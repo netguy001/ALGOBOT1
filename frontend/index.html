@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algo Trading Terminal — Indian Market</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- ===== TOP BAR ===== -->
+    <header class="topbar">
+        <div class="topbar-left">
+            <div class="logo">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                    <path d="M3 17l4-4 4 4 8-12" stroke="#00c853" stroke-width="2.5" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+                <span class="logo-text">AlgoTerminal</span>
+            </div>
+            <div class="market-indices">
+                <div class="index-chip"><span class="idx-name">NIFTY</span><span class="idx-val" id="idx-nifty">—</span>
+                </div>
+                <div class="index-chip"><span class="idx-name">SENSEX</span><span class="idx-val"
+                        id="idx-sensex">—</span></div>
+                <div class="index-chip"><span class="idx-name">BANKNIFTY</span><span class="idx-val"
+                        id="idx-banknifty">—</span></div>
+            </div>
+        </div>
+        <div class="topbar-right">
+            <span class="clock" id="clock">--:--:--</span>
+            <span id="conn-badge" class="badge badge-off"><span class="dot"></span>Offline</span>
+            <span id="engine-badge" class="badge badge-idle">Idle</span>
+        </div>
+    </header>
+
+    <!-- ===== TOOLBAR ===== -->
+    <div class="toolbar">
+        <div class="toolbar-left">
+            <select id="symbol-select" class="tb-sel sym-sel">
+                <option value="RELIANCE.NS">RELIANCE</option>
+                <option value="TCS.NS">TCS</option>
+                <option value="INFY.NS">INFY</option>
+                <option value="HDFCBANK.NS">HDFCBANK</option>
+                <option value="SBIN.NS">SBIN</option>
+            </select>
+            <div class="tf-group" id="tf-group">
+                <button class="tf-btn active" data-tf="1">1m</button>
+                <button class="tf-btn" data-tf="5">5m</button>
+                <button class="tf-btn" data-tf="15">15m</button>
+                <button class="tf-btn" data-tf="60">1H</button>
+                <button class="tf-btn" data-tf="D">1D</button>
+            </div>
+            <div class="tb-sep"></div>
+            <select id="strategy-select" class="tb-sel">
+                <option value="sma_crossover">SMA Crossover</option>
+                <option value="rsi_mean_reversion">RSI Mean Reversion</option>
+                <option value="breakout">Breakout (Donchian)</option>
+                <option value="momentum">Momentum</option>
+            </select>
+            <label class="ml-chip" title="Toggle ML prediction filter">
+                <input type="checkbox" id="ml-toggle">
+                <span class="ml-slider"></span>
+                <span class="ml-label">ML</span>
+            </label>
+        </div>
+        <div class="toolbar-right">
+            <button id="btn-start" class="tb-btn start-btn"><svg width="12" height="12" viewBox="0 0 24 24"
+                    fill="currentColor">
+                    <polygon points="5,3 19,12 5,21" />
+                </svg> Start</button>
+            <button id="btn-stop" class="tb-btn stop-btn"><svg width="12" height="12" viewBox="0 0 24 24"
+                    fill="currentColor">
+                    <rect x="4" y="4" width="16" height="16" rx="2" />
+                </svg> Stop</button>
+        </div>
+    </div>
+
+    <!-- ===== MAIN LAYOUT ===== -->
+    <main class="app-grid">
+
+        <!-- LEFT: Watchlist -->
+        <aside class="pane wl-pane">
+            <div class="pane-head">
+                <h3>Watchlist</h3>
+            </div>
+            <div id="watchlist" class="wl-body"></div>
+        </aside>
+
+        <!-- CENTER -->
+        <div class="center">
+
+            <!-- Chart -->
+            <section class="pane chart-pane">
+                <div class="chart-head">
+                    <div class="ch-info">
+                        <span class="ch-sym" id="ch-sym">RELIANCE.NS</span>
+                        <span class="ch-ltp" id="ch-ltp">—</span>
+                        <span class="ch-chg" id="ch-chg"></span>
+                    </div>
+                    <div class="ch-overlays">
+                        <button class="ov-btn active" data-ov="sma" title="SMA 20 / 50">SMA</button>
+                        <button class="ov-btn" data-ov="ema" title="EMA 12 / 26">EMA</button>
+                        <button class="ov-btn" data-ov="bb" title="Bollinger Bands">BB</button>
+                        <button class="ov-btn" data-ov="vol" title="Volume bars">Vol</button>
+                    </div>
+                </div>
+                <div id="tv-chart"></div>
+            </section>
+
+            <!-- Bottom tabs -->
+            <section class="pane bottom-pane">
+                <div class="tab-bar">
+                    <button class="tab active" data-tab="orders">Orders <span class="tcnt"
+                            id="cnt-orders">0</span></button>
+                    <button class="tab" data-tab="positions">Positions <span class="tcnt" id="cnt-pos">0</span></button>
+                    <button class="tab" data-tab="trades">Trade Log</button>
+                    <button class="tab" data-tab="signals">Signals</button>
+                </div>
+
+                <!-- Orders -->
+                <div class="tab-body active" id="tab-orders">
+                    <div class="tbl-scroll">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Symbol</th>
+                                    <th>Side</th>
+                                    <th>Type</th>
+                                    <th>Qty</th>
+                                    <th>Price</th>
+                                    <th>Filled</th>
+                                    <th>Status</th>
+                                    <th>Strategy</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="order-body">
+                                <tr>
+                                    <td colspan="10" class="empty">No orders yet</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- Positions -->
+                <div class="tab-body" id="tab-positions">
+                    <div class="tbl-scroll">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Symbol</th>
+                                    <th>Side</th>
+                                    <th>Qty</th>
+                                    <th>Avg Entry</th>
+                                    <th>LTP</th>
+                                    <th>P&L</th>
+                                    <th>% Chg</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="pos-body">
+                                <tr>
+                                    <td colspan="8" class="empty">No open positions</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- Trade Log -->
+                <div class="tab-body" id="tab-trades">
+                    <div class="tbl-scroll">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Symbol</th>
+                                    <th>Side</th>
+                                    <th>Qty</th>
+                                    <th>Price</th>
+                                    <th>Strategy</th>
+                                </tr>
+                            </thead>
+                            <tbody id="trades-body">
+                                <tr>
+                                    <td colspan="6" class="empty">No trades yet</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- Signals -->
+                <div class="tab-body" id="tab-signals">
+                    <div class="tbl-scroll" id="signal-log">
+                        <div class="empty">No signals yet</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- RIGHT SIDEBAR -->
+        <aside class="pane right-pane">
+
+            <!-- PnL -->
+            <div class="pnl-card">
+                <div class="pnl-head">Profit & Loss</div>
+                <div class="pnl-big">
+                    <span class="pnl-big-val" id="pnl-total">₹0.00</span>
+                    <span class="pnl-big-lbl">Total P&L</span>
+                </div>
+                <div class="pnl-grid">
+                    <div class="pnl-cell"><span class="pnl-lbl">Realised</span><span class="pnl-val"
+                            id="pnl-real">₹0.00</span></div>
+                    <div class="pnl-cell"><span class="pnl-lbl">Unrealised</span><span class="pnl-val"
+                            id="pnl-unreal">₹0.00</span></div>
+                    <div class="pnl-cell"><span class="pnl-lbl">Capital</span><span class="pnl-val"
+                            id="pnl-cap">₹10,00,000</span></div>
+                    <div class="pnl-cell"><span class="pnl-lbl">Trades</span><span class="pnl-val"
+                            id="pnl-trades">0</span></div>
+                </div>
+            </div>
+
+            <!-- Order Entry -->
+            <div class="ord-card">
+                <div class="ord-head">Place Order</div>
+                <div class="ord-side-tabs">
+                    <button class="os-tab buy-tab active" data-side="BUY">BUY</button>
+                    <button class="os-tab sell-tab" data-side="SELL">SELL</button>
+                </div>
+                <div class="ord-form">
+                    <div class="of-row"><label>Symbol</label><input type="text" id="of-sym" value="RELIANCE.NS"></div>
+                    <div class="of-row"><label>Type</label>
+                        <select id="of-type">
+                            <option value="MARKET">Market</option>
+                            <option value="LIMIT">Limit</option>
+                        </select>
+                    </div>
+                    <div class="of-row"><label>Qty</label><input type="number" id="of-qty" value="10" min="1"></div>
+                    <div class="of-row of-limit" id="of-limit-row"><label>Limit ₹</label><input type="number"
+                            id="of-price" step="0.05" value="0"></div>
+                    <div class="of-row"><label>SL %</label><input type="number" id="of-sl" step="0.1" value="2.0"></div>
+                    <div class="of-row"><label>Target %</label><input type="number" id="of-tp" step="0.1" value="4.0">
+                    </div>
+                    <button id="btn-order" class="submit-btn buy-bg">BUY RELIANCE.NS</button>
+                    <div class="ord-msg" id="ord-msg"></div>
+                </div>
+            </div>
+
+            <!-- Strategy Stats -->
+            <div class="strat-card">
+                <div class="strat-head">Strategy</div>
+                <div class="strat-row"><span>Active</span><span id="st-name">SMA Crossover</span></div>
+                <div class="strat-row"><span>Ticks</span><span id="st-ticks">0</span></div>
+                <div class="strat-row"><span>Signals</span><span id="st-signals">0</span></div>
+                <div class="strat-row"><span>ML Filter</span><span id="st-ml">OFF</span></div>
+                <div class="strat-row"><span>Win Rate</span><span id="st-wr">—</span></div>
+            </div>
+        </aside>
+    </main>
+
+    <footer class="footer">AlgoTerminal — Interview Demo &middot; NSE/BSE Simulation &middot; Synthetic Data &middot;
+        Not for production</footer>
+
+    <script src="/static/app.js"></script>
+</body>
+
+</html>

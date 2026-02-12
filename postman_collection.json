@@ -1,0 +1,201 @@
+{
+    "info": {
+        "name": "Algo Demo India",
+        "description": "Postman collection for exercising the REST API of the algorithmic trading demo.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:5000"
+        }
+    ],
+    "item": [
+        {
+            "name": "Start Strategy",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{base_url}}/api/start",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "start"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\"strategy\": \"sma_crossover\"}"
+                }
+            }
+        },
+        {
+            "name": "Stop Strategy",
+            "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/api/stop",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "stop"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Get Status",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/api/status",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "status"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Get Positions",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/api/positions",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "positions"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Get PnL",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/api/pnl",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "pnl"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Place Manual Order",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{base_url}}/api/place-order",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "place-order"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\"symbol\": \"RELIANCE.NS\", \"side\": \"BUY\", \"qty\": 10, \"price\": 2500}"
+                }
+            }
+        },
+        {
+            "name": "Cancel Order",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{base_url}}/api/cancel-order",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "cancel-order"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\"order_id\": \"paste-order-id-here\"}"
+                }
+            }
+        },
+        {
+            "name": "Get Orders",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/api/orders",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "orders"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "ML Predict",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/api/ml-predict?symbol=RELIANCE.NS",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "ml-predict"
+                    ],
+                    "query": [
+                        {
+                            "key": "symbol",
+                            "value": "RELIANCE.NS"
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}
