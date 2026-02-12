@@ -4,7 +4,16 @@ app/strategy/engine.py
 Strategy manager — loads strategies, feeds ticks, and routes resulting
 trade signals to the order manager.
 
-Designed to run in a background thread controlled by start() / stop().
+The engine defers all state decisions to the EngineController.
+It does NOT own a ``_running`` bool — it asks the controller.
+
+Engine safety guards (checked every tick cycle):
+    - max_open_positions    — refuses signals if limit reached
+    - max_total_exposure    — refuses signals if portfolio too exposed
+    - max_daily_loss_pct    — auto-stops engine if daily loss breached
+    - kill_switch           — immediate hard stop, no exceptions
+
+These guards complement the OrderValidator checks — defence-in-depth.
 """
 
 import logging
@@ -12,7 +21,13 @@ import threading
 from typing import Optional
 
 from app.strategy.strategies import STRATEGY_REGISTRY, Signal
-from app.config import DEFAULT_STRATEGY, ML_ENABLED, ML_PROBABILITY_THRESHOLD
+from app.config import (
+    DEFAULT_STRATEGY,
+    ML_ENABLED,
+    ML_PROBABILITY_THRESHOLD,
+    MAX_DAILY_LOSS_PCT,
+    KILL_SWITCH,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +38,7 @@ class StrategyEngine:
 
     Usage::
 
-        engine = StrategyEngine(order_callback=send_order)
+        engine = StrategyEngine(order_callback=send_order, controller=ctrl)
         engine.set_strategy("sma_crossover")
         engine.on_tick(tick_dict)  # call repeatedly with each tick
     """
@@ -33,25 +48,26 @@ class StrategyEngine:
         order_callback=None,
         ml_predict_fn=None,
         use_ml: bool = ML_ENABLED,
+        capital_mgr=None,
+        controller=None,
     ):
-        """
-        Parameters
-        ----------
-        order_callback : callable(signal) -> None
-            Function invoked when a strategy emits a signal.
-        ml_predict_fn : callable(symbol, price) -> float | None
-            Returns probability of up-move (0-1). ``None`` if model unavailable.
-        use_ml : bool
-            Whether to filter signals through the ML model.
-        """
         self._strategy = None
         self._strategy_name: str = DEFAULT_STRATEGY
-        self._running = False
         self._lock = threading.Lock()
         self._order_callback = order_callback
         self._ml_predict_fn = ml_predict_fn
         self.use_ml = use_ml
         self._tick_count = 0
+        self._capital_mgr = capital_mgr
+        self._controller = controller  # EngineController (single source of truth)
+        self._halted_reason: Optional[str] = None
+
+        # Respect kill switch from config on init
+        if KILL_SWITCH:
+            self._halted_reason = "kill_switch_from_config"
+            logger.warning(
+                "Engine kill switch is ON from config — engine will not start"
+            )
 
         self.set_strategy(self._strategy_name)
 
@@ -60,7 +76,6 @@ class StrategyEngine:
     # ------------------------------------------------------------------
 
     def set_strategy(self, name: str, **kwargs) -> None:
-        """Switch the active strategy by name."""
         cls = STRATEGY_REGISTRY.get(name)
         if cls is None:
             logger.error(
@@ -80,22 +95,37 @@ class StrategyEngine:
 
     @property
     def running(self) -> bool:
-        return self._running
+        """Delegates to the EngineController if available."""
+        if self._controller:
+            return self._controller.is_running
+        return False
 
     # ------------------------------------------------------------------
-    # Control
+    # Control — delegates to EngineController
     # ------------------------------------------------------------------
 
     def start(self) -> None:
-        self._running = True
+        if KILL_SWITCH or (self._capital_mgr and self._capital_mgr.kill_switch):
+            self._halted_reason = "kill_switch"
+            logger.warning("Cannot start engine — kill switch is active")
+            return
+        if self._controller:
+            self._controller.start(reason="engine.start")
+        self._halted_reason = None
         logger.info("Strategy engine started (%s)", self._strategy_name)
 
     def stop(self) -> None:
-        self._running = False
+        if self._controller:
+            self._controller.stop(reason="engine.stop")
         logger.info("Strategy engine stopped")
 
+    def emergency_stop(self, reason: str) -> None:
+        if self._controller:
+            self._controller.emergency_stop(reason)
+        self._halted_reason = reason
+        logger.warning("ENGINE EMERGENCY STOP: %s", reason)
+
     def reset(self) -> None:
-        """Reset the current strategy's internal state."""
         with self._lock:
             if self._strategy:
                 self._strategy.reset()
@@ -103,20 +133,61 @@ class StrategyEngine:
         logger.info("Strategy engine reset")
 
     # ------------------------------------------------------------------
-    # Tick processing
+    # Safety guard checks (called every tick before signal processing)
+    # ------------------------------------------------------------------
+
+    def _check_safety_guards(self) -> Optional[str]:
+        if self._capital_mgr is None:
+            return None
+
+        cm = self._capital_mgr
+
+        if cm.kill_switch:
+            return "kill_switch"
+
+        if cm.daily_loss_halted:
+            return "daily_loss_halted"
+
+        if cm.initial_capital > 0 and cm.realised_pnl < 0:
+            daily_loss_pct = abs(cm.realised_pnl) / cm.initial_capital * 100
+            if daily_loss_pct >= MAX_DAILY_LOSS_PCT:
+                cm.halt()
+                return (
+                    f"daily_loss_pct ({daily_loss_pct:.1f}% >= {MAX_DAILY_LOSS_PCT}%)"
+                )
+
+        if cm.total_exposure >= cm.max_exposure_pct:
+            return f"max_exposure ({cm.total_exposure:.1f}%)"
+
+        if cm.open_position_count >= cm.max_open_positions:
+            return f"max_open_positions ({cm.open_position_count})"
+
+        return None
+
+    # ------------------------------------------------------------------
+    # Tick processing — guarded by EngineController state
     # ------------------------------------------------------------------
 
     def on_tick(self, tick: dict) -> Optional[Signal]:
         """
         Feed a tick into the active strategy.
 
-        Returns the signal (if any) for callers that need it,
-        and also invokes the ``order_callback`` if set.
+        Returns the signal (if any) for callers that need it.
+        **Immediately returns None if the controller is not RUNNING.**
         """
-        if not self._running or self._strategy is None:
+        # ── Gate: only process when controller is RUNNING ──
+        if self._controller and not self._controller.is_running:
+            return None
+        if self._strategy is None:
             return None
 
         self._tick_count += 1
+
+        # --- Engine-level safety guards ---
+        breach = self._check_safety_guards()
+        if breach:
+            self.emergency_stop(breach)
+            return None
 
         with self._lock:
             signal = self._strategy.on_tick(tick)
@@ -168,9 +239,12 @@ class StrategyEngine:
     # ------------------------------------------------------------------
 
     def status(self) -> dict:
+        ctrl = self._controller.to_dict() if self._controller else {}
         return {
-            "running": self._running,
+            "running": self.running,
+            "state": ctrl.get("state", "IDLE"),
             "strategy": self._strategy_name,
             "use_ml": self.use_ml,
             "ticks_processed": self._tick_count,
+            "halted_reason": self._halted_reason or ctrl.get("reason"),
         }

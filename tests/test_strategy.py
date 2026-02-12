@@ -93,7 +93,8 @@ class TestRiskSizing:
     """Test position sizing and stop/take-profit calculations."""
 
     def test_position_size_default(self):
-        """1 lakh capital, 1% risk, 2% SL @ price 100 → risk=1000, risk_per_share=2 → qty=500."""
+        """1 lakh capital, 1% risk, 2% SL @ price 100 → risk=1000, risk_per_share=2 → qty=500.
+        Now capped by MAX_POSITION_SIZE_PER_TRADE (default 500)."""
         params = RiskParams(capital=100_000, risk_pct=1.0, stop_loss_pct=2.0)
         qty = position_size(100.0, params)
         assert qty == 500
@@ -122,6 +123,100 @@ class TestRiskSizing:
 
 
 # ---------------------------------------------------------------------------
+# CapitalManager tests
+# ---------------------------------------------------------------------------
+
+from app.broker.capital_manager import CapitalManager
+
+
+class TestCapitalManager:
+    """Test centralised capital and position management."""
+
+    def test_initial_state(self):
+        cm = CapitalManager(initial_capital=100_000)
+        assert cm.initial_capital == 100_000
+        assert cm.available_capital == 100_000
+        assert cm.used_margin == 0.0
+        assert cm.open_position_count == 0
+
+    def test_update_position_buy(self):
+        cm = CapitalManager(initial_capital=100_000)
+        pnl = cm.update_position("TEST.NS", "BUY", 10, 2000.0)
+        assert pnl == 0.0  # opening position has no PnL
+        pos = cm.get_position("TEST.NS")
+        assert pos["qty"] == 10
+        assert pos["side"] == "BUY"
+        assert pos["avg_price"] == 2000.0
+
+    def test_roundtrip_pnl(self):
+        cm = CapitalManager(initial_capital=100_000)
+        cm.update_position("TEST.NS", "BUY", 10, 2000.0)
+        pnl = cm.update_position("TEST.NS", "SELL", 10, 2100.0)
+        assert pnl == pytest.approx(1000.0)  # (2100-2000)*10
+        assert cm.realised_pnl == pytest.approx(1000.0)
+
+    def test_clamp_quantity(self):
+        cm = CapitalManager(
+            initial_capital=10_000,
+            max_position_size=100,
+            max_qty_per_order=50,
+        )
+        # Should be capped by max_qty_per_order (50)
+        assert cm.clamp_quantity(200, 100.0) == 50
+
+    def test_daily_loss_halt(self):
+        cm = CapitalManager(initial_capital=100_000, daily_loss_limit=1000)
+        assert not cm.daily_loss_halted
+        # Simulate a big loss
+        cm.update_position("X.NS", "BUY", 100, 1000.0)
+        cm.update_position("X.NS", "SELL", 100, 989.0)  # loss = 1100
+        assert cm.check_daily_loss() is True
+        assert cm.daily_loss_halted is True
+
+
+# ---------------------------------------------------------------------------
+# OrderValidator tests
+# ---------------------------------------------------------------------------
+
+from app.broker.order_validator import OrderValidator
+
+
+class TestOrderValidator:
+    """Test pre-trade validation."""
+
+    def _make_validator(self, **cm_kwargs):
+        cm = CapitalManager(initial_capital=100_000, **cm_kwargs)
+        ov = OrderValidator(capital_manager=cm, cooldown_candles=3)
+        return ov, cm
+
+    def test_approved_signal(self):
+        ov, _ = self._make_validator()
+        result = ov.validate_signal(
+            {"symbol": "TEST.NS", "action": "BUY", "price": 100.0}
+        )
+        assert result is None  # approved
+
+    def test_cooldown_blocks_duplicate(self):
+        ov, _ = self._make_validator()
+        sig = {"symbol": "TEST.NS", "action": "BUY", "price": 100.0}
+        ov.validate_signal(sig)
+        ov.record_signal("TEST.NS")
+        ov.tick()
+        result = ov.validate_signal(
+            {"symbol": "TEST.NS", "action": "BUY", "price": 101.0}
+        )
+        assert result is not None  # blocked by cooldown
+
+    def test_daily_loss_blocks(self):
+        ov, cm = self._make_validator(daily_loss_limit=100)
+        cm.update_position("X.NS", "BUY", 100, 1000.0)
+        cm.update_position("X.NS", "SELL", 100, 998.0)  # loss=200
+        result = ov.validate_signal({"symbol": "Y.NS", "action": "BUY", "price": 50.0})
+        assert result is not None
+        assert "daily_loss" in result
+
+
+# ---------------------------------------------------------------------------
 # Order state transition tests
 # ---------------------------------------------------------------------------
 
@@ -132,8 +227,12 @@ class TestOrderManager:
     """Test order lifecycle and state transitions."""
 
     def _make_manager(self):
-        """Create a fresh order manager with a no-op broker."""
-        return OrderManager(broker_submit_fn=lambda order: True)
+        """Create a fresh order manager with CapitalManager and no-op broker."""
+        cm = CapitalManager(initial_capital=1_000_000)
+        return OrderManager(
+            broker_submit_fn=lambda order: True,
+            capital_mgr=cm,
+        )
 
     def test_place_manual_order(self):
         mgr = self._make_manager()

@@ -18,15 +18,53 @@ _engine = None
 _order_mgr = None
 _current_prices: dict[str, float] = {}
 _ml_predict_fn = None
+_controller = None  # EngineController
 
 
-def init_api_deps(engine, order_mgr, current_prices_ref, ml_predict_fn=None):
+def init_api_deps(
+    engine, order_mgr, current_prices_ref, ml_predict_fn=None, controller=None
+):
     """Inject dependencies from main.py (avoids circular imports)."""
-    global _engine, _order_mgr, _current_prices, _ml_predict_fn
+    global _engine, _order_mgr, _current_prices, _ml_predict_fn, _controller
     _engine = engine
     _order_mgr = order_mgr
     _current_prices = current_prices_ref
     _ml_predict_fn = ml_predict_fn
+    _controller = controller
+
+
+# ------------------------------------------------------------------
+# Candles (historical chart data — persisted in SQLite)
+# ------------------------------------------------------------------
+
+
+@api_bp.route("/candles", methods=["GET"])
+def get_candles():
+    """Return historical candles for a symbol/timeframe.
+
+    Query params:
+        symbol    — e.g. RELIANCE.NS  (required)
+        timeframe — e.g. tick, 1m      (default: tick)
+        limit     — max rows           (default: 500)
+
+    Returns candles sorted ascending by timestamp so the frontend can
+    load them directly into the chart without re-sorting.
+    """
+    from app.db import storage
+
+    symbol = request.args.get("symbol", "")
+    if not symbol:
+        return jsonify({"error": "symbol query param required"}), 400
+
+    timeframe = request.args.get("timeframe", "tick")
+    try:
+        limit = int(request.args.get("limit", "500"))
+    except (ValueError, TypeError):
+        limit = 500
+    limit = min(max(limit, 1), 5000)  # clamp 1-5000
+
+    candles = storage.get_recent_candles(symbol, timeframe, limit)
+    return jsonify({"candles": candles, "count": len(candles)}), 200
 
 
 # ------------------------------------------------------------------
@@ -47,15 +85,23 @@ def start_strategy():
 
 @api_bp.route("/stop", methods=["POST"])
 def stop_strategy():
-    """Stop the strategy engine."""
+    """Stop the strategy engine.  Freezes strategy + PnL updates."""
     _engine.stop()
-    return jsonify({"status": "stopped"}), 200
+    state = _controller.state.value if _controller else "STOPPED"
+    return jsonify({"status": "stopped", "state": state}), 200
 
 
 @api_bp.route("/status", methods=["GET"])
 def get_status():
-    """Return engine status, active strategy, tick count."""
-    return jsonify(_engine.status()), 200
+    """Return engine status, active strategy, tick count, and trading mode."""
+    from app.config import MODE
+
+    status = _engine.status()
+    status["mode"] = MODE
+    if _controller:
+        status["state"] = _controller.state.value
+        status["running"] = _controller.is_running
+    return jsonify(status), 200
 
 
 # ------------------------------------------------------------------
@@ -143,11 +189,22 @@ def cancel_order():
 
 @api_bp.route("/orders", methods=["GET"])
 def get_orders():
-    """Return recent orders."""
+    """Return recent orders with pagination.
+
+    Query params:
+        limit  — max rows (default 50, max 500)
+        offset — row offset for pagination (default 0)
+    """
     from app.db import storage
 
-    orders = storage.get_all_orders(limit=100)
-    return jsonify({"orders": orders}), 200
+    try:
+        limit = min(int(request.args.get("limit", "50")), 500)
+        offset = max(int(request.args.get("offset", "0")), 0)
+    except (ValueError, TypeError):
+        limit, offset = 50, 0
+
+    orders = storage.get_all_orders(limit=limit, offset=offset)
+    return jsonify({"orders": orders, "limit": limit, "offset": offset}), 200
 
 
 # ------------------------------------------------------------------

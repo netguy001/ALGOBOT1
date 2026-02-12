@@ -1,20 +1,24 @@
 /**
- * AlgoTerminal v3 — Professional Trading Dashboard
- * ==================================================
- * - TradingView Lightweight Charts with proper candlesticks
- * - Each backend tick = 1 base candle (sequential timestamps)
- * - Timeframe buttons aggregate N ticks into 1 candle
- * - SMA / EMA / BB overlays computed from candle history
- * - Optimised: chart updates batched, PnL throttled
+ * AlgoTerminal v4 — Production-Ready Trading Dashboard
+ * =====================================================
+ * Key improvements over v3:
+ *   - Historical candles fetched from /api/candles on page load
+ *     so the chart is populated BEFORE the websocket connects.
+ *   - Chart is created ONCE, never destroyed/recreated on reconnect.
+ *   - Disconnect indicator banner with auto-retry.
+ *   - Loading spinner while historical candles are fetching.
+ *   - Paginated orders table for large order volumes.
+ *   - Mode-aware: fake indices only shown in demo mode.
  */
 
 // ── Config ──────────────────────────────────────────────────
 const API = '';
-const MAX_CANDLES = 300;
-const MAX_ORDERS = 150;
+const MAX_CANDLES = 500;
+const MAX_ORDERS = 200;
 const MAX_TRADES = 200;
 const MAX_SIGNALS = 100;
 const PNL_THROTTLE = 400;
+const ORDERS_PAGE_SIZE = 50;   // rows per page for order table pagination
 
 // ── Candle grouping: how many ticks per candle for each TF ──
 const TF_MAP = { '1': 1, '5': 5, '15': 15, '60': 60, 'D': 1 };
@@ -28,6 +32,10 @@ let signalCount = 0;
 let tradeList = [];
 let orderList = [];
 let lastPnlTs = 0;
+let ordersPage = 0;                 // current page of order pagination
+let chartReady = false;             // guard: prevent chart operations before init
+let historicalLoaded = false;       // guard: have we loaded /api/candles yet?
+let engineState = 'IDLE';           // IDLE | RUNNING | STOPPED | PAUSED
 
 // Per-symbol raw tick buffers (for chart reconstruction on symbol switch)
 const tickBuffers = {};          // { 'RELIANCE.NS': [{o,h,l,c,v,t}, ...], ... }
@@ -73,6 +81,32 @@ function shortTime(iso) {
 function sideClass(s) { return s === 'BUY' ? 'side-buy' : 'side-sell'; }
 function statusClass(s) { return 'st-' + (s || 'new').toLowerCase(); }
 function n(v, d = 2) { return Number(v).toFixed(d); }
+
+// Clock
+setInterval(() => {
+    const d = new Date();
+    clock.textContent = d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+}, 1000);
+
+// ═══════════════════════════════════════════════════════════
+//  LOADING SPINNER  (shown while fetching historical candles)
+// ═══════════════════════════════════════════════════════════
+function showChartLoading(show) {
+    const chartEl = document.getElementById('tv-chart');
+    if (!chartEl) return;
+    let spinner = chartEl.querySelector('.chart-spinner');
+    if (show) {
+        if (!spinner) {
+            spinner = document.createElement('div');
+            spinner.className = 'chart-spinner';
+            spinner.innerHTML = '<div class="spinner-ring"></div><span>Loading chart data…</span>';
+            chartEl.appendChild(spinner);
+        }
+        spinner.style.display = 'flex';
+    } else if (spinner) {
+        spinner.style.display = 'none';
+    }
+}
 
 // Clock
 setInterval(() => {
@@ -352,6 +386,7 @@ function updateWatchPrice(sym, price) {
 }
 
 function selectSymbol(sym) {
+    if (sym === selectedSymbol && candleData.length > 0) return; // already loaded
     selectedSymbol = sym;
     symSel.value = sym;
     chSym.textContent = sym;
@@ -359,29 +394,36 @@ function selectSymbol(sym) {
     if (ofSym) ofSym.value = sym;
     updateOrderBtn();
 
-    // Reset chart and rebuild from buffer
+    // Reset chart
     resetChartData();
-
-    // Replay buffered ticks for this symbol
-    const buf = tickBuffers[sym] || [];
-    const start = Math.max(0, buf.length - MAX_CANDLES * ticksPerCandle);
-    for (let i = start; i < buf.length; i++) {
-        pendingTicks.push(buf[i]);
-        if (pendingTicks.length >= ticksPerCandle) flushCandle();
-    }
-    refreshOverlays();
-    chart.timeScale().fitContent();
-
-    // Update LTP display
-    if (buf.length > 0) {
-        const last = buf[buf.length - 1];
-        chLtp.textContent = n(last.price);
-    }
 
     // Watchlist active highlight
     document.querySelectorAll('.wl-row').forEach(r => {
         r.classList.toggle('active', r.dataset.sym === sym);
     });
+
+    // ── FETCH historical candles for this symbol from DB ──
+    loadHistoricalCandles(sym).then(() => {
+        // If we already had in-memory ticks that are newer, replay them
+        const buf = tickBuffers[sym] || [];
+        if (buf.length > candleData.length) {
+            resetChartData();
+            const start = Math.max(0, buf.length - MAX_CANDLES * ticksPerCandle);
+            for (let i = start; i < buf.length; i++) {
+                pendingTicks.push(buf[i]);
+                if (pendingTicks.length >= ticksPerCandle) flushCandle();
+            }
+            refreshOverlays();
+            chart.timeScale().fitContent();
+        }
+    });
+
+    // Update LTP display from in-memory buffer
+    const buf = tickBuffers[sym] || [];
+    if (buf.length > 0) {
+        const last = buf[buf.length - 1];
+        chLtp.textContent = n(last.price);
+    }
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -438,22 +480,150 @@ document.querySelectorAll('.ov-btn').forEach(btn => {
 });
 
 // ═══════════════════════════════════════════════════════════
-//  WEBSOCKET
+//  HISTORICAL CANDLE FETCH  (from /api/candles — persistent DB)
+// ═══════════════════════════════════════════════════════════
+// Called ONCE on page load, BEFORE websocket connects.
+// This ensures the chart shows historical data even after server restart.
+
+async function loadHistoricalCandles(symbol) {
+    showChartLoading(true);
+    try {
+        const res = await fetch(`${API}/api/candles?symbol=${encodeURIComponent(symbol)}&timeframe=tick&limit=500`);
+        const data = await res.json();
+        if (data.candles && data.candles.length > 0) {
+            // Convert DB candles into tick-buffer format
+            const ticks = data.candles.map(c => ({
+                symbol: c.symbol,
+                price: c.close,
+                open: c.open,
+                high: c.high,
+                low: c.low,
+                close: c.close,
+                volume: c.volume || 0,
+                timestamp: new Date(c.timestamp * 1000).toISOString(),
+            }));
+
+            // Load into tick buffer (don't overwrite if websocket already has more)
+            if (!tickBuffers[symbol] || tickBuffers[symbol].length < ticks.length) {
+                tickBuffers[symbol] = ticks;
+            }
+
+            // Build chart from these candles
+            resetChartData();
+            const buf = tickBuffers[symbol] || [];
+            const start = Math.max(0, buf.length - MAX_CANDLES * ticksPerCandle);
+            for (let i = start; i < buf.length; i++) {
+                pendingTicks.push(buf[i]);
+                if (pendingTicks.length >= ticksPerCandle) flushCandle();
+            }
+            refreshOverlays();
+            chart.timeScale().fitContent();
+
+            // Update LTP display
+            if (buf.length > 0) {
+                const last = buf[buf.length - 1];
+                chLtp.textContent = n(last.price);
+            }
+
+            historicalLoaded = true;
+            console.log('[candles] Loaded', data.candles.length, 'historical candles for', symbol);
+        }
+    } catch (e) {
+        console.warn('[candles] Failed to load historical candles:', e);
+    } finally {
+        showChartLoading(false);
+    }
+}
+
+// Also load historical for all symbols on startup (for watchlist)
+async function loadAllHistoricalCandles() {
+    // Load selected symbol first (for chart), then others in background
+    await loadHistoricalCandles(selectedSymbol);
+    for (const sym of SYMBOLS) {
+        if (sym === selectedSymbol) continue;
+        // Fire and forget — just populates tick buffers for watchlist
+        fetch(`${API}/api/candles?symbol=${encodeURIComponent(sym)}&timeframe=tick&limit=10`)
+            .then(r => r.json())
+            .then(data => {
+                if (data.candles && data.candles.length > 0) {
+                    const last = data.candles[data.candles.length - 1];
+                    updateWatchPrice(sym, last.close);
+                }
+            })
+            .catch(() => { });
+    }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  WEBSOCKET  (connects AFTER historical candles are loaded)
 // ═══════════════════════════════════════════════════════════
 let socket;
+let reconnectCount = 0;
 
 function connectSocket() {
     socket = io({ transports: ['websocket', 'polling'], reconnectionDelay: 1000 });
 
     socket.on('connect', () => {
+        reconnectCount++;
         connBadge.className = 'badge badge-on';
         connBadge.innerHTML = '<span class="dot"></span>Connected';
+        const banner = document.getElementById('disconnect-banner');
+        if (banner) banner.style.display = 'none';
+
+        // Request state from server — but do NOT reset the chart.
+        // The chart was already populated from /api/candles.
+        // We only want position/pnl/status updates here.
         socket.emit('request_state');
     });
 
     socket.on('disconnect', () => {
         connBadge.className = 'badge badge-off';
         connBadge.innerHTML = '<span class="dot"></span>Offline';
+        const banner = document.getElementById('disconnect-banner');
+        if (banner) banner.style.display = 'flex';
+        // NOTE: We do NOT reset the chart here. The existing candle data
+        // stays visible so the user doesn't lose context during a blip.
+    });
+
+    // ── Tick History (sent on connect / reconnect) ──
+    // Only used to SUPPLEMENT the chart — never replaces data loaded
+    // from /api/candles. This handles new ticks that arrived since
+    // the page loaded.
+    socket.on('tick_history', history => {
+        for (const [sym, ticks] of Object.entries(history)) {
+            if (!ticks || !ticks.length) continue;
+            // Merge: only replace if server has MORE ticks than we have
+            if (!tickBuffers[sym] || ticks.length > tickBuffers[sym].length) {
+                tickBuffers[sym] = ticks;
+            }
+            if (!firstPrice[sym] && ticks.length > 0) {
+                firstPrice[sym] = ticks[0].price;
+            }
+            const last = ticks[ticks.length - 1];
+            updateWatchPrice(sym, last.price);
+        }
+
+        // Only rebuild chart if we haven't loaded historical yet,
+        // or if the server has significantly more data
+        const buf = tickBuffers[selectedSymbol] || [];
+        if (buf.length > candleData.length + 5) {
+            resetChartData();
+            const start = Math.max(0, buf.length - MAX_CANDLES * ticksPerCandle);
+            for (let i = start; i < buf.length; i++) {
+                pendingTicks.push(buf[i]);
+                if (pendingTicks.length >= ticksPerCandle) flushCandle();
+            }
+            refreshOverlays();
+            chart.timeScale().fitContent();
+        }
+
+        if (buf.length > 0) {
+            const last = buf[buf.length - 1];
+            chLtp.textContent = n(last.price);
+            tickCount = buf.length;
+            stTicks.textContent = tickCount;
+        }
+        console.log('[tick_history] Merged', Object.keys(history).length, 'symbols');
     });
 
     // ── Tick ──
@@ -490,8 +660,9 @@ function connectSocket() {
     // ── Position ──
     socket.on('position_update', data => renderPositions(data.positions));
 
-    // ── PnL (throttled) ──
+    // ── PnL (throttled) — ONLY update if engine is RUNNING ──
     socket.on('pnl_update', pnl => {
+        if (engineState === 'STOPPED') return;  // freeze PnL display
         const now = Date.now();
         if (now - lastPnlTs < PNL_THROTTLE) return;
         lastPnlTs = now;
@@ -528,8 +699,14 @@ function connectSocket() {
 
     // ── Status ──
     socket.on('status', st => {
-        if (st.running) {
+        engineState = st.state || (st.running ? 'RUNNING' : 'IDLE');
+
+        if (engineState === 'RUNNING') {
             engBadge.className = 'badge badge-run'; engBadge.textContent = 'Running';
+        } else if (engineState === 'STOPPED') {
+            engBadge.className = 'badge badge-off'; engBadge.textContent = 'Stopped';
+        } else if (engineState === 'PAUSED') {
+            engBadge.className = 'badge badge-idle'; engBadge.textContent = 'Paused';
         } else {
             engBadge.className = 'badge badge-idle'; engBadge.textContent = 'Idle';
         }
@@ -540,7 +717,7 @@ function connectSocket() {
 }
 
 // ═══════════════════════════════════════════════════════════
-//  ORDERS TABLE
+//  ORDERS TABLE  (with pagination)
 // ═══════════════════════════════════════════════════════════
 function upsertOrder(order) {
     const idx = orderList.findIndex(o => o.order_id === order.order_id);
@@ -552,11 +729,19 @@ function upsertOrder(order) {
 function renderOrders() {
     if (!orderList.length) {
         orderBody.innerHTML = '<tr><td colspan="10" class="empty">No orders yet</td></tr>';
-        cntOrders.textContent = '0'; return;
+        cntOrders.textContent = '0';
+        renderOrderPagination();
+        return;
     }
     cntOrders.textContent = orderList.length;
+
+    // Pagination: show only ORDERS_PAGE_SIZE rows at a time
+    const start = ordersPage * ORDERS_PAGE_SIZE;
+    const end = Math.min(start + ORDERS_PAGE_SIZE, orderList.length);
+    const pageOrders = orderList.slice(start, end);
+
     let h = '';
-    for (const o of orderList) {
+    for (const o of pageOrders) {
         const canC = o.status === 'NEW' || o.status === 'ACK' || o.status === 'PARTIAL';
         h += `<tr>
             <td>${shortTime(o.updated_at || o.created_at)}</td>
@@ -572,7 +757,39 @@ function renderOrders() {
         </tr>`;
     }
     orderBody.innerHTML = h;
+    renderOrderPagination();
 }
+
+function renderOrderPagination() {
+    // Create or update pagination controls below the orders table
+    let pagEl = document.getElementById('orders-pagination');
+    const totalPages = Math.max(1, Math.ceil(orderList.length / ORDERS_PAGE_SIZE));
+
+    if (!pagEl) {
+        const tabOrders = document.getElementById('tab-orders');
+        if (!tabOrders) return;
+        pagEl = document.createElement('div');
+        pagEl.id = 'orders-pagination';
+        pagEl.className = 'pagination-bar';
+        tabOrders.appendChild(pagEl);
+    }
+
+    if (totalPages <= 1) {
+        pagEl.innerHTML = '';
+        return;
+    }
+
+    let h = '<button class="pg-btn" onclick="changeOrdersPage(-1)"' + (ordersPage === 0 ? ' disabled' : '') + '>&laquo; Prev</button>';
+    h += `<span class="pg-info">Page ${ordersPage + 1} of ${totalPages}</span>`;
+    h += '<button class="pg-btn" onclick="changeOrdersPage(1)"' + (ordersPage >= totalPages - 1 ? ' disabled' : '') + '>Next &raquo;</button>';
+    pagEl.innerHTML = h;
+}
+
+window.changeOrdersPage = function (delta) {
+    const totalPages = Math.ceil(orderList.length / ORDERS_PAGE_SIZE);
+    ordersPage = Math.max(0, Math.min(ordersPage + delta, totalPages - 1));
+    renderOrders();
+};
 
 window.cancelOrder = async function (id) {
     try {
@@ -760,18 +977,21 @@ $('btn-order').addEventListener('click', async () => {
 });
 
 // ═══════════════════════════════════════════════════════════
-//  LOAD EXISTING DATA + FAKE INDICES
+//  LOAD EXISTING DATA + FAKE INDICES  (mode-aware)
 // ═══════════════════════════════════════════════════════════
 async function loadExisting() {
     try {
-        const res = await fetch(API + '/api/orders');
+        const res = await fetch(API + '/api/orders?limit=50&offset=0');
         const d = await res.json();
         if (d.orders) d.orders.forEach(o => upsertOrder(o));
     } catch (e) { }
 }
 
+// Fake market indices — ONLY shown in demo mode.
+// In paper/live mode these should come from real data feeds.
 function fakeIndices() {
     const base = { nifty: 25800, sensex: 83800, banknifty: 60700 };
+    const origin = { nifty: 25800, sensex: 83800, banknifty: 60700 };
     function tick() {
         for (const [name, b] of Object.entries(base)) {
             const v = b + (Math.random() - 0.48) * 80;
@@ -779,7 +999,7 @@ function fakeIndices() {
             const el = $('idx-' + name);
             if (el) {
                 el.textContent = Math.round(v).toLocaleString('en-IN');
-                el.style.color = v >= 25800 && name === 'nifty' || v >= 83800 && name === 'sensex' || v >= 60700 && name === 'banknifty' ? 'var(--green)' : 'var(--red)';
+                el.style.color = v >= origin[name] ? 'var(--green)' : 'var(--red)';
             }
         }
     }
@@ -787,11 +1007,42 @@ function fakeIndices() {
     setInterval(tick, 2500);
 }
 
+// Detect mode from status endpoint
+async function detectMode() {
+    try {
+        const res = await fetch(API + '/api/status');
+        const st = await res.json();
+        return st.mode || 'demo';
+    } catch (e) {
+        return 'demo';
+    }
+}
+
 // ═══════════════════════════════════════════════════════════
-//  INIT
+//  INIT  —  Historical candles FIRST, then websocket
 // ═══════════════════════════════════════════════════════════
-buildWatchlist();
-connectSocket();
-loadExisting();
-fakeIndices();
-updateOrderBtn();
+async function init() {
+    buildWatchlist();
+    updateOrderBtn();
+
+    // 1. Show loading state and fetch persistent candles from DB
+    showChartLoading(true);
+    await loadAllHistoricalCandles();
+
+    // 2. Now connect websocket — new ticks will APPEND to the chart
+    connectSocket();
+
+    // 3. Load existing orders
+    loadExisting();
+
+    // 4. Fake indices only in demo mode (strict mode compliance)
+    const mode = await detectMode();
+    if (mode === 'demo') {
+        fakeIndices();
+    } else {
+        // In non-demo modes, hide the SIM tags or show real data
+        document.querySelectorAll('.sim-tag').forEach(el => el.style.display = 'none');
+    }
+}
+
+init();

@@ -85,6 +85,22 @@ def _init_tables(conn: sqlite3.Connection) -> None:
             signal     TEXT,
             details    TEXT
         );
+
+        CREATE TABLE IF NOT EXISTS candles (
+            id         INTEGER PRIMARY KEY AUTOINCREMENT,
+            symbol     TEXT NOT NULL,
+            timeframe  TEXT NOT NULL DEFAULT '1m',
+            timestamp  INTEGER NOT NULL,
+            open       REAL NOT NULL,
+            high       REAL NOT NULL,
+            low        REAL NOT NULL,
+            close      REAL NOT NULL,
+            volume     REAL NOT NULL DEFAULT 0,
+            UNIQUE(symbol, timeframe, timestamp)
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_candles_sym_tf
+            ON candles(symbol, timeframe, timestamp DESC);
         """
     )
     conn.commit()
@@ -143,10 +159,11 @@ def get_order(order_id: str) -> Optional[dict]:
     return dict(row) if row else None
 
 
-def get_all_orders(limit: int = 100) -> list[dict]:
+def get_all_orders(limit: int = 100, offset: int = 0) -> list[dict]:
     conn = _get_conn()
     rows = conn.execute(
-        "SELECT * FROM orders ORDER BY created_at DESC LIMIT ?", (limit,)
+        "SELECT * FROM orders ORDER BY created_at DESC LIMIT ? OFFSET ?",
+        (limit, offset),
     ).fetchall()
     return [dict(r) for r in rows]
 
@@ -180,6 +197,39 @@ def insert_trade(trade: dict[str, Any]) -> None:
             ),
         )
         conn.commit()
+
+
+def insert_order_and_trade(order: dict[str, Any], trade: dict[str, Any]) -> None:
+    """Insert/update an order and its trade fill in a single transaction."""
+    with _lock:
+        conn = _get_conn()
+        try:
+            conn.execute("BEGIN")
+            updates = {
+                "status": order.get("status", "FILLED"),
+                "filled_qty": order.get("filled_qty", 0),
+                "avg_price": order.get("avg_price", 0),
+                "updated_at": datetime.utcnow().isoformat(),
+            }
+            set_clause = ", ".join(f"{k} = ?" for k in updates)
+            values = list(updates.values()) + [order["order_id"]]
+            conn.execute(f"UPDATE orders SET {set_clause} WHERE order_id = ?", values)
+            conn.execute(
+                """INSERT INTO trades (order_id, symbol, side, qty, price, timestamp)
+                   VALUES (?, ?, ?, ?, ?, ?)""",
+                (
+                    trade["order_id"],
+                    trade["symbol"],
+                    trade["side"],
+                    trade["qty"],
+                    trade["price"],
+                    trade.get("timestamp", datetime.utcnow().isoformat()),
+                ),
+            )
+            conn.commit()
+        except Exception:
+            conn.rollback()
+            raise
 
 
 def get_trades(limit: int = 200) -> list[dict]:
@@ -247,11 +297,86 @@ def insert_strategy_log(log: dict[str, Any]) -> None:
 # ---------------------------------------------------------------------------
 
 
+# ---------------------------------------------------------------------------
+# Candle helpers
+# ---------------------------------------------------------------------------
+
+
+def upsert_candle(candle: dict[str, Any]) -> None:
+    """Insert or update a candle row (keyed by symbol+timeframe+timestamp).
+
+    On conflict (same symbol+timeframe+timestamp), the OHLC values are merged:
+    high takes the max, low takes the min, close is overwritten, volume is accumulated.
+    This ensures ticks arriving within the same candle window are merged correctly.
+    """
+    with _lock:
+        conn = _get_conn()
+        conn.execute(
+            """INSERT INTO candles (symbol, timeframe, timestamp, open, high, low, close, volume)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+               ON CONFLICT(symbol, timeframe, timestamp)
+               DO UPDATE SET
+                   high   = MAX(candles.high, excluded.high),
+                   low    = MIN(candles.low,  excluded.low),
+                   close  = excluded.close,
+                   volume = candles.volume + excluded.volume""",
+            (
+                candle["symbol"],
+                candle.get("timeframe", "1m"),
+                int(candle["timestamp"]),
+                float(candle.get("open", candle.get("close", 0))),
+                float(candle.get("high", candle.get("close", 0))),
+                float(candle.get("low", candle.get("close", 0))),
+                float(candle.get("close", 0)),
+                float(candle.get("volume", 0)),
+            ),
+        )
+        conn.commit()
+
+
+# Alias for backward compatibility
+insert_or_update_candle = upsert_candle
+
+
+def get_recent_candles(
+    symbol: str, timeframe: str = "1m", limit: int = 500
+) -> list[dict]:
+    """Return the most recent *limit* candles sorted ascending by timestamp.
+
+    This is the primary query used by the /api/candles endpoint and the
+    frontend to hydrate the chart on page load.
+    """
+    conn = _get_conn()
+    rows = conn.execute(
+        """SELECT symbol, timeframe, timestamp, open, high, low, close, volume
+           FROM candles
+           WHERE symbol = ? AND timeframe = ?
+           ORDER BY timestamp DESC
+           LIMIT ?""",
+        (symbol, timeframe, limit),
+    ).fetchall()
+    # Return in chronological (ascending) order
+    return [dict(r) for r in reversed(rows)]
+
+
+# Keep old name working as an alias
+get_candles = get_recent_candles
+
+
+def get_candle_count(symbol: str, timeframe: str = "1m") -> int:
+    conn = _get_conn()
+    row = conn.execute(
+        "SELECT COUNT(*) FROM candles WHERE symbol = ? AND timeframe = ?",
+        (symbol, timeframe),
+    ).fetchone()
+    return row[0] if row else 0
+
+
 def reset_db() -> None:
     """Drop all rows — useful for tests and fresh demos."""
     with _lock:
         conn = _get_conn()
-        for table in ("orders", "trades", "pnl_history", "strategy_logs"):
+        for table in ("orders", "trades", "pnl_history", "strategy_logs", "candles"):
             conn.execute(f"DELETE FROM {table}")
         conn.commit()
         logger.warning("Database reset: all rows deleted.")

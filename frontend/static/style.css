@@ -911,6 +911,43 @@ td {
     letter-spacing: .02em
 }
 
+/* --- Disconnect Banner --- */
+.disconnect-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #d32f2f;
+    color: #fff;
+    font-size: .78rem;
+    font-weight: 600;
+    padding: 6px 0;
+    letter-spacing: .02em;
+    z-index: 9999;
+    animation: pulse-red 1.5s infinite;
+}
+
+@keyframes pulse-red {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: .7;
+    }
+}
+
+/* --- Simulated Index Tag --- */
+.sim-tag {
+    font-size: .55rem;
+    color: #ffc107;
+    font-weight: 700;
+    vertical-align: super;
+    margin-left: 2px;
+    letter-spacing: .04em;
+}
+
 /* --- Signal row in log --- */
 .sig-row {
     display: flex;
@@ -1000,4 +1037,73 @@ td {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* --- Chart Loading Spinner --- */
+.chart-spinner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(11, 14, 17, .75);
+    z-index: 50;
+    pointer-events: none;
+}
+
+.spinner-ring {
+    width: 36px;
+    height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* --- Order Pagination --- */
+.pagination-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+}
+
+.pg-btn {
+    background: var(--surface2, #1a1f27);
+    color: var(--text2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 3px 10px;
+    font-size: .72rem;
+    cursor: pointer;
+    transition: background .15s, color .15s;
+}
+
+.pg-btn:hover {
+    background: var(--accent);
+    color: #fff;
+}
+
+.pg-btn:disabled {
+    opacity: .35;
+    cursor: default;
+    background: var(--surface2, #1a1f27);
+    color: var(--text3);
+}
+
+.pg-info {
+    font-size: .7rem;
+    color: var(--text3);
+    font-family: var(--mono);
+    min-width: 70px;
+    text-align: center;
 }

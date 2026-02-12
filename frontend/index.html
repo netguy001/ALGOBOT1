@@ -27,12 +27,13 @@
                 <span class="logo-text">AlgoTerminal</span>
             </div>
             <div class="market-indices">
-                <div class="index-chip"><span class="idx-name">NIFTY</span><span class="idx-val" id="idx-nifty">—</span>
+                <div class="index-chip" title="Simulated — not real market data"><span class="idx-name">NIFTY <sup
+                            class="sim-tag">SIM</sup></span><span class="idx-val" id="idx-nifty">—</span>
                 </div>
-                <div class="index-chip"><span class="idx-name">SENSEX</span><span class="idx-val"
-                        id="idx-sensex">—</span></div>
-                <div class="index-chip"><span class="idx-name">BANKNIFTY</span><span class="idx-val"
-                        id="idx-banknifty">—</span></div>
+                <div class="index-chip" title="Simulated — not real market data"><span class="idx-name">SENSEX <sup
+                            class="sim-tag">SIM</sup></span><span class="idx-val" id="idx-sensex">—</span></div>
+                <div class="index-chip" title="Simulated — not real market data"><span class="idx-name">BANKNIFTY <sup
+                            class="sim-tag">SIM</sup></span><span class="idx-val" id="idx-banknifty">—</span></div>
             </div>
         </div>
         <div class="topbar-right">
@@ -41,6 +42,11 @@
             <span id="engine-badge" class="badge badge-idle">Idle</span>
         </div>
     </header>
+
+    <!-- ===== DISCONNECT BANNER ===== -->
+    <div id="disconnect-banner" class="disconnect-banner" style="display:none">
+        ⚠ Connection lost — reconnecting…
+    </div>
 
     <!-- ===== TOOLBAR ===== -->
     <div class="toolbar">

@@ -8,6 +8,11 @@ Each strategy class follows the same interface:
 
 A ``Signal`` is a simple dict:
     {"action": "BUY"|"SELL", "symbol": str, "price": float, "reason": str}
+
+Production improvements over demo version:
+    - Trend filter: BUY only when price > SMA(50), SELL only when price < SMA(50).
+    - Signals fire only on actual crossover events, not continuous conditions.
+    - Per-symbol state tracking prevents duplicate signals.
 """
 
 import logging
@@ -28,6 +33,9 @@ from app.config import (
 logger = logging.getLogger(__name__)
 
 Signal = dict  # type alias for clarity
+
+# Trend-filter period used across all strategies
+_TREND_SMA_PERIOD = 50
 
 
 @dataclass
@@ -64,6 +72,26 @@ class _PriceBuffer:
         return len(self.prices)
 
 
+def _trend_filter(buf: _PriceBuffer, action: str, price: float) -> bool:
+    """
+    Apply trend filter: only allow BUY when price > SMA50,
+    only allow SELL when price < SMA50.
+
+    Returns True if the signal is ALLOWED, False if blocked.
+    If not enough data yet, permit the signal (warm-up phase).
+    """
+    if len(buf) < _TREND_SMA_PERIOD + 1:
+        return True  # allow during warm-up
+    sma50_val = sma(buf.series, _TREND_SMA_PERIOD).iloc[-1]
+    if pd.isna(sma50_val):
+        return True
+    if action == "BUY" and price <= sma50_val:
+        return False
+    if action == "SELL" and price >= sma50_val:
+        return False
+    return True
+
+
 # =========================================================================
 # SMA Crossover Strategy
 # =========================================================================
@@ -74,7 +102,8 @@ class SMACrossoverStrategy:
     Buy when SMA(short) crosses above SMA(long).
     Sell when SMA(short) crosses below SMA(long).
 
-    Parameters: ``short_period``, ``long_period``.
+    Fires ONLY on the crossover event (edge-trigger, not level-trigger).
+    Includes trend filter: BUY only above SMA50, SELL only below SMA50.
     """
 
     name = "sma_crossover"
@@ -82,7 +111,8 @@ class SMACrossoverStrategy:
     def __init__(self, short_period: int = SMA_SHORT, long_period: int = SMA_LONG):
         self.short_period = short_period
         self.long_period = long_period
-        self._buf = _PriceBuffer(maxlen=long_period + 10)
+        buf_len = max(long_period, _TREND_SMA_PERIOD) + 10
+        self._buf = _PriceBuffer(maxlen=buf_len)
         self._prev_short: Optional[float] = None
         self._prev_long: Optional[float] = None
 
@@ -97,29 +127,32 @@ class SMACrossoverStrategy:
 
         signal = None
         if self._prev_short is not None and self._prev_long is not None:
-            # Golden cross
+            # Golden cross (edge-trigger: previous was below, now above)
             if self._prev_short <= self._prev_long and cur_short > cur_long:
-                signal = {
-                    "action": "BUY",
-                    "symbol": tick["symbol"],
-                    "price": tick["price"],
-                    "reason": f"SMA{self.short_period} crossed above SMA{self.long_period}",
-                }
+                if _trend_filter(self._buf, "BUY", tick["price"]):
+                    signal = {
+                        "action": "BUY",
+                        "symbol": tick["symbol"],
+                        "price": tick["price"],
+                        "reason": f"SMA{self.short_period} crossed above SMA{self.long_period}",
+                    }
             # Death cross
             elif self._prev_short >= self._prev_long and cur_short < cur_long:
-                signal = {
-                    "action": "SELL",
-                    "symbol": tick["symbol"],
-                    "price": tick["price"],
-                    "reason": f"SMA{self.short_period} crossed below SMA{self.long_period}",
-                }
+                if _trend_filter(self._buf, "SELL", tick["price"]):
+                    signal = {
+                        "action": "SELL",
+                        "symbol": tick["symbol"],
+                        "price": tick["price"],
+                        "reason": f"SMA{self.short_period} crossed below SMA{self.long_period}",
+                    }
 
         self._prev_short = cur_short
         self._prev_long = cur_long
         return signal
 
     def reset(self) -> None:
-        self._buf = _PriceBuffer(maxlen=self.long_period + 10)
+        buf_len = max(self.long_period, _TREND_SMA_PERIOD) + 10
+        self._buf = _PriceBuffer(maxlen=buf_len)
         self._prev_short = None
         self._prev_long = None
 
@@ -133,6 +166,9 @@ class RSIMeanReversionStrategy:
     """
     Buy when RSI drops below ``oversold`` threshold.
     Sell when RSI rises above ``overbought`` threshold.
+
+    Only fires ONCE per zone entry. Resets when RSI returns to neutral.
+    Includes trend filter.
     """
 
     name = "rsi_mean_reversion"
@@ -146,34 +182,51 @@ class RSIMeanReversionStrategy:
         self.period = period
         self.oversold = oversold
         self.overbought = overbought
-        self._buf = _PriceBuffer(maxlen=period + 20)
+        buf_len = max(period + 20, _TREND_SMA_PERIOD + 10)
+        self._buf = _PriceBuffer(maxlen=buf_len)
+        # Track per-symbol whether we already fired in the current zone
+        self._fired: dict[str, str] = {}  # symbol -> "BUY" | "SELL" | ""
 
     def on_tick(self, tick: dict) -> Optional[Signal]:
         self._buf.append(tick)
         if len(self._buf) < self.period + 2:
             return None
 
+        sym = tick["symbol"]
         rsi_vals = rsi(self._buf.series, self.period)
         cur_rsi = rsi_vals.iloc[-1]
 
+        prev_fired = self._fired.get(sym, "")
+
         if cur_rsi < self.oversold:
-            return {
-                "action": "BUY",
-                "symbol": tick["symbol"],
-                "price": tick["price"],
-                "reason": f"RSI({self.period})={cur_rsi:.1f} < {self.oversold} (oversold)",
-            }
+            if prev_fired != "BUY":
+                if _trend_filter(self._buf, "BUY", tick["price"]):
+                    self._fired[sym] = "BUY"
+                    return {
+                        "action": "BUY",
+                        "symbol": sym,
+                        "price": tick["price"],
+                        "reason": f"RSI({self.period})={cur_rsi:.1f} < {self.oversold} (oversold)",
+                    }
         elif cur_rsi > self.overbought:
-            return {
-                "action": "SELL",
-                "symbol": tick["symbol"],
-                "price": tick["price"],
-                "reason": f"RSI({self.period})={cur_rsi:.1f} > {self.overbought} (overbought)",
-            }
+            if prev_fired != "SELL":
+                if _trend_filter(self._buf, "SELL", tick["price"]):
+                    self._fired[sym] = "SELL"
+                    return {
+                        "action": "SELL",
+                        "symbol": sym,
+                        "price": tick["price"],
+                        "reason": f"RSI({self.period})={cur_rsi:.1f} > {self.overbought} (overbought)",
+                    }
+        else:
+            # RSI is in neutral zone — reset the fired flag
+            self._fired[sym] = ""
         return None
 
     def reset(self) -> None:
-        self._buf = _PriceBuffer(maxlen=self.period + 20)
+        buf_len = max(self.period + 20, _TREND_SMA_PERIOD + 10)
+        self._buf = _PriceBuffer(maxlen=buf_len)
+        self._fired.clear()
 
 
 # =========================================================================
@@ -185,13 +238,16 @@ class BreakoutStrategy:
     """
     Buy on a Donchian Channel upper-band breakout.
     Sell on a lower-band breakdown.
+
+    Includes trend filter.
     """
 
     name = "breakout"
 
     def __init__(self, period: int = 20):
         self.period = period
-        self._buf = _PriceBuffer(maxlen=period + 10)
+        buf_len = max(period + 10, _TREND_SMA_PERIOD + 10)
+        self._buf = _PriceBuffer(maxlen=buf_len)
 
     def on_tick(self, tick: dict) -> Optional[Signal]:
         self._buf.append(tick)
@@ -204,23 +260,26 @@ class BreakoutStrategy:
         price = tick["price"]
 
         if price > upper.iloc[-2]:  # breakout above prior upper band
-            return {
-                "action": "BUY",
-                "symbol": tick["symbol"],
-                "price": price,
-                "reason": f"Price {price:.2f} broke above Donchian({self.period}) upper {upper.iloc[-2]:.2f}",
-            }
+            if _trend_filter(self._buf, "BUY", price):
+                return {
+                    "action": "BUY",
+                    "symbol": tick["symbol"],
+                    "price": price,
+                    "reason": f"Price {price:.2f} broke above Donchian({self.period}) upper {upper.iloc[-2]:.2f}",
+                }
         elif price < lower.iloc[-2]:
-            return {
-                "action": "SELL",
-                "symbol": tick["symbol"],
-                "price": price,
-                "reason": f"Price {price:.2f} broke below Donchian({self.period}) lower {lower.iloc[-2]:.2f}",
-            }
+            if _trend_filter(self._buf, "SELL", price):
+                return {
+                    "action": "SELL",
+                    "symbol": tick["symbol"],
+                    "price": price,
+                    "reason": f"Price {price:.2f} broke below Donchian({self.period}) lower {lower.iloc[-2]:.2f}",
+                }
         return None
 
     def reset(self) -> None:
-        self._buf = _PriceBuffer(maxlen=self.period + 10)
+        buf_len = max(self.period + 10, _TREND_SMA_PERIOD + 10)
+        self._buf = _PriceBuffer(maxlen=buf_len)
 
 
 # =========================================================================
@@ -232,13 +291,17 @@ class MomentumStrategy:
     """
     Buy when momentum (price change over ``period`` bars) turns positive.
     Sell when it turns negative.
+
+    Edge-trigger only (fires on zero-crossing, not continuous positive/negative).
+    Includes trend filter.
     """
 
     name = "momentum"
 
     def __init__(self, period: int = 10):
         self.period = period
-        self._buf = _PriceBuffer(maxlen=period + 10)
+        buf_len = max(period + 10, _TREND_SMA_PERIOD + 10)
+        self._buf = _PriceBuffer(maxlen=buf_len)
         self._prev_mom: Optional[float] = None
 
     def on_tick(self, tick: dict) -> Optional[Signal]:
@@ -252,25 +315,28 @@ class MomentumStrategy:
 
         if self._prev_mom is not None:
             if self._prev_mom <= 0 and cur_mom > 0:
-                signal = {
-                    "action": "BUY",
-                    "symbol": tick["symbol"],
-                    "price": tick["price"],
-                    "reason": f"Momentum({self.period}) turned positive: {cur_mom:.2f}",
-                }
+                if _trend_filter(self._buf, "BUY", tick["price"]):
+                    signal = {
+                        "action": "BUY",
+                        "symbol": tick["symbol"],
+                        "price": tick["price"],
+                        "reason": f"Momentum({self.period}) turned positive: {cur_mom:.2f}",
+                    }
             elif self._prev_mom >= 0 and cur_mom < 0:
-                signal = {
-                    "action": "SELL",
-                    "symbol": tick["symbol"],
-                    "price": tick["price"],
-                    "reason": f"Momentum({self.period}) turned negative: {cur_mom:.2f}",
-                }
+                if _trend_filter(self._buf, "SELL", tick["price"]):
+                    signal = {
+                        "action": "SELL",
+                        "symbol": tick["symbol"],
+                        "price": tick["price"],
+                        "reason": f"Momentum({self.period}) turned negative: {cur_mom:.2f}",
+                    }
 
         self._prev_mom = cur_mom
         return signal
 
     def reset(self) -> None:
-        self._buf = _PriceBuffer(maxlen=self.period + 10)
+        buf_len = max(self.period + 10, _TREND_SMA_PERIOD + 10)
+        self._buf = _PriceBuffer(maxlen=buf_len)
         self._prev_mom = None
 
 

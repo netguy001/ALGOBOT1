@@ -10,17 +10,19 @@ Order states::
                        ↘ REJECTED
 
 The order manager is the single authority on order state transitions.
+Position and capital tracking is *delegated* to ``CapitalManager``.
+Pre-trade validation is delegated to ``OrderValidator``.
 """
 
 import logging
 import threading
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any, Callable, Optional
 
 from app.db import storage
 from app.utils.risk import RiskParams, position_size, stop_loss_price, take_profit_price
-from app.config import INITIAL_CAPITAL
+from app.config import ORDER_TIMEOUT_SEC
 
 logger = logging.getLogger(__name__)
 
@@ -38,28 +40,38 @@ MAX_RETRIES = 3
 class OrderManager:
     """
     Manages all order operations: creation, state tracking, retries,
-    idempotency, and position bookkeeping.
+    idempotency, and position bookkeeping (via CapitalManager).
     """
 
-    def __init__(self, broker_submit_fn: Optional[Callable] = None):
+    def __init__(
+        self,
+        broker_submit_fn: Optional[Callable] = None,
+        capital_mgr=None,
+        order_validator=None,
+    ):
         """
         Parameters
         ----------
         broker_submit_fn : callable(order_dict) -> bool
             Function that submits an order to the (simulated) broker.
-            Should return True on successful submission.
+        capital_mgr : CapitalManager | None
+            Centralised capital/position tracker. If None, a minimal
+            fallback is used (for backward-compat in tests).
+        order_validator : OrderValidator | None
+            Pre-trade validation layer. If None, validation is skipped.
         """
         self._broker_submit = broker_submit_fn
         self._lock = threading.Lock()
-        # In-memory position: symbol -> {"qty": int, "avg_price": float, "side": str}
-        self._positions: dict[str, dict[str, Any]] = {}
+
+        # External dependencies (injected, not owned)
+        self._capital_mgr = capital_mgr
+        self._order_validator = order_validator
+
         # Order cache: order_id -> order dict
         self._orders: dict[str, dict] = {}
-        # Idempotency set: signal hashes recently processed
-        self._recent_signals: set[str] = set()
-        # Capital tracking
-        self.capital: float = INITIAL_CAPITAL
-        self.realised_pnl: float = 0.0
+
+        # Engine stop callback (set by main.py for daily-loss halt)
+        self._engine_stop_fn: Optional[Callable] = None
 
     # ------------------------------------------------------------------
     # Order creation from strategy signal
@@ -69,35 +81,55 @@ class OrderManager:
         """
         Convert a strategy signal into an order and submit it.
 
-        Implements idempotency: duplicate signals within the same tick are
-        ignored (keyed on symbol + action + price).
+        Delegates pre-trade checks to OrderValidator and position sizing
+        to CapitalManager.
         """
-        sig_key = f"{signal['symbol']}_{signal['action']}_{signal['price']}"
-        if sig_key in self._recent_signals:
-            logger.debug("Duplicate signal ignored: %s", sig_key)
-            return None
-        self._recent_signals.add(sig_key)
-        # Cap size of recent set
-        if len(self._recent_signals) > 500:
-            self._recent_signals.clear()
+        sym = signal["symbol"]
+        price = signal["price"]
 
-        # Calculate position size via risk engine
-        params = RiskParams(capital=self.capital)
-        qty = position_size(signal["price"], params)
+        # --- Pre-trade validation ---
+        if self._order_validator is not None:
+            rejection = self._order_validator.validate_signal(signal)
+            if rejection:
+                logger.debug(
+                    "Signal rejected: %s (%s %s)", rejection, signal["action"], sym
+                )
+                # If daily-loss halt triggered, stop the engine
+                if rejection in ("daily_loss_halted", "daily_loss_limit_breached"):
+                    if self._engine_stop_fn:
+                        self._engine_stop_fn()
+                return None
+            # Record the signal for cooldown tracking
+            self._order_validator.record_signal(sym)
+
+        # --- Position sizing ---
+        if self._capital_mgr is not None:
+            avail = self._capital_mgr.available_capital
+            params = RiskParams(capital=max(avail, 0))
+            qty = position_size(price, params)
+            qty = self._capital_mgr.clamp_quantity(qty, price)
+        else:
+            # Fallback (no capital manager)
+            params = RiskParams()
+            qty = position_size(price, params)
+
+        if qty <= 0:
+            logger.debug("Position size is 0 for %s — signal dropped", sym)
+            return None
 
         order = {
             "order_id": str(uuid.uuid4()),
-            "symbol": signal["symbol"],
+            "symbol": sym,
             "side": signal["action"],
             "qty": qty,
-            "price": signal["price"],
+            "price": price,
             "order_type": "MARKET",
             "status": "NEW",
             "filled_qty": 0,
             "avg_price": 0.0,
             "strategy": signal.get("strategy", "manual"),
-            "stop_loss": stop_loss_price(signal["price"], signal["action"]),
-            "take_profit": take_profit_price(signal["price"], signal["action"]),
+            "stop_loss": stop_loss_price(price, signal["action"]),
+            "take_profit": take_profit_price(price, signal["action"]),
             "created_at": datetime.utcnow().isoformat(),
             "updated_at": datetime.utcnow().isoformat(),
             "retries": 0,
@@ -107,13 +139,15 @@ class OrderManager:
             self._orders[order["order_id"]] = order
 
         storage.insert_order(order)
+        avail_str = f"{avail:.0f}" if self._capital_mgr else "N/A"
         logger.info(
-            "Order created: %s %s %s qty=%d @ %.2f",
+            "Order created: %s %s %s qty=%d @ %.2f  (avail_capital=%s)",
             order["order_id"][:8],
             order["side"],
             order["symbol"],
             qty,
             order["price"],
+            avail_str,
         )
 
         self._submit_with_retry(order)
@@ -123,6 +157,21 @@ class OrderManager:
         self, symbol: str, side: str, qty: int, price: float
     ) -> dict:
         """Place a manual (non-strategy) order."""
+        # Validate via OrderValidator if available
+        if self._order_validator is not None:
+            rejection = self._order_validator.validate_manual_order(
+                symbol, side, qty, price
+            )
+            if rejection:
+                logger.info("Manual order rejected: %s", rejection)
+                return {"error": rejection}
+
+        # Clamp qty through capital manager
+        if self._capital_mgr is not None:
+            qty = min(qty, self._capital_mgr.clamp_quantity(qty, price))
+            if qty <= 0:
+                return {"error": "clamped_quantity_zero"}
+
         order = {
             "order_id": str(uuid.uuid4()),
             "symbol": symbol,
@@ -246,59 +295,34 @@ class OrderManager:
         return order
 
     # ------------------------------------------------------------------
-    # Position tracking
+    # Position tracking — delegated to CapitalManager
     # ------------------------------------------------------------------
 
     def _update_position(self, order: dict) -> None:
-        """Update in-memory position after a fill."""
+        """Update position after a fill — delegates to CapitalManager."""
         sym = order["symbol"]
         side = order["side"]
         fill_qty = order["filled_qty"]
         fill_price = order["avg_price"]
 
-        with self._lock:
-            pos = self._positions.get(sym, {"qty": 0, "avg_price": 0.0, "side": "FLAT"})
+        if self._capital_mgr is not None:
+            self._capital_mgr.update_position(sym, side, fill_qty, fill_price)
+        else:
+            logger.warning("No CapitalManager — position tracking skipped")
 
-            if pos["side"] == "FLAT" or pos["qty"] == 0:
-                pos = {"qty": fill_qty, "avg_price": fill_price, "side": side}
-            elif pos["side"] == side:
-                # Adding to position
-                total_qty = pos["qty"] + fill_qty
-                pos["avg_price"] = (
-                    (pos["avg_price"] * pos["qty"]) + (fill_price * fill_qty)
-                ) / total_qty
-                pos["qty"] = total_qty
-            else:
-                # Reducing / closing position
-                if fill_qty >= pos["qty"]:
-                    # Close PnL
-                    pnl = (fill_price - pos["avg_price"]) * pos["qty"]
-                    if pos["side"] == "SELL":
-                        pnl = -pnl
-                    self.realised_pnl += pnl
-                    remaining = fill_qty - pos["qty"]
-                    if remaining > 0:
-                        pos = {"qty": remaining, "avg_price": fill_price, "side": side}
-                    else:
-                        pos = {"qty": 0, "avg_price": 0.0, "side": "FLAT"}
-                else:
-                    pnl = (fill_price - pos["avg_price"]) * fill_qty
-                    if pos["side"] == "SELL":
-                        pnl = -pnl
-                    self.realised_pnl += pnl
-                    pos["qty"] -= fill_qty
-
-            self._positions[sym] = pos
-
-        storage.insert_trade(
-            {
-                "order_id": order["order_id"],
-                "symbol": sym,
-                "side": side,
-                "qty": fill_qty,
-                "price": fill_price,
-            }
-        )
+        # Transactional: update order + insert trade in one DB commit
+        trade_data = {
+            "order_id": order["order_id"],
+            "symbol": sym,
+            "side": side,
+            "qty": fill_qty,
+            "price": fill_price,
+        }
+        try:
+            storage.insert_order_and_trade(order, trade_data)
+        except Exception:
+            # Fallback to separate insert if transactional fails
+            storage.insert_trade(trade_data)
 
     # ------------------------------------------------------------------
     # Cancel
@@ -320,8 +344,9 @@ class OrderManager:
     # ------------------------------------------------------------------
 
     def get_positions(self) -> dict:
-        with self._lock:
-            return dict(self._positions)
+        if self._capital_mgr is not None:
+            return self._capital_mgr.get_positions()
+        return {}
 
     def get_open_orders(self) -> list[dict]:
         with self._lock:
@@ -337,24 +362,142 @@ class OrderManager:
 
     def get_pnl(self, current_prices: Optional[dict[str, float]] = None) -> dict:
         """
-        Compute realised + unrealised PnL.
-
-        Parameters
-        ----------
-        current_prices : dict mapping symbol → latest price (for unrealised)
+        Compute realised + unrealised PnL — delegates to CapitalManager.
         """
-        unrealised = 0.0
-        if current_prices:
-            with self._lock:
-                for sym, pos in self._positions.items():
-                    if pos["qty"] > 0 and sym in current_prices:
-                        diff = current_prices[sym] - pos["avg_price"]
-                        if pos["side"] == "SELL":
-                            diff = -diff
-                        unrealised += diff * pos["qty"]
+        if self._capital_mgr is not None:
+            return self._capital_mgr.get_pnl(current_prices)
+
+        # Fallback (no capital manager)
         return {
-            "realised_pnl": round(self.realised_pnl, 2),
-            "unrealised_pnl": round(unrealised, 2),
-            "total_pnl": round(self.realised_pnl + unrealised, 2),
-            "capital": round(self.capital + self.realised_pnl + unrealised, 2),
+            "realised_pnl": 0.0,
+            "unrealised_pnl": 0.0,
+            "total_pnl": 0.0,
+            "capital": 0.0,
+            "daily_loss_halted": False,
         }
+
+    # ------------------------------------------------------------------
+    # Live SL/TP enforcement (called from tick loop)
+    # ------------------------------------------------------------------
+
+    def check_sl_tp(self, current_prices: dict[str, float]) -> list[dict]:
+        """
+        Check all open positions against their SL/TP prices.
+        Returns list of closing orders created.
+        """
+        closing_orders = []
+
+        # Get positions from CapitalManager
+        if self._capital_mgr is not None:
+            positions_snapshot = {
+                sym: pos
+                for sym, pos in self._capital_mgr.get_positions().items()
+                if pos.get("qty", 0) > 0
+            }
+        else:
+            positions_snapshot = {}
+
+        if not positions_snapshot:
+            return closing_orders
+
+        # Gather SL/TP from the most recent filled order for each symbol
+        with self._lock:
+            sl_tp_map: dict[str, dict] = {}
+            for o in self._orders.values():
+                if (
+                    o["status"] in ("FILLED", "PARTIAL")
+                    and o["symbol"] in positions_snapshot
+                    and o.get("stop_loss")
+                    and o.get("take_profit")
+                ):
+                    existing = sl_tp_map.get(o["symbol"])
+                    if existing is None or o["updated_at"] > existing["updated_at"]:
+                        sl_tp_map[o["symbol"]] = o
+
+        for sym, pos in positions_snapshot.items():
+            price = current_prices.get(sym)
+            if price is None:
+                continue
+            ref_order = sl_tp_map.get(sym)
+            if ref_order is None:
+                continue
+
+            sl = ref_order["stop_loss"]
+            tp = ref_order["take_profit"]
+            side = pos["side"]
+            hit = None
+
+            if side == "BUY":
+                if price <= sl:
+                    hit = "SL"
+                elif price >= tp:
+                    hit = "TP"
+            elif side == "SELL":
+                if price >= sl:
+                    hit = "SL"
+                elif price <= tp:
+                    hit = "TP"
+
+            if hit:
+                close_side = "SELL" if side == "BUY" else "BUY"
+                close_order = {
+                    "order_id": str(uuid.uuid4()),
+                    "symbol": sym,
+                    "side": close_side,
+                    "qty": pos["qty"],
+                    "price": price,
+                    "order_type": "MARKET",
+                    "status": "NEW",
+                    "filled_qty": 0,
+                    "avg_price": 0.0,
+                    "strategy": f"auto_{hit.lower()}_exit",
+                    "stop_loss": 0,
+                    "take_profit": 0,
+                    "created_at": datetime.utcnow().isoformat(),
+                    "updated_at": datetime.utcnow().isoformat(),
+                    "retries": 0,
+                }
+                with self._lock:
+                    self._orders[close_order["order_id"]] = close_order
+                storage.insert_order(close_order)
+                self._submit_with_retry(close_order)
+                closing_orders.append(close_order)
+                logger.info(
+                    "%s HIT for %s @ %.2f (SL=%.2f TP=%.2f) — closing %d shares",
+                    hit,
+                    sym,
+                    price,
+                    sl,
+                    tp,
+                    pos["qty"],
+                )
+
+        return closing_orders
+
+    # ------------------------------------------------------------------
+    # Order timeout cleanup
+    # ------------------------------------------------------------------
+
+    def cleanup_stale_orders(self) -> int:
+        """
+        Mark orders stuck in NEW status for longer than ORDER_TIMEOUT_SEC
+        as REJECTED.  Returns count of timed-out orders.
+        """
+        now = datetime.utcnow()
+        cutoff = now - timedelta(seconds=ORDER_TIMEOUT_SEC)
+        timed_out = 0
+        with self._lock:
+            stale = [
+                o
+                for o in self._orders.values()
+                if o["status"] == "NEW" and o.get("created_at", "") < cutoff.isoformat()
+            ]
+        for o in stale:
+            self.update_order_status(o["order_id"], "REJECTED")
+            logger.warning(
+                "Order %s timed out after %ds — REJECTED",
+                o["order_id"][:8],
+                ORDER_TIMEOUT_SEC,
+            )
+            timed_out += 1
+        return timed_out
