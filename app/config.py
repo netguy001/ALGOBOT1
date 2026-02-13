@@ -112,6 +112,18 @@ MAX_DAILY_LOSS_PCT: float = float(os.getenv("MAX_DAILY_LOSS_PCT", "5.0"))
 SIGNAL_COOLDOWN_SEC: float = float(os.getenv("SIGNAL_COOLDOWN_SEC", "30.0"))
 
 # ---------------------------------------------------------------------------
+# Manual order gating when engine is stopped
+# ---------------------------------------------------------------------------
+ALLOW_MANUAL_WHEN_STOPPED: bool = (
+    os.getenv("ALLOW_MANUAL_WHEN_STOPPED", "true").lower() == "true"
+)
+
+# ---------------------------------------------------------------------------
+# PnL snapshot interval (in tick cycles)
+# ---------------------------------------------------------------------------
+PNL_SNAPSHOT_INTERVAL: int = int(os.getenv("PNL_SNAPSHOT_INTERVAL", "60"))
+
+# ---------------------------------------------------------------------------
 # Risk: position-size explosion guards
 # ---------------------------------------------------------------------------
 MIN_STOP_DISTANCE_PCT: float = float(os.getenv("MIN_STOP_DISTANCE_PCT", "0.5"))

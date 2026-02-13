@@ -109,6 +109,10 @@ class StrategyEngine:
             self._halted_reason = "kill_switch"
             logger.warning("Cannot start engine — kill switch is active")
             return
+        # Reset daily-loss halt so the engine can actually run
+        if self._capital_mgr and self._capital_mgr.daily_loss_halted:
+            self._capital_mgr.reset_halt()
+            logger.info("daily_loss_halted reset on engine start")
         if self._controller:
             self._controller.start(reason="engine.start")
         self._halted_reason = None

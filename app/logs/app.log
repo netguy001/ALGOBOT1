@@ -1,0 +1,367 @@
+2026-02-12 19:41:19,052 [INFO] app.db.storage: Database tables initialised at C:\AI\algo trading\bot1\algo_demo_india\data\algo_demo.db
+2026-02-12 19:41:19,052 [INFO] app.broker.capital_manager: CapitalManager restored from DB: account=default  capital=-1712680.39  realised_pnl=-25465.65  positions=2
+2026-02-12 19:41:19,052 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 19:41:19,068 [INFO] app.data_feed.provider: Creating YahooProvider for mode=demo
+2026-02-12 19:41:19,068 [INFO] __main__: Market data provider: yahoo (mode=demo)
+2026-02-12 19:41:19,068 [INFO] app.broker.simulated_broker: Simulated broker started
+2026-02-12 19:41:19,068 [INFO] __main__: Starting server on 0.0.0.0:5005  ML=False
+2026-02-12 19:41:19,146 [INFO] app.data_feed.demo_feed: DemoDataFeed connected � symbols=['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-12 19:41:19,146 [INFO] __main__: Tick loop started for ['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-12 19:42:06,358 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 07:19:57,517 [INFO] app.db.storage: Database tables initialised at C:\AI\algo trading\bot1\algo_demo_india\data\algo_demo.db
+2026-02-13 07:19:57,517 [INFO] app.engine_controller: EngineController: restored STOPPED state from DB
+2026-02-13 07:19:57,517 [INFO] app.broker.capital_manager: CapitalManager restored from DB: account=default  capital=-1732980.39  realised_pnl=-25765.65  positions=3
+2026-02-13 07:19:57,517 [INFO] app.broker.order_manager: Restored 73 orders from DB into in-memory cache
+2026-02-13 07:19:57,517 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-13 07:19:57,517 [INFO] app.data_feed.provider: Creating YahooProvider for mode=demo
+2026-02-13 07:19:57,517 [INFO] __main__: Market data provider: yahoo (mode=demo)
+2026-02-13 07:19:57,525 [INFO] app.broker.simulated_broker: Simulated broker started
+2026-02-13 07:19:57,525 [INFO] __main__: Starting server on 0.0.0.0:5005  ML=False
+2026-02-13 07:19:57,614 [INFO] app.data_feed.demo_feed: DemoDataFeed connected � symbols=['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-13 07:19:57,615 [INFO] __main__: Tick loop started for ['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-13 07:20:10,349 [INFO] app.routes.auth: User logged in: meganath1025@gmail.com
+2026-02-13 07:20:10,732 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 07:20:25,316 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-13 07:20:25,316 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-13 07:20:25,316 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-13 07:20:25,316 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-13 07:20:25,524 [WARNING] app.engine_controller: EMERGENCY STOP: daily_loss_halted
+2026-02-13 07:20:25,524 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: daily_loss_halted
+2026-02-13 07:20:37,957 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 07:20:38,416 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 07:20:39,141 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 07:20:39,566 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 07:20:43,757 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-13 07:20:43,757 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-13 07:20:43,757 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-13 07:20:43,765 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-13 07:20:43,774 [WARNING] app.engine_controller: EMERGENCY STOP: daily_loss_halted
+2026-02-13 07:20:43,774 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: daily_loss_halted
+2026-02-13 07:20:48,483 [INFO] app.routes.auth: User logged out: meganath1025@gmail.com
+2026-02-13 07:20:48,490 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 07:21:11,365 [INFO] app.db.storage: Database tables initialised at C:\AI\algo trading\bot1\algo_demo_india\data\algo_demo.db
+2026-02-13 07:21:11,365 [INFO] app.engine_controller: EngineController: restored STOPPED state from DB
+2026-02-13 07:21:11,365 [INFO] app.broker.capital_manager: CapitalManager restored from DB: account=default  capital=-1732980.39  realised_pnl=-25765.65  positions=3
+2026-02-13 07:21:11,365 [INFO] app.broker.order_manager: Restored 73 orders from DB into in-memory cache
+2026-02-13 07:21:11,365 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-13 07:21:11,365 [INFO] app.data_feed.provider: Creating YahooProvider for mode=demo
+2026-02-13 07:21:11,365 [INFO] __main__: Market data provider: yahoo (mode=demo)
+2026-02-13 07:21:11,373 [INFO] app.broker.simulated_broker: Simulated broker started
+2026-02-13 07:21:11,373 [INFO] __main__: Starting server on 0.0.0.0:5005  ML=False
+2026-02-13 07:21:11,390 [INFO] app.data_feed.demo_feed: DemoDataFeed connected � symbols=['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-13 07:21:11,390 [INFO] __main__: Tick loop started for ['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-13 07:21:21,188 [INFO] app.routes.auth: User logged in: meganath1025@gmail.com
+2026-02-13 07:21:21,598 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 07:21:23,781 [INFO] app.routes.auth: User logged out: meganath1025@gmail.com
+2026-02-13 07:21:23,782 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 07:21:27,915 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 07:23:57,220 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-13 07:23:57,220 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-13 07:23:57,220 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-13 07:23:57,220 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-13 07:23:57,236 [WARNING] app.engine_controller: EMERGENCY STOP: daily_loss_halted
+2026-02-13 07:23:57,236 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: daily_loss_halted
+2026-02-13 07:24:52,019 [INFO] app.ws.socket_server: Control event: toggle_ml  payload={'action': 'toggle_ml', 'use_ml': True}
+2026-02-13 07:24:54,695 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-13 07:24:54,703 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-13 07:24:54,703 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-13 07:24:54,703 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-13 07:24:54,912 [WARNING] app.engine_controller: EMERGENCY STOP: daily_loss_halted
+2026-02-13 07:24:54,912 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: daily_loss_halted
+2026-02-13 07:28:44,260 [INFO] app.ws.socket_server: Control event: set_strategy  payload={'action': 'set_strategy', 'strategy': 'breakout'}
+2026-02-13 07:28:44,260 [INFO] app.strategy.engine: Strategy set to breakout
+2026-02-13 07:29:22,935 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'breakout'}
+2026-02-13 07:29:22,935 [INFO] app.strategy.engine: Strategy set to breakout
+2026-02-13 07:29:22,935 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-13 07:29:22,935 [INFO] app.strategy.engine: Strategy engine started (breakout)
+2026-02-13 07:29:23,118 [WARNING] app.engine_controller: EMERGENCY STOP: daily_loss_halted
+2026-02-13 07:29:23,118 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: daily_loss_halted
+2026-02-13 07:30:44,404 [INFO] app.ws.socket_server: Control event: set_strategy  payload={'action': 'set_strategy', 'strategy': 'rsi_mean_reversion'}
+2026-02-13 07:30:44,404 [INFO] app.strategy.engine: Strategy set to rsi_mean_reversion
+2026-02-13 07:33:05,443 [INFO] app.ws.socket_server: Control event: stop  payload={'action': 'stop'}
+2026-02-13 07:33:05,444 [INFO] app.strategy.engine: Strategy engine stopped
+2026-02-13 07:33:06,408 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'rsi_mean_reversion'}
+2026-02-13 07:33:06,408 [INFO] app.strategy.engine: Strategy set to rsi_mean_reversion
+2026-02-13 07:33:06,408 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-13 07:33:06,408 [INFO] app.strategy.engine: Strategy engine started (rsi_mean_reversion)
+2026-02-13 07:33:06,589 [WARNING] app.engine_controller: EMERGENCY STOP: daily_loss_halted
+2026-02-13 07:33:06,589 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: daily_loss_halted
+2026-02-13 08:03:11,790 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 08:03:17,457 [INFO] app.routes.auth: User logged in: meganath1025@gmail.com
+2026-02-13 08:03:17,824 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 08:07:05,763 [INFO] app.ws.socket_server: Control event: toggle_ml  payload={'action': 'toggle_ml', 'use_ml': True}
+2026-02-13 08:07:32,771 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-13 08:07:32,771 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-13 08:07:32,771 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-13 08:07:32,771 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-13 08:07:33,137 [WARNING] app.engine_controller: EMERGENCY STOP: daily_loss_halted
+2026-02-13 08:07:33,137 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: daily_loss_halted
+2026-02-13 08:26:51,623 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 08:42:26,428 [INFO] app.db.storage: Database tables initialised at C:\AI\algo trading\bot1\algo_demo_india\data\algo_demo.db
+2026-02-13 08:42:26,428 [INFO] app.engine_controller: EngineController: restored STOPPED state from DB
+2026-02-13 08:42:26,428 [INFO] app.broker.capital_manager: CapitalManager restored from DB: account=default  capital=-1732980.39  realised_pnl=-25765.65  positions=3
+2026-02-13 08:42:26,428 [WARNING] app.broker.trade_ledger: PnL discrepancy detected: DB=-25465.64 vs CM=-25765.65 (diff=300.01). Rebuilding from trade records.
+2026-02-13 08:42:26,428 [WARNING] __main__: Startup PnL verification failed: 'ledger_pnl'
+2026-02-13 08:42:26,428 [INFO] app.broker.order_manager: Restored 80 orders from DB into in-memory cache
+2026-02-13 08:42:26,428 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-13 08:42:26,428 [INFO] app.data_feed.provider: Creating YahooProvider for mode=demo
+2026-02-13 08:42:26,428 [INFO] __main__: Market data provider: yahoo (mode=demo)
+2026-02-13 08:42:26,433 [INFO] app.broker.simulated_broker: Simulated broker started
+2026-02-13 08:42:26,433 [INFO] __main__: Starting server on 0.0.0.0:5005  ML=False
+2026-02-13 08:42:26,449 [INFO] app.data_feed.demo_feed: DemoDataFeed connected � symbols=['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-13 08:42:26,449 [INFO] __main__: Tick loop started for ['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-13 08:42:32,395 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 08:42:32,910 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 08:42:34,076 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 08:42:40,395 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 08:42:40,843 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 08:42:42,502 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 08:42:42,969 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 08:42:44,419 [INFO] app.broker.order_manager: Order 3e52ddf1: NEW → REJECTED  filled=0  avg=0.00
+2026-02-13 08:42:44,419 [WARNING] app.broker.order_manager: Order 3e52ddf1 timed out after 60s — REJECTED
+2026-02-13 08:42:44,419 [INFO] app.broker.order_manager: Order 5ba06504: NEW → REJECTED  filled=0  avg=0.00
+2026-02-13 08:42:44,419 [WARNING] app.broker.order_manager: Order 5ba06504 timed out after 60s — REJECTED
+2026-02-13 08:42:44,419 [INFO] __main__: Cleaned up 2 stale orders
+2026-02-13 08:43:34,968 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-13 08:43:34,968 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-13 08:43:34,968 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-13 08:43:34,968 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-13 08:43:34,993 [WARNING] app.engine_controller: EMERGENCY STOP: daily_loss_halted
+2026-02-13 08:43:34,993 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: daily_loss_halted
+2026-02-13 08:43:46,434 [INFO] app.ws.socket_server: Control event: toggle_ml  payload={'action': 'toggle_ml', 'use_ml': True}
+2026-02-13 08:43:48,960 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-13 08:43:48,960 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-13 08:43:48,960 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-13 08:43:48,960 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-13 08:43:49,059 [WARNING] app.engine_controller: EMERGENCY STOP: daily_loss_halted
+2026-02-13 08:43:49,059 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: daily_loss_halted
+2026-02-13 08:45:10,674 [INFO] app.ws.socket_server: Control event: stop  payload={'action': 'stop'}
+2026-02-13 08:45:10,674 [INFO] app.strategy.engine: Strategy engine stopped
+2026-02-13 08:52:01,686 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 09:02:15,922 [INFO] app.db.storage: Database tables initialised at C:\AI\algo trading\bot1\algo_demo_india\data\algo_demo.db
+2026-02-13 09:02:15,922 [INFO] app.engine_controller: EngineController: restored STOPPED state from DB
+2026-02-13 09:02:15,922 [INFO] app.broker.capital_manager: CapitalManager restored from DB: account=default  capital=-1732980.39  realised_pnl=-25765.65  positions=3
+2026-02-13 09:02:15,922 [WARNING] app.broker.trade_ledger: PnL discrepancy detected: DB=-25465.64 vs CM=-25765.65 (diff=300.01). Rebuilding from trade records.
+2026-02-13 09:02:15,922 [WARNING] __main__: Startup PnL verification failed: 'ledger_pnl'
+2026-02-13 09:02:15,938 [INFO] app.broker.order_manager: Restored 87 orders from DB into in-memory cache
+2026-02-13 09:02:15,938 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-13 09:02:15,938 [INFO] app.data_feed.provider: Creating YahooProvider for mode=demo
+2026-02-13 09:02:15,938 [INFO] __main__: Market data provider: yahoo (mode=demo)
+2026-02-13 09:02:15,938 [INFO] app.broker.simulated_broker: Simulated broker started
+2026-02-13 09:02:15,938 [INFO] __main__: Starting server on 0.0.0.0:5005  ML=False
+2026-02-13 09:02:15,953 [INFO] app.data_feed.demo_feed: DemoDataFeed connected � symbols=['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-13 09:02:15,953 [INFO] __main__: Tick loop started for ['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-13 09:02:18,645 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 09:02:21,320 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 09:02:25,386 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-13 09:02:25,386 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-13 09:02:25,386 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-13 09:02:25,386 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-13 09:02:25,697 [WARNING] app.engine_controller: EMERGENCY STOP: daily_loss_halted
+2026-02-13 09:02:25,697 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: daily_loss_halted
+2026-02-13 09:02:33,779 [INFO] app.broker.order_manager: Order f50b4f0d: NEW → REJECTED  filled=0  avg=0.00
+2026-02-13 09:02:33,779 [WARNING] app.broker.order_manager: Order f50b4f0d timed out after 60s — REJECTED
+2026-02-13 09:02:33,779 [INFO] app.broker.order_manager: Order 70157092: NEW → REJECTED  filled=0  avg=0.00
+2026-02-13 09:02:33,779 [WARNING] app.broker.order_manager: Order 70157092 timed out after 60s — REJECTED
+2026-02-13 09:02:33,779 [INFO] __main__: Cleaned up 2 stale orders
+2026-02-13 09:02:36,304 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 09:02:36,778 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 09:02:38,862 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 09:02:39,332 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 09:02:40,272 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 09:02:40,904 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 09:02:41,678 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 09:02:42,128 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 09:03:09,503 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-13 09:03:09,503 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-13 09:03:09,503 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-13 09:03:09,503 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-13 09:03:09,744 [WARNING] app.engine_controller: EMERGENCY STOP: daily_loss_halted
+2026-02-13 09:03:09,744 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: daily_loss_halted
+2026-02-13 09:03:15,419 [INFO] app.ws.socket_server: Control event: toggle_ml  payload={'action': 'toggle_ml', 'use_ml': True}
+2026-02-13 09:07:33,857 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 09:07:34,758 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 09:07:40,774 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 09:07:41,265 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 09:07:43,883 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-13 09:07:43,883 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-13 09:07:43,883 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-13 09:07:43,883 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-13 09:07:44,116 [WARNING] app.engine_controller: EMERGENCY STOP: daily_loss_halted
+2026-02-13 09:07:44,116 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: daily_loss_halted
+2026-02-13 09:08:16,140 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 09:08:16,615 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 09:11:41,627 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 09:11:41,627 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 09:17:35,165 [INFO] app.db.storage: Database tables initialised at C:\AI\algo trading\bot1\algo_demo_india\data\algo_demo.db
+2026-02-13 09:17:35,165 [INFO] app.engine_controller: EngineController: restored STOPPED state from DB
+2026-02-13 09:17:35,165 [INFO] app.broker.capital_manager: CapitalManager restored from DB: account=default  capital=-1732980.39  realised_pnl=-25765.65  positions=3
+2026-02-13 09:17:35,165 [WARNING] app.broker.trade_ledger: PnL discrepancy detected: DB=-25465.64 vs CM=-25765.65 (diff=300.01). Rebuilding from trade records.
+2026-02-13 09:17:35,165 [WARNING] __main__: Startup PnL verification failed: 'ledger_pnl'
+2026-02-13 09:17:35,180 [INFO] app.broker.order_manager: Restored 101 orders from DB into in-memory cache
+2026-02-13 09:17:35,180 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-13 09:17:35,180 [INFO] app.data_feed.provider: Creating YahooProvider for mode=demo
+2026-02-13 09:17:35,180 [INFO] __main__: Market data provider: yahoo (mode=demo)
+2026-02-13 09:17:35,180 [INFO] app.broker.simulated_broker: Simulated broker started
+2026-02-13 09:17:35,180 [INFO] __main__: Starting server on 0.0.0.0:5005  ML=False
+2026-02-13 09:17:35,198 [INFO] app.data_feed.demo_feed: DemoDataFeed connected � symbols=['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-13 09:17:35,198 [INFO] __main__: Tick loop started for ['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-13 09:17:35,308 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 09:17:39,807 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 09:17:47,283 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-13 09:17:47,283 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-13 09:17:47,283 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-13 09:17:47,283 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-13 09:17:47,450 [WARNING] app.engine_controller: EMERGENCY STOP: daily_loss_halted
+2026-02-13 09:17:47,483 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: daily_loss_halted
+2026-02-13 09:17:53,118 [INFO] app.broker.order_manager: Order 55b0981f: NEW → REJECTED  filled=0  avg=0.00
+2026-02-13 09:17:53,118 [WARNING] app.broker.order_manager: Order 55b0981f timed out after 60s — REJECTED
+2026-02-13 09:17:53,118 [INFO] app.broker.order_manager: Order 48d3c27c: NEW → REJECTED  filled=0  avg=0.00
+2026-02-13 09:17:53,118 [WARNING] app.broker.order_manager: Order 48d3c27c timed out after 60s — REJECTED
+2026-02-13 09:17:53,118 [INFO] __main__: Cleaned up 2 stale orders
+2026-02-13 09:17:59,818 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 09:18:00,451 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 09:18:11,602 [INFO] app.broker.order_manager: Order 36a1c3e1: NEW → REJECTED  filled=0  avg=0.00
+2026-02-13 09:18:11,602 [WARNING] app.broker.order_manager: Order 36a1c3e1 timed out after 60s — REJECTED
+2026-02-13 09:18:11,602 [INFO] app.broker.order_manager: Order 842c73b5: NEW → REJECTED  filled=0  avg=0.00
+2026-02-13 09:18:11,606 [WARNING] app.broker.order_manager: Order 842c73b5 timed out after 60s — REJECTED
+2026-02-13 09:18:11,606 [INFO] __main__: Cleaned up 2 stale orders
+2026-02-13 09:18:37,015 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 09:18:37,574 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 09:18:45,431 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 09:18:45,927 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 09:18:50,182 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 09:18:50,669 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 09:18:58,273 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 09:18:58,732 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 09:19:04,308 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-13 09:19:04,308 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-13 09:19:04,308 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-13 09:19:04,315 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-13 09:19:04,341 [WARNING] app.engine_controller: EMERGENCY STOP: daily_loss_halted
+2026-02-13 09:19:04,341 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: daily_loss_halted
+2026-02-13 09:19:47,516 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 09:19:48,022 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 09:19:51,556 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-13 09:19:51,556 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-13 09:19:51,556 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-13 09:19:51,556 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-13 09:19:51,731 [WARNING] app.engine_controller: EMERGENCY STOP: daily_loss_halted
+2026-02-13 09:19:51,731 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: daily_loss_halted
+2026-02-13 09:20:17,839 [INFO] app.ws.socket_server: Control event: stop  payload={'action': 'stop'}
+2026-02-13 09:20:17,839 [INFO] app.strategy.engine: Strategy engine stopped
+2026-02-13 09:20:58,689 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-13 09:20:58,689 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-13 09:20:58,689 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-13 09:20:58,689 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-13 09:20:58,855 [WARNING] app.engine_controller: EMERGENCY STOP: daily_loss_halted
+2026-02-13 09:20:58,855 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: daily_loss_halted
+2026-02-13 09:21:00,537 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 09:21:01,587 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 09:23:41,212 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 09:23:41,214 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 09:46:33,267 [INFO] app.db.storage: Database tables initialised at C:\AI\algo trading\bot1\algo_demo_india\data\algo_demo.db
+2026-02-13 09:46:33,267 [INFO] app.engine_controller: EngineController: restored STOPPED state from DB
+2026-02-13 09:46:33,267 [INFO] app.broker.capital_manager: CapitalManager restored from DB: account=default  capital=-1732980.39  realised_pnl=-25765.65  positions=3
+2026-02-13 09:46:33,267 [WARNING] app.broker.trade_ledger: PnL discrepancy detected: DB=-25465.64 vs CM=-25765.65 (diff=300.01). Rebuilding from trade records.
+2026-02-13 09:46:33,267 [WARNING] __main__: Startup PnL verification failed: 'ledger_pnl'
+2026-02-13 09:46:33,267 [INFO] app.broker.order_manager: Restored 108 orders from DB into in-memory cache
+2026-02-13 09:46:33,267 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-13 09:46:33,267 [INFO] app.data_feed.provider: Creating YahooProvider for mode=demo
+2026-02-13 09:46:33,267 [INFO] __main__: Market data provider: yahoo (mode=demo)
+2026-02-13 09:46:33,267 [INFO] app.broker.simulated_broker: Simulated broker started
+2026-02-13 09:46:33,267 [INFO] __main__: Starting server on 0.0.0.0:5005  ML=False
+2026-02-13 09:46:33,283 [INFO] app.data_feed.demo_feed: DemoDataFeed connected � symbols=['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-13 09:46:33,283 [INFO] __main__: Tick loop started for ['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-13 09:46:38,652 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 09:46:42,268 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 09:46:42,527 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-13 09:46:42,527 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-13 09:46:42,527 [INFO] app.strategy.engine: daily_loss_halted reset on engine start
+2026-02-13 09:46:42,527 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-13 09:46:42,527 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-13 09:46:42,552 [WARNING] app.engine_controller: EMERGENCY STOP: max_exposure (277.9%)
+2026-02-13 09:46:42,552 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: max_exposure (277.9%)
+2026-02-13 09:46:51,261 [INFO] app.broker.order_manager: Order 2fd9d74e: NEW → REJECTED  filled=0  avg=0.00
+2026-02-13 09:46:51,261 [WARNING] app.broker.order_manager: Order 2fd9d74e timed out after 60s — REJECTED
+2026-02-13 09:46:51,261 [INFO] app.broker.order_manager: Order 18ce45dc: NEW → REJECTED  filled=0  avg=0.00
+2026-02-13 09:46:51,261 [WARNING] app.broker.order_manager: Order 18ce45dc timed out after 60s — REJECTED
+2026-02-13 09:46:51,261 [INFO] __main__: Cleaned up 2 stale orders
+2026-02-13 09:46:56,802 [INFO] app.ws.socket_server: Control event: toggle_ml  payload={'action': 'toggle_ml', 'use_ml': True}
+2026-02-13 09:47:04,060 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-13 09:47:04,060 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-13 09:47:04,060 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-13 09:47:04,060 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-13 09:47:04,070 [WARNING] app.engine_controller: EMERGENCY STOP: max_exposure (277.9%)
+2026-02-13 09:47:04,070 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: max_exposure (277.9%)
+2026-02-13 09:47:20,960 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 09:47:21,513 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 09:47:26,068 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-13 09:47:26,068 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-13 09:47:26,068 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-13 09:47:26,068 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-13 09:47:26,244 [WARNING] app.engine_controller: EMERGENCY STOP: max_exposure (277.9%)
+2026-02-13 09:47:26,244 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: max_exposure (277.9%)
+2026-02-13 09:47:38,860 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 09:47:39,310 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 09:47:43,494 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-13 09:47:43,494 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-13 09:47:43,494 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-13 09:47:43,494 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-13 09:47:43,511 [WARNING] app.engine_controller: EMERGENCY STOP: max_exposure (277.9%)
+2026-02-13 09:47:43,511 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: max_exposure (277.9%)
+2026-02-13 09:55:49,570 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 09:55:50,670 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 09:55:52,853 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-13 09:55:52,853 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-13 09:55:52,853 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-13 09:55:52,853 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-13 09:55:53,279 [WARNING] app.engine_controller: EMERGENCY STOP: max_exposure (277.9%)
+2026-02-13 09:55:53,279 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: max_exposure (277.9%)
+2026-02-13 09:56:04,674 [INFO] app.ws.socket_server: Control event: stop  payload={'action': 'stop'}
+2026-02-13 09:56:04,674 [INFO] app.strategy.engine: Strategy engine stopped
+2026-02-13 09:56:06,945 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 09:56:07,395 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 09:56:15,295 [INFO] app.ws.socket_server: Control event: toggle_ml  payload={'action': 'toggle_ml', 'use_ml': True}
+2026-02-13 09:56:38,518 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 09:56:38,518 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 11:06:47,611 [INFO] app.db.storage: Database tables initialised at C:\AI\algo trading\bot1\algo_demo_india\data\algo_demo.db
+2026-02-13 11:06:47,611 [INFO] app.engine_controller: EngineController: restored STOPPED state from DB
+2026-02-13 11:06:47,627 [INFO] app.broker.capital_manager: CapitalManager restored from DB: account=default  capital=-1732980.39  realised_pnl=-25765.65  positions=3
+2026-02-13 11:06:47,627 [WARNING] app.broker.trade_ledger: PnL discrepancy detected: DB=-25465.64 vs CM=-25765.65 (diff=300.01). Rebuilding from trade records.
+2026-02-13 11:06:47,627 [WARNING] __main__: Startup PnL verification failed: 'ledger_pnl'
+2026-02-13 11:06:47,627 [INFO] app.broker.order_manager: Restored 108 orders from DB into in-memory cache
+2026-02-13 11:06:47,627 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-13 11:06:47,627 [INFO] app.data_feed.provider: Creating YahooProvider for mode=demo
+2026-02-13 11:06:47,627 [INFO] __main__: Market data provider: yahoo (mode=demo)
+2026-02-13 11:06:47,627 [INFO] app.broker.simulated_broker: Simulated broker started
+2026-02-13 11:06:47,627 [INFO] __main__: Starting server on 0.0.0.0:5005  ML=False
+2026-02-13 11:06:47,705 [INFO] app.data_feed.demo_feed: DemoDataFeed connected � symbols=['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-13 11:06:47,705 [INFO] __main__: Tick loop started for ['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-13 11:11:27,792 [INFO] app.routes.auth: User logged in: meganath1025@gmail.com
+2026-02-13 11:11:28,377 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 11:11:40,842 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-13 11:11:40,842 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-13 11:11:40,842 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-13 11:11:40,842 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-13 11:11:41,092 [WARNING] app.engine_controller: EMERGENCY STOP: max_exposure (277.9%)
+2026-02-13 11:11:41,092 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: max_exposure (277.9%)
+2026-02-13 11:11:43,593 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 11:11:44,209 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 11:11:48,376 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-13 11:11:48,376 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-13 11:11:48,376 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-13 11:11:48,376 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-13 11:11:48,417 [WARNING] app.engine_controller: EMERGENCY STOP: max_exposure (277.9%)
+2026-02-13 11:11:48,417 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: max_exposure (277.9%)
+2026-02-13 11:11:54,175 [INFO] app.ws.socket_server: Control event: toggle_ml  payload={'action': 'toggle_ml', 'use_ml': True}
+2026-02-13 11:11:56,650 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-13 11:11:56,650 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-13 11:11:56,650 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-13 11:11:56,650 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-13 11:11:56,950 [WARNING] app.engine_controller: EMERGENCY STOP: max_exposure (277.9%)
+2026-02-13 11:11:56,950 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: max_exposure (277.9%)
+2026-02-13 11:12:03,268 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-13 11:12:03,811 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-13 11:13:00,508 [INFO] app.routes.auth: User logged out: meganath1025@gmail.com
+2026-02-13 11:13:00,517 [INFO] app.ws.socket_server: WebSocket client disconnected

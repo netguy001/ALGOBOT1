@@ -37,11 +37,39 @@ class EngineState(enum.Enum):
 class EngineController:
     """Thread-safe centralised state machine for the trading engine."""
 
-    def __init__(self) -> None:
-        self._state = EngineState.IDLE
+    def __init__(self, persist_fn=None, restore_fn=None) -> None:
         self._lock = threading.Lock()
         self._stop_event = threading.Event()  # signalled when STOPPED
         self._reason: Optional[str] = None
+        self._persist_fn = persist_fn  # callable(state_str) -> None
+        self._restore_fn = restore_fn  # callable() -> str | None
+
+        # Restore state from DB if available
+        self._state = EngineState.IDLE
+        if restore_fn:
+            try:
+                saved = restore_fn()
+                if saved and saved in ("RUNNING", "PAUSED"):
+                    # Auto-resume to RUNNING if server was RUNNING before crash
+                    self._state = EngineState.RUNNING
+                    self._reason = "auto_resume"
+                    logger.info(
+                        "EngineController: auto-resumed from saved state %s", saved
+                    )
+                elif saved == "STOPPED":
+                    self._state = EngineState.STOPPED
+                    self._stop_event.set()
+                    logger.info("EngineController: restored STOPPED state from DB")
+            except Exception as exc:
+                logger.warning("EngineController: failed to restore state: %s", exc)
+
+    def _persist(self) -> None:
+        """Persist current state to DB (if callback set)."""
+        if self._persist_fn:
+            try:
+                self._persist_fn(self._state.value)
+            except Exception as exc:
+                logger.warning("EngineController: failed to persist state: %s", exc)
 
     # ── State queries ────────────────────────────────────────
 
@@ -84,6 +112,7 @@ class EngineController:
                 self._reason = reason
                 self._stop_event.clear()
                 logger.info("EngineController -> RUNNING  (%s)", reason or "user")
+                self._persist()
                 return True
             logger.warning("Cannot start: current state is %s", self._state.value)
             return False
@@ -96,6 +125,7 @@ class EngineController:
                 self._reason = reason or "user_stop"
                 self._stop_event.set()
                 logger.info("EngineController -> STOPPED  (%s)", self._reason)
+                self._persist()
                 return True
             # Already stopped / idle — idempotent
             if self._state == EngineState.STOPPED:
@@ -110,6 +140,7 @@ class EngineController:
                 self._state = EngineState.PAUSED
                 self._reason = reason or "user_pause"
                 logger.info("EngineController -> PAUSED  (%s)", self._reason)
+                self._persist()
                 return True
             return False
 
@@ -120,6 +151,7 @@ class EngineController:
             self._reason = None
             self._stop_event.clear()
             logger.info("EngineController -> IDLE (reset)")
+            self._persist()
 
     def emergency_stop(self, reason: str) -> None:
         """Unconditional hard stop from any state."""
@@ -127,6 +159,7 @@ class EngineController:
             self._state = EngineState.STOPPED
             self._reason = reason
             self._stop_event.set()
+            self._persist()
         logger.warning("EMERGENCY STOP: %s", reason)
 
     # ── Serialisation ────────────────────────────────────────

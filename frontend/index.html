@@ -16,6 +16,40 @@
 
 <body>
 
+    <!-- ===== LOGIN MODAL OVERLAY ===== -->
+    <div id="auth-overlay" class="auth-overlay" style="display:none">
+        <div class="auth-card">
+            <div class="auth-logo">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                    <path d="M3 17l4-4 4 4 8-12" stroke="#00c853" stroke-width="2.5" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+                <span>AlgoTerminal</span>
+            </div>
+            <div id="auth-tab-bar" class="auth-tabs">
+                <button class="auth-tab active" data-auth="login">Login</button>
+                <button class="auth-tab" data-auth="register">Register</button>
+            </div>
+            <!-- Login form -->
+            <form id="login-form" class="auth-form">
+                <input type="text" id="login-user" placeholder="Username" autocomplete="username" required>
+                <input type="password" id="login-pass" placeholder="Password" autocomplete="current-password" required>
+                <button type="submit" class="auth-btn">Login</button>
+            </form>
+            <!-- Register form (hidden by default) -->
+            <form id="register-form" class="auth-form" style="display:none">
+                <input type="text" id="reg-user" placeholder="Username" autocomplete="username" required>
+                <input type="password" id="reg-pass" placeholder="Password (min 4 chars)" autocomplete="new-password"
+                    required minlength="4">
+                <button type="submit" class="auth-btn">Create Account</button>
+            </form>
+            <div id="auth-msg" class="auth-msg"></div>
+            <div class="auth-skip">
+                <button id="auth-skip-btn" class="auth-skip-btn">Continue as Guest</button>
+            </div>
+        </div>
+    </div>
+
     <!-- ===== TOP BAR ===== -->
     <header class="topbar">
         <div class="topbar-left">
@@ -38,8 +72,13 @@
         </div>
         <div class="topbar-right">
             <span class="clock" id="clock">--:--:--</span>
-            <span id="conn-badge" class="badge badge-off"><span class="dot"></span>Offline</span>
+            <span class="ist-label" id="ist-label" title="Indian Standard Time">IST</span>
+            <span id="conn-badge" class="badge badge-on"><span class="dot"></span>Connected</span>
             <span id="engine-badge" class="badge badge-idle">Idle</span>
+            <span id="user-info" class="user-info" style="display:none">
+                <span id="user-name" class="user-name">Guest</span>
+                <button id="btn-logout" class="logout-btn" title="Logout">Logout</button>
+            </span>
         </div>
     </header>
 
@@ -130,6 +169,7 @@
                     <button class="tab" data-tab="positions">Positions <span class="tcnt" id="cnt-pos">0</span></button>
                     <button class="tab" data-tab="trades">Trade Log</button>
                     <button class="tab" data-tab="signals">Signals</button>
+                    <button class="tab" data-tab="datasource">Data Source</button>
                 </div>
 
                 <!-- Orders -->
@@ -193,7 +233,7 @@
                                     <th>Side</th>
                                     <th>Qty</th>
                                     <th>Price</th>
-                                    <th>Strategy</th>
+                                    <th>Strategy / P&L</th>
                                 </tr>
                             </thead>
                             <tbody id="trades-body">
@@ -208,6 +248,28 @@
                 <div class="tab-body" id="tab-signals">
                     <div class="tbl-scroll" id="signal-log">
                         <div class="empty">No signals yet</div>
+                    </div>
+                </div>
+                <!-- Data Source Debug -->
+                <div class="tab-body" id="tab-datasource">
+                    <div class="tbl-scroll">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Symbol</th>
+                                    <th>Source</th>
+                                    <th>Rows</th>
+                                    <th>Date Range</th>
+                                    <th>CSV</th>
+                                </tr>
+                            </thead>
+                            <tbody id="datasource-body">
+                                <tr>
+                                    <td colspan="5" class="empty">Loading…</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="ds-mode" id="ds-mode"></div>
                     </div>
                 </div>
             </section>

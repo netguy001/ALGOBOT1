@@ -30,6 +30,7 @@ _order_mgr = None
 _current_prices = {}
 _tick_history = {}
 _controller = None  # EngineController
+_clock = None  # EngineClock
 
 
 def init_socketio(
@@ -39,14 +40,16 @@ def init_socketio(
     current_prices_ref,
     tick_history_ref=None,
     controller=None,
+    clock=None,
 ):
     """Register SocketIO event handlers."""
-    global _engine, _order_mgr, _current_prices, _tick_history, _controller
+    global _engine, _order_mgr, _current_prices, _tick_history, _controller, _clock
     _engine = engine
     _order_mgr = order_mgr
     _current_prices = current_prices_ref
     _tick_history = tick_history_ref or {}
     _controller = controller
+    _clock = clock
 
     @socketio.on("connect")
     def handle_connect():
@@ -75,6 +78,14 @@ def init_socketio(
             _engine.start()  # delegates to controller
         elif action == "stop":
             _engine.stop()  # delegates to controller
+            # Emit a final PnL/position snapshot so UI freezes on correct values
+            try:
+                pnl = _order_mgr.get_pnl(current_prices=_current_prices)
+                socketio.emit("pnl_update", pnl)
+                positions = _order_mgr.get_positions()
+                socketio.emit("position_update", {"positions": positions})
+            except Exception:
+                pass
         elif action == "pause":
             if _controller:
                 _controller.pause(reason="user_pause")
@@ -105,9 +116,13 @@ def init_socketio(
         pnl = _order_mgr.get_pnl(current_prices=_current_prices)
         emit("pnl_update", pnl)
 
+        # Send current orders so the order table is populated immediately
+        orders = _order_mgr.get_all_orders()
+        emit("orders_snapshot", {"orders": orders})
+
 
 def _build_status() -> dict:
-    """Merge engine status with controller state."""
+    """Merge engine status with controller state and clock info."""
     st = _engine.status()
     if _controller:
         st["state"] = _controller.state.value
@@ -115,4 +130,8 @@ def _build_status() -> dict:
     from app.config import MODE
 
     st["mode"] = MODE
+    if _clock:
+        st["market_open"] = _clock.is_market_open()
+        st["ist_time"] = _clock.now().strftime("%H:%M:%S")
+        st["utc_timestamp"] = _clock.now_iso()
     return st

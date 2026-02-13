@@ -19,6 +19,13 @@ sys.path.insert(0, str(_PROJECT_ROOT))
 import pytest
 import pandas as pd
 import numpy as np
+import uuid
+
+
+def _test_account_id():
+    """Generate a unique account ID for test isolation."""
+    return f"test_{uuid.uuid4().hex[:8]}"
+
 
 # ---------------------------------------------------------------------------
 # Indicator tests
@@ -94,16 +101,18 @@ class TestRiskSizing:
 
     def test_position_size_default(self):
         """1 lakh capital, 1% risk, 2% SL @ price 100 → risk=1000, risk_per_share=2 → qty=500.
-        Now capped by MAX_POSITION_SIZE_PER_TRADE (default 500)."""
+        Capped by MAX_POSITION_SIZE_PCT_OF_CAPITAL (10%) → max notional=10k → 100 shares.
+        """
         params = RiskParams(capital=100_000, risk_pct=1.0, stop_loss_pct=2.0)
         qty = position_size(100.0, params)
-        assert qty == 500
+        # Guard 3 (10% of 100k = 10k, at 100/share = 100 max)
+        assert qty == 100
 
     def test_position_size_min_one(self):
-        """Even with very low capital, qty should be at least 1."""
+        """Very low capital relative to price → qty is 0 (trade rejected by risk guards)."""
         params = RiskParams(capital=10, risk_pct=1.0, stop_loss_pct=2.0)
         qty = position_size(10000.0, params)
-        assert qty >= 1
+        assert qty == 0  # correctly rejected: cannot afford even 1 share
 
     def test_stop_loss_buy(self):
         sl = stop_loss_price(100.0, "BUY", 2.0)
@@ -133,14 +142,14 @@ class TestCapitalManager:
     """Test centralised capital and position management."""
 
     def test_initial_state(self):
-        cm = CapitalManager(initial_capital=100_000)
+        cm = CapitalManager(initial_capital=100_000, account_id=_test_account_id())
         assert cm.initial_capital == 100_000
         assert cm.available_capital == 100_000
         assert cm.used_margin == 0.0
         assert cm.open_position_count == 0
 
     def test_update_position_buy(self):
-        cm = CapitalManager(initial_capital=100_000)
+        cm = CapitalManager(initial_capital=100_000, account_id=_test_account_id())
         pnl = cm.update_position("TEST.NS", "BUY", 10, 2000.0)
         assert pnl == 0.0  # opening position has no PnL
         pos = cm.get_position("TEST.NS")
@@ -149,7 +158,7 @@ class TestCapitalManager:
         assert pos["avg_price"] == 2000.0
 
     def test_roundtrip_pnl(self):
-        cm = CapitalManager(initial_capital=100_000)
+        cm = CapitalManager(initial_capital=100_000, account_id=_test_account_id())
         cm.update_position("TEST.NS", "BUY", 10, 2000.0)
         pnl = cm.update_position("TEST.NS", "SELL", 10, 2100.0)
         assert pnl == pytest.approx(1000.0)  # (2100-2000)*10
@@ -160,12 +169,17 @@ class TestCapitalManager:
             initial_capital=10_000,
             max_position_size=100,
             max_qty_per_order=50,
+            account_id=_test_account_id(),
         )
         # Should be capped by max_qty_per_order (50)
         assert cm.clamp_quantity(200, 100.0) == 50
 
     def test_daily_loss_halt(self):
-        cm = CapitalManager(initial_capital=100_000, daily_loss_limit=1000)
+        cm = CapitalManager(
+            initial_capital=100_000,
+            daily_loss_limit=1000,
+            account_id=_test_account_id(),
+        )
         assert not cm.daily_loss_halted
         # Simulate a big loss
         cm.update_position("X.NS", "BUY", 100, 1000.0)
@@ -185,7 +199,9 @@ class TestOrderValidator:
     """Test pre-trade validation."""
 
     def _make_validator(self, **cm_kwargs):
-        cm = CapitalManager(initial_capital=100_000, **cm_kwargs)
+        cm = CapitalManager(
+            initial_capital=100_000, account_id=_test_account_id(), **cm_kwargs
+        )
         ov = OrderValidator(capital_manager=cm, cooldown_candles=3)
         return ov, cm
 
@@ -211,6 +227,7 @@ class TestOrderValidator:
         ov, cm = self._make_validator(daily_loss_limit=100)
         cm.update_position("X.NS", "BUY", 100, 1000.0)
         cm.update_position("X.NS", "SELL", 100, 998.0)  # loss=200
+        cm.check_daily_loss()  # trigger the halt flag
         result = ov.validate_signal({"symbol": "Y.NS", "action": "BUY", "price": 50.0})
         assert result is not None
         assert "daily_loss" in result
@@ -228,7 +245,7 @@ class TestOrderManager:
 
     def _make_manager(self):
         """Create a fresh order manager with CapitalManager and no-op broker."""
-        cm = CapitalManager(initial_capital=1_000_000)
+        cm = CapitalManager(initial_capital=1_000_000, account_id=_test_account_id())
         return OrderManager(
             broker_submit_fn=lambda order: True,
             capital_mgr=cm,

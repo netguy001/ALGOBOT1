@@ -17,7 +17,7 @@ import argparse
 import json
 import logging
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
@@ -244,7 +244,7 @@ def save_report(result: dict) -> None:
     """Save JSON report and equity-curve chart."""
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
-    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+    ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
     prefix = f"{result['symbol'].replace('.', '_')}_{result['strategy']}_{ts}"
 
     # JSON report

@@ -1,13 +1,13 @@
-"""
+﻿"""
 app/broker/order_manager.py
 ===========================
 Order lifecycle management with retry logic and idempotency.
 
 Order states::
 
-    NEW → ACK → PARTIAL → FILLED
-                       ↘ CANCELLED
-                       ↘ REJECTED
+    NEW â†’ ACK â†’ PARTIAL â†’ FILLED
+                       â†˜ CANCELLED
+                       â†˜ REJECTED
 
 The order manager is the single authority on order state transitions.
 Position and capital tracking is *delegated* to ``CapitalManager``.
@@ -17,12 +17,33 @@ Pre-trade validation is delegated to ``OrderValidator``.
 import logging
 import threading
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Callable, Optional
 
 from app.db import storage
 from app.utils.risk import RiskParams, position_size, stop_loss_price, take_profit_price
 from app.config import ORDER_TIMEOUT_SEC
+
+
+def _utc_now_iso() -> str:
+    """Return current UTC time as ISO 8601 string via EngineClock."""
+    try:
+        from app.utils.clock import EngineClock
+
+        return EngineClock(mode="demo").now_iso()
+    except Exception:
+        return datetime.now(timezone.utc).isoformat()
+
+
+def _utc_now_dt() -> datetime:
+    """Return current UTC datetime (timezone-aware) via EngineClock."""
+    try:
+        from app.utils.clock import EngineClock
+
+        return EngineClock(mode="demo").now_utc()
+    except Exception:
+        return datetime.now(timezone.utc)
+
 
 logger = logging.getLogger(__name__)
 
@@ -73,6 +94,26 @@ class OrderManager:
         # Engine stop callback (set by main.py for daily-loss halt)
         self._engine_stop_fn: Optional[Callable] = None
 
+        # Restore recent orders from DB so SL/TP refs survive restart
+        self._restore_orders_from_db()
+
+    def _restore_orders_from_db(self) -> None:
+        """Load recent filled/partial orders from DB into in-memory cache.
+
+        This ensures SL/TP reference orders are available after a server
+        restart without requiring the orders to be re-created.
+        """
+        try:
+            recent = storage.get_all_orders(limit=200)
+            for o in recent:
+                self._orders[o["order_id"]] = dict(o)
+            if recent:
+                logger.info(
+                    "Restored %d orders from DB into in-memory cache", len(recent)
+                )
+        except Exception as exc:
+            logger.warning("Failed to restore orders from DB: %s", exc)
+
     # ------------------------------------------------------------------
     # Order creation from strategy signal
     # ------------------------------------------------------------------
@@ -114,7 +155,7 @@ class OrderManager:
             qty = position_size(price, params)
 
         if qty <= 0:
-            logger.debug("Position size is 0 for %s — signal dropped", sym)
+            logger.debug("Position size is 0 for %s â€” signal dropped", sym)
             return None
 
         order = {
@@ -130,8 +171,8 @@ class OrderManager:
             "strategy": signal.get("strategy", "manual"),
             "stop_loss": stop_loss_price(price, signal["action"]),
             "take_profit": take_profit_price(price, signal["action"]),
-            "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat(),
+            "created_at": _utc_now_iso(),
+            "updated_at": _utc_now_iso(),
             "retries": 0,
         }
 
@@ -185,8 +226,8 @@ class OrderManager:
             "strategy": "manual",
             "stop_loss": stop_loss_price(price, side),
             "take_profit": take_profit_price(price, side),
-            "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat(),
+            "created_at": _utc_now_iso(),
+            "updated_at": _utc_now_iso(),
             "retries": 0,
         }
         with self._lock:
@@ -202,7 +243,7 @@ class OrderManager:
     def _submit_with_retry(self, order: dict) -> None:
         """Submit to broker, retrying up to MAX_RETRIES times."""
         if self._broker_submit is None:
-            logger.warning("No broker_submit_fn configured — order stays NEW")
+            logger.warning("No broker_submit_fn configured â€” order stays NEW")
             return
 
         for attempt in range(1, MAX_RETRIES + 1):
@@ -220,7 +261,7 @@ class OrderManager:
             order["retries"] = attempt
 
         logger.error(
-            "Order %s failed after %d retries — marking REJECTED",
+            "Order %s failed after %d retries â€” marking REJECTED",
             order["order_id"][:8],
             MAX_RETRIES,
         )
@@ -256,7 +297,7 @@ class OrderManager:
             allowed = _VALID_TRANSITIONS.get(current, set())
             if new_status not in allowed:
                 logger.warning(
-                    "Invalid transition %s → %s for order %s",
+                    "Invalid transition %s â†’ %s for order %s",
                     current,
                     new_status,
                     order_id[:8],
@@ -264,7 +305,7 @@ class OrderManager:
                 return None
 
             order["status"] = new_status
-            order["updated_at"] = datetime.utcnow().isoformat()
+            order["updated_at"] = _utc_now_iso()
             if filled_qty > 0:
                 order["filled_qty"] = filled_qty
             if avg_price > 0:
@@ -285,7 +326,7 @@ class OrderManager:
             self._update_position(order)
 
         logger.info(
-            "Order %s: %s → %s  filled=%d  avg=%.2f",
+            "Order %s: %s â†’ %s  filled=%d  avg=%.2f",
             order_id[:8],
             current,
             new_status,
@@ -295,28 +336,37 @@ class OrderManager:
         return order
 
     # ------------------------------------------------------------------
-    # Position tracking — delegated to CapitalManager
+    # Position tracking â€” delegated to CapitalManager
     # ------------------------------------------------------------------
 
     def _update_position(self, order: dict) -> None:
-        """Update position after a fill — delegates to CapitalManager."""
+        """Update position after a fill â€” delegates to CapitalManager.
+
+        The realised PnL from this fill is stored in the trade record
+        so we have a full per-trade P&L audit trail in the DB.
+        """
         sym = order["symbol"]
         side = order["side"]
         fill_qty = order["filled_qty"]
         fill_price = order["avg_price"]
 
+        realised_pnl = 0.0
         if self._capital_mgr is not None:
-            self._capital_mgr.update_position(sym, side, fill_qty, fill_price)
+            realised_pnl = self._capital_mgr.update_position(
+                sym, side, fill_qty, fill_price
+            )
         else:
-            logger.warning("No CapitalManager — position tracking skipped")
+            logger.warning("No CapitalManager â€” position tracking skipped")
 
-        # Transactional: update order + insert trade in one DB commit
+        # Transactional: update order + insert trade (with PnL) in one DB commit
         trade_data = {
             "order_id": order["order_id"],
+            "account_id": getattr(self._capital_mgr, "account_id", "default"),
             "symbol": sym,
             "side": side,
             "qty": fill_qty,
             "price": fill_price,
+            "pnl": round(realised_pnl, 2),
         }
         try:
             storage.insert_order_and_trade(order, trade_data)
@@ -362,7 +412,7 @@ class OrderManager:
 
     def get_pnl(self, current_prices: Optional[dict[str, float]] = None) -> dict:
         """
-        Compute realised + unrealised PnL — delegates to CapitalManager.
+        Compute realised + unrealised PnL â€” delegates to CapitalManager.
         """
         if self._capital_mgr is not None:
             return self._capital_mgr.get_pnl(current_prices)
@@ -453,8 +503,8 @@ class OrderManager:
                     "strategy": f"auto_{hit.lower()}_exit",
                     "stop_loss": 0,
                     "take_profit": 0,
-                    "created_at": datetime.utcnow().isoformat(),
-                    "updated_at": datetime.utcnow().isoformat(),
+                    "created_at": _utc_now_iso(),
+                    "updated_at": _utc_now_iso(),
                     "retries": 0,
                 }
                 with self._lock:
@@ -463,7 +513,7 @@ class OrderManager:
                 self._submit_with_retry(close_order)
                 closing_orders.append(close_order)
                 logger.info(
-                    "%s HIT for %s @ %.2f (SL=%.2f TP=%.2f) — closing %d shares",
+                    "%s HIT for %s @ %.2f (SL=%.2f TP=%.2f) â€” closing %d shares",
                     hit,
                     sym,
                     price,
@@ -483,7 +533,7 @@ class OrderManager:
         Mark orders stuck in NEW status for longer than ORDER_TIMEOUT_SEC
         as REJECTED.  Returns count of timed-out orders.
         """
-        now = datetime.utcnow()
+        now = _utc_now_dt()
         cutoff = now - timedelta(seconds=ORDER_TIMEOUT_SEC)
         timed_out = 0
         with self._lock:
@@ -495,7 +545,7 @@ class OrderManager:
         for o in stale:
             self.update_order_status(o["order_id"], "REJECTED")
             logger.warning(
-                "Order %s timed out after %ds — REJECTED",
+                "Order %s timed out after %ds â€” REJECTED",
                 o["order_id"][:8],
                 ORDER_TIMEOUT_SEC,
             )

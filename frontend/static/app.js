@@ -39,14 +39,17 @@ let engineState = 'IDLE';           // IDLE | RUNNING | STOPPED | PAUSED
 
 // Per-symbol raw tick buffers (for chart reconstruction on symbol switch)
 const tickBuffers = {};          // { 'RELIANCE.NS': [{o,h,l,c,v,t}, ...], ... }
+// Positions cache (for order form indication)
+let positionsCache = {};         // { 'RELIANCE.NS': {side:'BUY',qty:10,...}, ... }
 // Current candle accumulator for the selected symbol
 let pendingTicks = [];
 // Completed candle array for chart
 let candleData = [];
 let volumeData = [];
-// Sequential time counter (seconds, increments per candle)
-let nextCandleTime = Math.floor(Date.now() / 1000) - MAX_CANDLES * 60;
-const CANDLE_DT = 60;            // spacing between candles in seconds
+// IST offset in seconds (UTC+5:30 = 19800s)
+// TradingView Lightweight Charts displays `time` as UTC.
+// To show IST on the X-axis we add the IST offset to every epoch value.
+const IST_OFFSET = 5.5 * 3600;   // 19800 seconds
 
 // Watchlist
 const watchData = {};
@@ -75,17 +78,41 @@ function formatINR(v) {
 }
 function pnlColor(v) { return v > 0 ? 'var(--green)' : v < 0 ? 'var(--red)' : 'var(--text)'; }
 function shortTime(iso) {
+    // Convert UTC ISO timestamp to IST and display.
+    // Shows "HH:MM:SS am/pm" for today, or "DD/MM HH:MM" for older dates.
     if (!iso) return '';
-    return new Date(iso).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return '';
+    const nowIST = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+    const dIST = new Date(d.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+    const sameDay = nowIST.getFullYear() === dIST.getFullYear()
+        && nowIST.getMonth() === dIST.getMonth()
+        && nowIST.getDate() === dIST.getDate();
+    if (sameDay) {
+        return d.toLocaleTimeString('en-IN', {
+            hour: '2-digit', minute: '2-digit', second: '2-digit',
+            timeZone: 'Asia/Kolkata'
+        });
+    }
+    // Different day — show date + time (no seconds) so user knows it's old
+    return d.toLocaleDateString('en-IN', {
+        day: '2-digit', month: '2-digit',
+        hour: '2-digit', minute: '2-digit',
+        timeZone: 'Asia/Kolkata'
+    });
 }
 function sideClass(s) { return s === 'BUY' ? 'side-buy' : 'side-sell'; }
 function statusClass(s) { return 'st-' + (s || 'new').toLowerCase(); }
 function n(v, d = 2) { return Number(v).toFixed(d); }
 
-// Clock
+// Client-side clock fallback (server clock overrides via fetchServerClock)
 setInterval(() => {
-    const d = new Date();
-    clock.textContent = d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+    // Only update if server hasn't set it recently — the server clock
+    // update (every 5s) will overwrite this with IST time.
+    if (!clock._serverUpdated) {
+        const d = new Date();
+        clock.textContent = d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZone: 'Asia/Kolkata' });
+    }
 }, 1000);
 
 // ═══════════════════════════════════════════════════════════
@@ -107,12 +134,6 @@ function showChartLoading(show) {
         spinner.style.display = 'none';
     }
 }
-
-// Clock
-setInterval(() => {
-    const d = new Date();
-    clock.textContent = d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-}, 1000);
 
 // ═══════════════════════════════════════════════════════════
 //  CHART SETUP  (TradingView Lightweight Charts)
@@ -265,14 +286,21 @@ setTimeout(resizeChart, 300);
 // We treat each tick as "1 base unit". Timeframe buttons
 // control how many ticks are grouped into one chart candle.
 //
-// Time is assigned sequentially (not from wall-clock) so
-// candles spread out properly on the chart.
+// Each candle uses the real UTC timestamp from the backend,
+// shifted to IST for display on the chart X-axis.
+
+// Convert an ISO-8601 UTC string to chart-time (epoch seconds shifted to IST)
+function isoToChartTime(iso) {
+    if (!iso) return Math.floor(Date.now() / 1000) + IST_OFFSET;
+    const ms = (typeof iso === 'number') ? iso * 1000 : Date.parse(iso);
+    if (isNaN(ms)) return Math.floor(Date.now() / 1000) + IST_OFFSET;
+    return Math.floor(ms / 1000) + IST_OFFSET;
+}
 
 function resetChartData() {
     candleData = [];
     volumeData = [];
     pendingTicks = [];
-    nextCandleTime = Math.floor(Date.now() / 1000) - MAX_CANDLES * CANDLE_DT;
     candleSeries.setData([]);
     volumeSeries.setData([]);
     getOrCreateSma(); sma20.setData([]); sma50.setData([]);
@@ -300,6 +328,10 @@ function processTick(tick) {
 function flushCandle() {
     if (pendingTicks.length === 0) return;
 
+    // Use the LAST tick's real timestamp for this candle
+    const last = pendingTicks[pendingTicks.length - 1];
+    const chartTime = isoToChartTime(last.timestamp);
+
     // Aggregate pending ticks into one OHLCV candle
     const first = pendingTicks[0];
     let o = first.open || first.price;
@@ -319,10 +351,16 @@ function flushCandle() {
         v += (t.volume || 0);
     }
 
-    const candle = { time: nextCandleTime, open: o, high: h, low: l, close: c };
-    const vol = { time: nextCandleTime, value: v, color: c >= o ? '#0ecb8130' : '#f6465d30' };
+    // Ensure time is strictly increasing (TradingView requirement)
+    let t = chartTime;
+    if (candleData.length > 0) {
+        const prevTime = candleData[candleData.length - 1].time;
+        if (t <= prevTime) t = prevTime + 1;
+    }
 
-    nextCandleTime += CANDLE_DT;
+    const candle = { time: t, open: o, high: h, low: l, close: c };
+    const vol = { time: t, value: v, color: c >= o ? '#0ecb8130' : '#f6465d30' };
+
     pendingTicks = [];
 
     // Push to history
@@ -403,7 +441,9 @@ function selectSymbol(sym) {
     });
 
     // ── FETCH historical candles for this symbol from DB ──
+    showChartLoading(true);
     loadHistoricalCandles(sym).then(() => {
+        showChartLoading(false);
         // If we already had in-memory ticks that are newer, replay them
         const buf = tickBuffers[sym] || [];
         if (buf.length > candleData.length) {
@@ -414,9 +454,9 @@ function selectSymbol(sym) {
                 if (pendingTicks.length >= ticksPerCandle) flushCandle();
             }
             refreshOverlays();
-            chart.timeScale().fitContent();
         }
-    });
+        chart.timeScale().fitContent();
+    }).catch(() => { showChartLoading(false); });
 
     // Update LTP display from in-memory buffer
     const buf = tickBuffers[sym] || [];
@@ -492,6 +532,7 @@ async function loadHistoricalCandles(symbol) {
         const data = await res.json();
         if (data.candles && data.candles.length > 0) {
             // Convert DB candles into tick-buffer format
+            // c.timestamp is epoch seconds (UTC) from the backend
             const ticks = data.candles.map(c => ({
                 symbol: c.symbol,
                 price: c.close,
@@ -561,7 +602,24 @@ let socket;
 let reconnectCount = 0;
 
 function connectSocket() {
-    socket = io({ transports: ['websocket', 'polling'], reconnectionDelay: 1000 });
+    // Guard: only create ONE socket connection
+    if (socket && socket.connected) {
+        console.log('[ws] Already connected, skipping duplicate connectSocket()');
+        return;
+    }
+    if (socket) {
+        // Socket exists but disconnected — reconnect it instead of creating new
+        socket.connect();
+        return;
+    }
+
+    socket = io({
+        transports: ['websocket', 'polling'],
+        reconnectionDelay: 1000,
+        reconnectionDelayMax: 5000,
+        reconnectionAttempts: Infinity,
+        forceNew: false,       // reuse existing connection
+    });
 
     socket.on('connect', () => {
         reconnectCount++;
@@ -651,18 +709,35 @@ function connectSocket() {
         }
     });
 
-    // ── Order Update ──
+    // ── Order Update (single order — real-time from broker callback) ──
     socket.on('order_update', order => {
+        console.log('[ws] order_update:', order.order_id?.substring(0, 8), order.status);
         upsertOrder(order);
         if (order.status === 'FILLED' || order.status === 'PARTIAL') addTrade(order);
+    });
+
+    // ── Orders Snapshot (full list — from request_state on connect/refresh) ──
+    socket.on('orders_snapshot', data => {
+        if (data && data.orders) {
+            data.orders.forEach(o => {
+                upsertOrder(o, true);   // bulk — skip per-order render
+                // Populate trade log with filled orders from snapshot
+                if (o.status === 'FILLED' || o.status === 'PARTIAL') addTrade(o);
+            });
+            sortOrderList();
+            renderOrders();
+        }
     });
 
     // ── Position ──
     socket.on('position_update', data => renderPositions(data.positions));
 
-    // ── PnL (throttled) — ONLY update if engine is RUNNING ──
+    // ── PnL (throttled) ──
+    // NOTE: Do NOT block based on engineState here.
+    // The backend already stops periodic PnL broadcasts when engine is stopped.
+    // The only PnL we receive when stopped is from request_state (initial load),
+    // which must always be accepted to show correct values after page refresh.
     socket.on('pnl_update', pnl => {
-        if (engineState === 'STOPPED') return;  // freeze PnL display
         const now = Date.now();
         if (now - lastPnlTs < PNL_THROTTLE) return;
         lastPnlTs = now;
@@ -719,11 +794,20 @@ function connectSocket() {
 // ═══════════════════════════════════════════════════════════
 //  ORDERS TABLE  (with pagination)
 // ═══════════════════════════════════════════════════════════
-function upsertOrder(order) {
+function upsertOrder(order, skipRender) {
     const idx = orderList.findIndex(o => o.order_id === order.order_id);
     if (idx >= 0) orderList[idx] = order;
     else { orderList.unshift(order); if (orderList.length > MAX_ORDERS) orderList.pop(); }
-    renderOrders();
+    if (!skipRender) renderOrders();
+}
+
+// Sort order list so newest (by updated_at/created_at) appear first
+function sortOrderList() {
+    orderList.sort((a, b) => {
+        const ta = new Date(a.updated_at || a.created_at || 0).getTime();
+        const tb = new Date(b.updated_at || b.created_at || 0).getTime();
+        return tb - ta;  // descending — newest first
+    });
 }
 
 function renderOrders() {
@@ -806,6 +890,10 @@ window.cancelOrder = async function (id) {
 //  POSITIONS TABLE
 // ═══════════════════════════════════════════════════════════
 function renderPositions(positions) {
+    // Store in cache for order form indication
+    positionsCache = positions || {};
+    updateOrderBtn();  // refresh button label with open/close indication
+
     if (!positions || !Object.keys(positions).length) {
         posBody.innerHTML = '<tr><td colspan="8" class="empty">No open positions</td></tr>';
         cntPos.textContent = '0'; return;
@@ -835,10 +923,12 @@ function renderPositions(positions) {
 
 window.closePos = async function (sym, side, qty) {
     const cs = side === 'BUY' ? 'SELL' : 'BUY';
+    // Use current market price (from watchlist) instead of 0
+    const ltp = (watchData[sym] && watchData[sym].price) || 0;
     try {
         await fetch(API + '/api/place-order', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ symbol: sym, side: cs, qty, price: 0 }),
+            body: JSON.stringify({ symbol: sym, side: cs, qty, price: ltp }),
         });
     } catch (e) { console.error('Close fail', e); }
 };
@@ -847,7 +937,9 @@ window.closePos = async function (sym, side, qty) {
 //  TRADE LOG
 // ═══════════════════════════════════════════════════════════
 function addTrade(order) {
-    if (tradeList.find(t => t.order_id === order.order_id && t.status === order.status)) return;
+    // Dedup by order_id (trades from both /api/trades and order_update events)
+    const id = order.order_id || order.trade_id || '';
+    if (id && tradeList.find(t => (t.order_id || t.trade_id) === id)) return;
     tradeList.unshift(order);
     if (tradeList.length > MAX_TRADES) tradeList.pop();
     renderTrades();
@@ -858,13 +950,15 @@ function renderTrades() {
     }
     let h = '';
     for (const t of tradeList) {
+        const time = t.updated_at || t.timestamp || '';
+        const lastCol = t.strategy ? t.strategy : (t.pnl !== undefined ? formatINR(t.pnl || 0) : 'manual');
         h += `<tr>
-            <td>${shortTime(t.updated_at)}</td>
+            <td>${shortTime(time)}</td>
             <td>${t.symbol}</td>
             <td class="${sideClass(t.side)}">${t.side}</td>
             <td>${t.filled_qty || t.qty}</td>
             <td>${n(t.avg_price || t.price || 0)}</td>
-            <td>${t.strategy || 'manual'}</td>
+            <td>${lastCol}</td>
         </tr>`;
     }
     tradesBody.innerHTML = h;
@@ -896,15 +990,10 @@ symSel.addEventListener('change', () => selectSymbol(symSel.value));
 
 btnStart.addEventListener('click', () => {
     socket.emit('control', { action: 'start', strategy: stratSel.value });
-    fetch(API + '/api/start', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ strategy: stratSel.value }),
-    });
 });
 
 btnStop.addEventListener('click', () => {
     socket.emit('control', { action: 'stop' });
-    fetch(API + '/api/stop', { method: 'POST' });
 });
 
 stratSel.addEventListener('change', () => {
@@ -940,8 +1029,21 @@ function updateOrderBtn() {
     const btn = $('btn-order');
     if (!btn) return;
     const ofSym = $('of-sym');
-    const sym = ofSym ? ofSym.value.replace('.NS', '') : '';
-    btn.textContent = selectedSide + ' ' + sym;
+    const sym = ofSym ? ofSym.value : '';
+    const shortSym = sym.replace('.NS', '');
+
+    // Determine if this order would OPEN, CLOSE, or ADD to position
+    let action = 'OPEN';
+    const pos = positionsCache[sym];
+    if (pos && pos.qty > 0) {
+        if (pos.side === selectedSide) {
+            action = 'ADD';   // same side = adding to position
+        } else {
+            action = 'CLOSE'; // opposite side = closing position
+        }
+    }
+
+    btn.textContent = `${selectedSide} ${shortSym} (${action})`;
     btn.className = 'submit-btn ' + (selectedSide === 'BUY' ? 'buy-bg' : 'sell-bg');
 }
 
@@ -977,14 +1079,217 @@ $('btn-order').addEventListener('click', async () => {
 });
 
 // ═══════════════════════════════════════════════════════════
+//  AUTH  (login / register / guest)
+// ═══════════════════════════════════════════════════════════
+let currentUser = null;   // { username, account_id } or null
+
+function showAuth() {
+    const ov = document.getElementById('auth-overlay');
+    if (ov) ov.style.display = 'flex';
+}
+function hideAuth() {
+    const ov = document.getElementById('auth-overlay');
+    if (ov) ov.style.display = 'none';
+}
+function showUserInfo(username) {
+    const el = document.getElementById('user-info');
+    const nm = document.getElementById('user-name');
+    if (el) el.style.display = 'inline-flex';
+    if (nm) nm.textContent = username || 'Guest';
+}
+
+// Auth tab switching
+document.querySelectorAll('.auth-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const isLogin = tab.dataset.auth === 'login';
+        document.getElementById('login-form').style.display = isLogin ? 'flex' : 'none';
+        document.getElementById('register-form').style.display = isLogin ? 'none' : 'flex';
+        document.getElementById('auth-msg').textContent = '';
+    });
+});
+
+// Login form
+document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = document.getElementById('auth-msg');
+    const username = document.getElementById('login-user').value.trim();
+    const password = document.getElementById('login-pass').value;
+    if (!username || !password) { msg.textContent = 'Fill all fields'; msg.style.color = 'var(--red)'; return; }
+    try {
+        const res = await fetch(API + '/auth/login', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password }),
+        });
+        const d = await res.json();
+        if (res.ok) {
+            currentUser = { username: d.username, account_id: d.account_id };
+            hideAuth();
+            showUserInfo(d.username);
+            startApp();
+        } else {
+            msg.textContent = d.error || 'Login failed'; msg.style.color = 'var(--red)';
+        }
+    } catch (err) {
+        msg.textContent = 'Network error'; msg.style.color = 'var(--red)';
+    }
+});
+
+// Register form
+document.getElementById('register-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = document.getElementById('auth-msg');
+    const username = document.getElementById('reg-user').value.trim();
+    const password = document.getElementById('reg-pass').value;
+    if (!username || !password) { msg.textContent = 'Fill all fields'; msg.style.color = 'var(--red)'; return; }
+    if (password.length < 4) { msg.textContent = 'Password min 4 chars'; msg.style.color = 'var(--red)'; return; }
+    try {
+        const res = await fetch(API + '/auth/register', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password }),
+        });
+        const d = await res.json();
+        if (res.ok) {
+            // Show success and switch to Login tab
+            msg.textContent = 'Account created! Please log in.';
+            msg.style.color = 'var(--green)';
+            // Auto-switch to login tab after brief delay
+            setTimeout(() => {
+                document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+                const loginTab = document.querySelector('.auth-tab[data-auth="login"]');
+                if (loginTab) loginTab.classList.add('active');
+                document.getElementById('login-form').style.display = 'flex';
+                document.getElementById('register-form').style.display = 'none';
+                // Pre-fill username
+                document.getElementById('login-user').value = username;
+                document.getElementById('login-pass').value = '';
+                document.getElementById('login-pass').focus();
+                msg.textContent = '';
+            }, 1200);
+        } else {
+            msg.textContent = d.error || 'Registration failed'; msg.style.color = 'var(--red)';
+        }
+    } catch (err) {
+        msg.textContent = 'Network error'; msg.style.color = 'var(--red)';
+    }
+});
+
+// Skip (guest)
+document.getElementById('auth-skip-btn').addEventListener('click', () => {
+    currentUser = { username: 'Guest', account_id: 'default' };
+    hideAuth();
+    showUserInfo('Guest');
+    startApp();
+});
+
+// Logout
+document.getElementById('btn-logout').addEventListener('click', async () => {
+    try { await fetch(API + '/auth/logout', { method: 'POST' }); } catch (e) { }
+    currentUser = null;
+    document.getElementById('user-info').style.display = 'none';
+    // Disconnect socket and reset app state so re-login is clean
+    if (socket) { socket.disconnect(); socket = null; }
+    appStarted = false;
+    orderList = []; tradeList = []; signalCount = 0; tickCount = 0;
+    showAuth();
+});
+
+// Check if already logged in (session cookie)
+async function checkAuth() {
+    try {
+        const res = await fetch(API + '/auth/me');
+        if (res.ok) {
+            const d = await res.json();
+            if (d.logged_in) {
+                currentUser = { username: d.username, account_id: d.account_id };
+                hideAuth();
+                showUserInfo(d.username);
+                return true;
+            }
+        }
+    } catch (e) { }
+    return false;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  SERVER CLOCK  (IST time from /api/clock)
+// ═══════════════════════════════════════════════════════════
+async function fetchServerClock() {
+    try {
+        const res = await fetch(API + '/api/clock');
+        if (res.ok) {
+            const d = await res.json();
+            if (d.ist_time) {
+                clock.textContent = d.ist_time;
+                clock._serverUpdated = true;
+                // Reset flag after 6s so client fallback resumes if server stops responding
+                clearTimeout(clock._resetTimer);
+                clock._resetTimer = setTimeout(() => { clock._serverUpdated = false; }, 6000);
+            }
+        }
+    } catch (e) { clock._serverUpdated = false; }
+}
+// Update IST clock from server every 5s (client clock as fallback)
+setInterval(fetchServerClock, 5000);
+
+// ═══════════════════════════════════════════════════════════
 //  LOAD EXISTING DATA + FAKE INDICES  (mode-aware)
 // ═══════════════════════════════════════════════════════════
 async function loadExisting() {
     try {
         const res = await fetch(API + '/api/orders?limit=50&offset=0');
         const d = await res.json();
-        if (d.orders) d.orders.forEach(o => upsertOrder(o));
+        if (d.orders) {
+            d.orders.forEach(o => upsertOrder(o, true));  // bulk load — skip per-order render
+            sortOrderList();   // ensure newest orders on page 1
+            renderOrders();
+            // Also populate trade log with filled orders
+            d.orders.filter(o => o.status === 'FILLED' || o.status === 'PARTIAL')
+                .forEach(o => addTrade(o));
+        }
     } catch (e) { }
+    // Also fetch trades from dedicated endpoint
+    try {
+        const res = await fetch(API + '/api/trades?limit=100');
+        const d = await res.json();
+        if (d.trades && d.trades.length) {
+            d.trades.forEach(t => addTrade(t));
+        }
+    } catch (e) { }
+}
+
+// ── Data Source Debug Panel ──
+async function loadDataSourceInfo() {
+    try {
+        const res = await fetch(API + '/api/datasource');
+        if (!res.ok) return;
+        const d = await res.json();
+        const body = document.getElementById('datasource-body');
+        const modeEl = document.getElementById('ds-mode');
+        if (!body) return;
+
+        if (modeEl) modeEl.textContent = 'Mode: ' + (d.mode || '?').toUpperCase();
+
+        const syms = d.symbols || {};
+        if (!Object.keys(syms).length) {
+            body.innerHTML = '<tr><td colspan="5" class="empty">No symbols configured</td></tr>';
+            return;
+        }
+
+        let h = '';
+        for (const [sym, info] of Object.entries(syms)) {
+            const srcClass = (info.source || '').includes('Yahoo') ? 'side-buy' : 'side-sell';
+            h += `<tr>
+                <td>${sym}</td>
+                <td class="${srcClass}">${info.source || '?'}</td>
+                <td>${info.rows || 0}</td>
+                <td style="font-size:.72rem">${info.date_range || '—'}</td>
+                <td>${info.csv_exists ? '✓' : '✗'}</td>
+            </tr>`;
+        }
+        body.innerHTML = h;
+    } catch (e) { console.debug('datasource load error', e); }
 }
 
 // Fake market indices — ONLY shown in demo mode.
@@ -1019,9 +1324,14 @@ async function detectMode() {
 }
 
 // ═══════════════════════════════════════════════════════════
-//  INIT  —  Historical candles FIRST, then websocket
+//  INIT  —  Auth check → Historical candles → WebSocket
 // ═══════════════════════════════════════════════════════════
-async function init() {
+let appStarted = false;
+
+async function startApp() {
+    if (appStarted) return;
+    appStarted = true;
+
     buildWatchlist();
     updateOrderBtn();
 
@@ -1035,13 +1345,30 @@ async function init() {
     // 3. Load existing orders
     loadExisting();
 
-    // 4. Fake indices only in demo mode (strict mode compliance)
+    // 4. Data source debug info
+    loadDataSourceInfo();
+
+    // 5. Fake indices only in demo mode (strict mode compliance)
     const mode = await detectMode();
     if (mode === 'demo') {
         fakeIndices();
     } else {
         // In non-demo modes, hide the SIM tags or show real data
         document.querySelectorAll('.sim-tag').forEach(el => el.style.display = 'none');
+    }
+
+    // 5. Fetch server IST clock immediately
+    fetchServerClock();
+}
+
+async function init() {
+    // Check if already logged in (session cookie persists across refresh)
+    const loggedIn = await checkAuth();
+    if (loggedIn) {
+        startApp();
+    } else {
+        // Show login overlay
+        showAuth();
     }
 }
 

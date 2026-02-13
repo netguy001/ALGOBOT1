@@ -23,7 +23,7 @@ import logging
 import math
 import random
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Generator, Optional
 
@@ -31,6 +31,17 @@ import numpy as np
 import pandas as pd
 
 from app.config import DATA_DIR, DEFAULT_SYMBOLS, TICK_INTERVAL_SEC
+
+
+def _utc_now_iso() -> str:
+    """Return current UTC time as ISO 8601 string via EngineClock."""
+    try:
+        from app.utils.clock import EngineClock
+
+        return EngineClock(mode="demo").now_iso()
+    except Exception:
+        return datetime.now(timezone.utc).isoformat()
+
 
 logger = logging.getLogger(__name__)
 
@@ -141,7 +152,7 @@ def generate_synthetic_ohlcv(
     volumes = (rng.lognormal(mean=14, sigma=0.6, size=days)).astype(int)
 
     # Build DatetimeIndex (last N trading days ending today)
-    end_date = datetime.now()
+    end_date = datetime.now(timezone.utc)
     dates = pd.bdate_range(end=end_date, periods=days)
 
     df = pd.DataFrame(
@@ -280,7 +291,7 @@ def tick_generator(
             "close": float(row["Close"]),
             "price": float(row["Close"]),
             "volume": int(row.get("Volume", 0)),
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": _utc_now_iso(),
         }
         yield tick
         time.sleep(interval_sec)

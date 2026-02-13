@@ -15389,3 +15389,1102 @@
 2026-02-12 17:18:24,328 [INFO] __main__: Market data provider: yahoo (mode=demo)
 2026-02-12 17:18:24,335 [INFO] app.broker.simulated_broker: Simulated broker started
 2026-02-12 17:18:24,336 [INFO] __main__: Starting server on 0.0.0.0:5005  ML=False
+2026-02-12 17:19:35,887 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 17:19:36,639 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 17:20:11,370 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 17:20:12,286 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 17:20:50,993 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 17:20:51,419 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 17:20:55,812 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 17:20:55,812 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:20:55,812 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 17:20:55,812 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:20:55,812 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:20:55,812 [WARNING] app.engine_controller: Cannot start: current state is RUNNING
+2026-02-12 17:20:55,812 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:20:55,853 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 17:20:55,853 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:20:55,853 [WARNING] app.engine_controller: Cannot start: current state is RUNNING
+2026-02-12 17:20:55,853 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:20:55,853 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:20:55,853 [WARNING] app.engine_controller: Cannot start: current state is RUNNING
+2026-02-12 17:20:55,853 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:21:08,778 [INFO] app.strategy.engine: Signal: SELL SBIN.NS @ 864.70 — SMA20 crossed below SMA50
+2026-02-12 17:21:08,778 [INFO] app.broker.order_manager: Order created: ceaaa684 SELL SBIN.NS qty=115 @ 864.70  (avail_capital=1000000)
+2026-02-12 17:21:09,211 [INFO] app.routes.webhook: Webhook received: order=ceaaa684 status=ACK filled=0 avg=0.00
+2026-02-12 17:21:09,294 [INFO] app.strategy.engine: Signal: BUY TCS.NS @ 2962.10 — SMA20 crossed above SMA50
+2026-02-12 17:21:09,294 [INFO] app.broker.order_manager: Order created: a43e5665 BUY TCS.NS qty=33 @ 2962.10  (avail_capital=1000000)
+2026-02-12 17:21:09,669 [INFO] app.routes.webhook: Webhook received: order=ceaaa684 status=FILLED filled=115 avg=864.27
+2026-02-12 17:21:10,036 [INFO] app.routes.webhook: Webhook received: order=a43e5665 status=ACK filled=0 avg=0.00
+2026-02-12 17:21:10,327 [INFO] app.routes.webhook: Webhook received: order=a43e5665 status=PARTIAL filled=30 avg=2963.58
+2026-02-12 17:21:11,111 [INFO] app.routes.webhook: Webhook received: order=a43e5665 status=FILLED filled=33 avg=2963.58
+2026-02-12 17:21:11,294 [INFO] app.broker.order_manager: SL HIT for SBIN.NS @ 882.95 (SL=881.99 TP=830.11) — closing 115 shares
+2026-02-12 17:21:11,494 [INFO] app.routes.webhook: Webhook received: order=468f6c7c status=ACK filled=0 avg=0.00
+2026-02-12 17:21:11,920 [INFO] app.broker.order_manager: SL HIT for TCS.NS @ 2896.64 (SL=2902.86 TP=3080.59) — closing 63 shares
+2026-02-12 17:21:12,217 [INFO] app.routes.webhook: Webhook received: order=468f6c7c status=FILLED filled=115 avg=883.39
+2026-02-12 17:21:12,453 [INFO] app.routes.webhook: Webhook received: order=b6a55be1 status=ACK filled=0 avg=0.00
+2026-02-12 17:21:12,911 [INFO] app.routes.webhook: Webhook received: order=b6a55be1 status=REJECTED filled=0 avg=0.00
+2026-02-12 17:21:14,259 [INFO] app.strategy.engine: Signal: BUY TCS.NS @ 2961.37 — SMA20 crossed above SMA50
+2026-02-12 17:21:20,469 [INFO] app.strategy.engine: Signal: SELL INFY.NS @ 1467.90 — SMA20 crossed below SMA50
+2026-02-12 17:21:20,469 [INFO] app.broker.order_manager: Order created: 30b7115e SELL INFY.NS qty=55 @ 1467.90  (avail_capital=811096)
+2026-02-12 17:21:20,836 [INFO] app.routes.webhook: Webhook received: order=30b7115e status=ACK filled=0 avg=0.00
+2026-02-12 17:21:21,602 [INFO] app.routes.webhook: Webhook received: order=30b7115e status=FILLED filled=55 avg=1467.17
+2026-02-12 17:21:22,418 [INFO] app.broker.order_manager: SL HIT for INFY.NS @ 1513.50 (SL=1497.26 TP=1409.18) — closing 55 shares
+2026-02-12 17:21:22,743 [INFO] app.routes.webhook: Webhook received: order=4cfc0844 status=ACK filled=0 avg=0.00
+2026-02-12 17:21:23,002 [INFO] app.strategy.engine: Signal: SELL SBIN.NS @ 953.30 — SMA20 crossed below SMA50
+2026-02-12 17:21:23,019 [INFO] app.routes.webhook: Webhook received: order=4cfc0844 status=PARTIAL filled=19 avg=1514.26
+2026-02-12 17:21:23,028 [INFO] app.broker.order_manager: SL HIT for INFY.NS @ 1530.30 (SL=1497.26 TP=1409.18) — closing 36 shares
+2026-02-12 17:21:23,294 [INFO] app.routes.webhook: Webhook received: order=4cfc0844 status=FILLED filled=55 avg=1514.26
+2026-02-12 17:21:23,453 [INFO] app.routes.webhook: Webhook received: order=bb29d54f status=ACK filled=0 avg=0.00
+2026-02-12 17:21:23,528 [INFO] app.strategy.engine: Signal: BUY TCS.NS @ 3075.88 — SMA20 crossed above SMA50
+2026-02-12 17:21:23,653 [INFO] app.broker.order_manager: TP HIT for INFY.NS @ 1551.70 (SL=1497.26 TP=1409.18) — closing 19 shares
+2026-02-12 17:21:24,178 [INFO] app.routes.webhook: Webhook received: order=bb29d54f status=FILLED filled=36 avg=1531.07
+2026-02-12 17:21:24,270 [INFO] app.broker.order_manager: TP HIT for INFY.NS @ 1541.80 (SL=1497.26 TP=1409.18) — closing 55 shares
+2026-02-12 17:21:24,434 [INFO] app.routes.webhook: Webhook received: order=3814974d status=ACK filled=0 avg=0.00
+2026-02-12 17:21:24,869 [INFO] app.broker.order_manager: TP HIT for INFY.NS @ 1502.80 (SL=1497.26 TP=1409.18) — closing 55 shares
+2026-02-12 17:21:25,251 [INFO] app.routes.webhook: Webhook received: order=3814974d status=FILLED filled=19 avg=1550.92
+2026-02-12 17:21:25,503 [INFO] app.broker.order_manager: TP HIT for INFY.NS @ 1507.60 (SL=1497.26 TP=1409.18) — closing 36 shares
+2026-02-12 17:21:25,619 [INFO] app.routes.webhook: Webhook received: order=6bbb0fb8 status=ACK filled=0 avg=0.00
+2026-02-12 17:21:25,669 [INFO] app.ws.socket_server: Control event: toggle_ml  payload={'action': 'toggle_ml', 'use_ml': True}
+2026-02-12 17:21:26,135 [INFO] app.broker.order_manager: SL HIT for INFY.NS @ 1486.40 (SL=1497.26 TP=1409.18) — closing 36 shares
+2026-02-12 17:21:26,427 [INFO] app.routes.webhook: Webhook received: order=6bbb0fb8 status=FILLED filled=55 avg=1541.03
+2026-02-12 17:21:26,577 [INFO] app.routes.webhook: Webhook received: order=09119906 status=ACK filled=0 avg=0.00
+2026-02-12 17:21:26,810 [INFO] app.broker.order_manager: TP HIT for TCS.NS @ 3091.50 (SL=2902.86 TP=3080.59) — closing 63 shares
+2026-02-12 17:21:26,810 [INFO] app.broker.order_manager: SL HIT for INFY.NS @ 1541.10 (SL=1497.26 TP=1409.18) — closing 19 shares
+2026-02-12 17:21:27,044 [INFO] app.routes.webhook: Webhook received: order=09119906 status=FILLED filled=55 avg=1502.05
+2026-02-12 17:21:27,211 [INFO] app.routes.webhook: Webhook received: order=c6e9f218 status=ACK filled=0 avg=0.00
+2026-02-12 17:21:27,419 [INFO] app.broker.order_manager: TP HIT for TCS.NS @ 3088.65 (SL=2902.86 TP=3080.59) — closing 63 shares
+2026-02-12 17:21:27,419 [INFO] app.broker.order_manager: SL HIT for INFY.NS @ 1536.50 (SL=1497.26 TP=1409.18) — closing 74 shares
+2026-02-12 17:21:28,002 [INFO] app.routes.webhook: Webhook received: order=c6e9f218 status=PARTIAL filled=23 avg=1506.85
+2026-02-12 17:21:28,028 [INFO] app.broker.order_manager: TP HIT for TCS.NS @ 3094.35 (SL=2902.86 TP=3080.59) — closing 63 shares
+2026-02-12 17:21:28,030 [INFO] app.broker.order_manager: SL HIT for INFY.NS @ 1545.00 (SL=1497.26 TP=1409.18) — closing 97 shares
+2026-02-12 17:21:28,652 [INFO] app.broker.order_manager: TP HIT for TCS.NS @ 3085.12 (SL=2902.86 TP=3080.59) — closing 63 shares
+2026-02-12 17:21:28,652 [INFO] app.broker.order_manager: SL HIT for INFY.NS @ 1548.00 (SL=1497.26 TP=1409.18) — closing 97 shares
+2026-02-12 17:21:28,761 [INFO] app.routes.webhook: Webhook received: order=c6e9f218 status=FILLED filled=36 avg=1506.85
+2026-02-12 17:21:29,053 [INFO] app.routes.webhook: Webhook received: order=cfdf09b0 status=ACK filled=0 avg=0.00
+2026-02-12 17:21:29,269 [INFO] app.broker.order_manager: SL HIT for INFY.NS @ 1530.60 (SL=1497.26 TP=1409.18) — closing 133 shares
+2026-02-12 17:21:29,677 [INFO] app.routes.webhook: Webhook received: order=cfdf09b0 status=FILLED filled=36 avg=1485.66
+2026-02-12 17:21:29,886 [INFO] app.broker.order_manager: TP HIT for TCS.NS @ 3106.43 (SL=2902.86 TP=3080.59) — closing 63 shares
+2026-02-12 17:21:29,888 [INFO] app.broker.order_manager: SL HIT for INFY.NS @ 1557.90 (SL=1497.26 TP=1409.18) — closing 169 shares
+2026-02-12 17:21:30,052 [INFO] app.routes.webhook: Webhook received: order=2aed807c status=ACK filled=0 avg=0.00
+2026-02-12 17:21:30,511 [INFO] app.broker.order_manager: TP HIT for TCS.NS @ 3080.60 (SL=2902.86 TP=3080.59) — closing 63 shares
+2026-02-12 17:21:30,511 [INFO] app.broker.order_manager: SL HIT for INFY.NS @ 1566.40 (SL=1497.26 TP=1409.18) — closing 169 shares
+2026-02-12 17:21:30,594 [INFO] app.routes.webhook: Webhook received: order=2aed807c status=FILLED filled=63 avg=3089.95
+2026-02-12 17:21:30,784 [INFO] app.routes.webhook: Webhook received: order=5e23cd29 status=ACK filled=0 avg=0.00
+2026-02-12 17:21:31,127 [INFO] app.broker.order_manager: SL HIT for INFY.NS @ 1560.10 (SL=1497.26 TP=1409.18) — closing 169 shares
+2026-02-12 17:21:31,218 [INFO] app.routes.webhook: Webhook received: order=5e23cd29 status=PARTIAL filled=9 avg=1541.87
+2026-02-12 17:21:31,735 [INFO] app.broker.order_manager: SL HIT for INFY.NS @ 1564.00 (SL=1497.26 TP=1409.18) — closing 160 shares
+2026-02-12 17:21:31,736 [INFO] app.routes.webhook: Webhook received: order=5e23cd29 status=FILLED filled=19 avg=1541.87
+2026-02-12 17:21:32,019 [INFO] app.routes.webhook: Webhook received: order=7cd88311 status=ACK filled=0 avg=0.00
+2026-02-12 17:21:32,344 [INFO] app.broker.order_manager: SL HIT for INFY.NS @ 1561.00 (SL=1497.26 TP=1409.18) — closing 141 shares
+2026-02-12 17:21:32,436 [INFO] app.routes.webhook: Webhook received: order=7cd88311 status=FILLED filled=63 avg=3087.11
+2026-02-12 17:21:32,777 [INFO] app.routes.webhook: Webhook received: order=4f6b2af2 status=ACK filled=0 avg=0.00
+2026-02-12 17:21:32,952 [INFO] app.broker.order_manager: SL HIT for TCS.NS @ 3123.22 (SL=2902.86 TP=3080.59) — closing 63 shares
+2026-02-12 17:21:32,953 [INFO] app.broker.order_manager: SL HIT for INFY.NS @ 1578.70 (SL=1497.26 TP=1409.18) — closing 141 shares
+2026-02-12 17:21:33,194 [INFO] app.routes.webhook: Webhook received: order=4f6b2af2 status=FILLED filled=74 avg=1537.27
+2026-02-12 17:21:33,319 [INFO] app.routes.webhook: Webhook received: order=3641a551 status=ACK filled=0 avg=0.00
+2026-02-12 17:21:33,560 [INFO] app.broker.order_manager: SL HIT for TCS.NS @ 3171.54 (SL=2902.86 TP=3080.59) — closing 63 shares
+2026-02-12 17:21:33,560 [INFO] app.broker.order_manager: SL HIT for INFY.NS @ 1597.60 (SL=1497.26 TP=1409.18) — closing 67 shares
+2026-02-12 17:21:34,136 [INFO] app.routes.webhook: Webhook received: order=3641a551 status=FILLED filled=63 avg=3092.80
+2026-02-12 17:21:34,170 [INFO] app.broker.order_manager: SL HIT for TCS.NS @ 3180.38 (SL=2902.86 TP=3080.59) — closing 126 shares
+2026-02-12 17:21:34,171 [INFO] app.broker.order_manager: SL HIT for INFY.NS @ 1616.20 (SL=1497.26 TP=1409.18) — closing 67 shares
+2026-02-12 17:21:34,545 [INFO] app.routes.webhook: Webhook received: order=8b372534 status=ACK filled=0 avg=0.00
+2026-02-12 17:21:34,778 [INFO] app.broker.order_manager: SL HIT for TCS.NS @ 3178.71 (SL=2902.86 TP=3080.59) — closing 126 shares
+2026-02-12 17:21:34,778 [INFO] app.broker.order_manager: SL HIT for INFY.NS @ 1610.80 (SL=1497.26 TP=1409.18) — closing 67 shares
+2026-02-12 17:21:35,220 [INFO] app.routes.webhook: Webhook received: order=8b372534 status=PARTIAL filled=52 avg=1545.77
+2026-02-12 17:21:35,385 [INFO] app.broker.order_manager: SL HIT for TCS.NS @ 3151.02 (SL=2902.86 TP=3080.59) — closing 126 shares
+2026-02-12 17:21:35,385 [INFO] app.broker.order_manager: SL HIT for INFY.NS @ 1599.00 (SL=1497.26 TP=1409.18) — closing 15 shares
+2026-02-12 17:21:35,819 [INFO] app.routes.webhook: Webhook received: order=8b372534 status=FILLED filled=97 avg=1545.77
+2026-02-12 17:21:35,945 [INFO] app.ws.socket_server: Control event: stop  payload={'action': 'stop'}
+2026-02-12 17:21:35,945 [INFO] app.engine_controller: EngineController -> STOPPED  (engine.stop)
+2026-02-12 17:21:35,946 [INFO] app.strategy.engine: Strategy engine stopped
+2026-02-12 17:21:35,947 [INFO] app.strategy.engine: Strategy engine stopped
+2026-02-12 17:21:35,980 [INFO] app.ws.socket_server: Control event: stop  payload={'action': 'stop'}
+2026-02-12 17:21:35,980 [INFO] app.strategy.engine: Strategy engine stopped
+2026-02-12 17:21:35,981 [INFO] app.strategy.engine: Strategy engine stopped
+2026-02-12 17:21:36,211 [INFO] app.routes.webhook: Webhook received: order=2ae5d890 status=ACK filled=0 avg=0.00
+2026-02-12 17:21:36,703 [INFO] app.routes.webhook: Webhook received: order=2ae5d890 status=PARTIAL filled=58 avg=3083.57
+2026-02-12 17:21:37,476 [INFO] app.routes.webhook: Webhook received: order=2ae5d890 status=FILLED filled=63 avg=3083.57
+2026-02-12 17:21:37,827 [INFO] app.routes.webhook: Webhook received: order=d554928a status=ACK filled=0 avg=0.00
+2026-02-12 17:21:38,445 [INFO] app.routes.webhook: Webhook received: order=d554928a status=PARTIAL filled=64 avg=1548.77
+2026-02-12 17:21:38,810 [INFO] app.routes.webhook: Webhook received: order=d554928a status=FILLED filled=97 avg=1548.77
+2026-02-12 17:21:39,094 [INFO] app.routes.webhook: Webhook received: order=01c2be03 status=ACK filled=0 avg=0.00
+2026-02-12 17:21:39,902 [INFO] app.routes.webhook: Webhook received: order=01c2be03 status=FILLED filled=133 avg=1531.37
+2026-02-12 17:21:40,327 [INFO] app.routes.webhook: Webhook received: order=e2230c0f status=ACK filled=0 avg=0.00
+2026-02-12 17:21:40,959 [INFO] app.routes.webhook: Webhook received: order=e2230c0f status=PARTIAL filled=60 avg=3104.88
+2026-02-12 17:21:41,684 [INFO] app.routes.webhook: Webhook received: order=e2230c0f status=FILLED filled=63 avg=3104.88
+2026-02-12 17:21:41,976 [INFO] app.routes.webhook: Webhook received: order=48d84d56 status=ACK filled=0 avg=0.00
+2026-02-12 17:21:42,368 [INFO] app.routes.webhook: Webhook received: order=48d84d56 status=FILLED filled=169 avg=1558.68
+2026-02-12 17:21:42,809 [INFO] app.routes.webhook: Webhook received: order=9fc73331 status=ACK filled=0 avg=0.00
+2026-02-12 17:21:43,668 [INFO] app.routes.webhook: Webhook received: order=9fc73331 status=PARTIAL filled=25 avg=3079.06
+2026-02-12 17:21:44,201 [INFO] app.routes.webhook: Webhook received: order=9fc73331 status=FILLED filled=63 avg=3079.06
+2026-02-12 17:21:44,501 [INFO] app.routes.webhook: Webhook received: order=f8d120e0 status=ACK filled=0 avg=0.00
+2026-02-12 17:21:45,260 [INFO] app.routes.webhook: Webhook received: order=f8d120e0 status=FILLED filled=169 avg=1567.18
+2026-02-12 17:21:45,626 [INFO] app.routes.webhook: Webhook received: order=8aad6b61 status=ACK filled=0 avg=0.00
+2026-02-12 17:21:46,192 [INFO] app.routes.webhook: Webhook received: order=8aad6b61 status=FILLED filled=169 avg=1560.88
+2026-02-12 17:21:46,329 [INFO] app.routes.webhook: Webhook received: order=ec080f81 status=ACK filled=0 avg=0.00
+2026-02-12 17:21:46,642 [INFO] app.routes.webhook: Webhook received: order=ec080f81 status=PARTIAL filled=58 avg=1564.78
+2026-02-12 17:21:47,310 [INFO] app.routes.webhook: Webhook received: order=ec080f81 status=FILLED filled=160 avg=1564.78
+2026-02-12 17:21:47,734 [INFO] app.routes.webhook: Webhook received: order=e5f37af1 status=ACK filled=0 avg=0.00
+2026-02-12 17:21:48,384 [INFO] app.routes.webhook: Webhook received: order=e5f37af1 status=FILLED filled=141 avg=1561.78
+2026-02-12 17:21:48,570 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 17:21:48,570 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:21:48,570 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 17:21:48,570 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:21:48,571 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:21:48,572 [WARNING] app.engine_controller: Cannot start: current state is RUNNING
+2026-02-12 17:21:48,572 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:21:48,700 [INFO] app.routes.webhook: Webhook received: order=ed30b711 status=ACK filled=0 avg=0.00
+2026-02-12 17:21:48,777 [WARNING] app.engine_controller: EMERGENCY STOP: max_exposure (335.5%)
+2026-02-12 17:21:48,778 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: max_exposure (335.5%)
+2026-02-12 17:21:49,268 [INFO] app.routes.webhook: Webhook received: order=ed30b711 status=PARTIAL filled=43 avg=3124.78
+2026-02-12 17:21:50,060 [INFO] app.routes.webhook: Webhook received: order=ed30b711 status=FILLED filled=63 avg=3124.78
+2026-02-12 17:21:50,351 [INFO] app.routes.webhook: Webhook received: order=2ec01300 status=ACK filled=0 avg=0.00
+2026-02-12 17:21:50,757 [INFO] app.routes.webhook: Webhook received: order=2ec01300 status=FILLED filled=141 avg=1579.49
+2026-02-12 17:21:51,009 [INFO] app.routes.webhook: Webhook received: order=829bc600 status=ACK filled=0 avg=0.00
+2026-02-12 17:21:51,501 [INFO] app.routes.webhook: Webhook received: order=829bc600 status=FILLED filled=63 avg=3173.13
+2026-02-12 17:21:51,684 [INFO] app.routes.webhook: Webhook received: order=3874be52 status=ACK filled=0 avg=0.00
+2026-02-12 17:21:52,085 [INFO] app.routes.webhook: Webhook received: order=3874be52 status=PARTIAL filled=41 avg=1598.40
+2026-02-12 17:21:52,685 [INFO] app.routes.webhook: Webhook received: order=3874be52 status=FILLED filled=67 avg=1598.40
+2026-02-12 17:21:53,026 [INFO] app.routes.webhook: Webhook received: order=5a9f4425 status=ACK filled=0 avg=0.00
+2026-02-12 17:21:53,761 [INFO] app.routes.webhook: Webhook received: order=5a9f4425 status=PARTIAL filled=32 avg=3181.97
+2026-02-12 17:21:54,201 [INFO] app.routes.webhook: Webhook received: order=5a9f4425 status=FILLED filled=126 avg=3181.97
+2026-02-12 17:21:54,617 [INFO] app.routes.webhook: Webhook received: order=4e1e6aa9 status=ACK filled=0 avg=0.00
+2026-02-12 17:21:54,984 [INFO] app.routes.webhook: Webhook received: order=4e1e6aa9 status=PARTIAL filled=2 avg=1617.01
+2026-02-12 17:21:55,493 [INFO] app.routes.webhook: Webhook received: order=4e1e6aa9 status=FILLED filled=67 avg=1617.01
+2026-02-12 17:21:55,734 [INFO] app.routes.webhook: Webhook received: order=5a091983 status=ACK filled=0 avg=0.00
+2026-02-12 17:21:56,204 [INFO] app.routes.webhook: Webhook received: order=5a091983 status=FILLED filled=126 avg=3180.30
+2026-02-12 17:21:56,359 [INFO] app.routes.webhook: Webhook received: order=131158af status=ACK filled=0 avg=0.00
+2026-02-12 17:21:56,693 [INFO] app.routes.webhook: Webhook received: order=131158af status=FILLED filled=67 avg=1611.61
+2026-02-12 17:21:56,853 [INFO] app.routes.webhook: Webhook received: order=d5f9298c status=ACK filled=0 avg=0.00
+2026-02-12 17:21:57,643 [INFO] app.routes.webhook: Webhook received: order=d5f9298c status=FILLED filled=126 avg=3152.59
+2026-02-12 17:21:57,851 [INFO] app.routes.webhook: Webhook received: order=0aa493c6 status=ACK filled=0 avg=0.00
+2026-02-12 17:21:58,576 [INFO] app.routes.webhook: Webhook received: order=0aa493c6 status=PARTIAL filled=5 avg=1599.80
+2026-02-12 17:21:59,234 [INFO] app.routes.webhook: Webhook received: order=0aa493c6 status=FILLED filled=15 avg=1599.80
+2026-02-12 17:22:07,526 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 17:22:07,526 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:22:07,526 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 17:22:07,526 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:22:07,526 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:22:07,526 [WARNING] app.engine_controller: Cannot start: current state is RUNNING
+2026-02-12 17:22:07,526 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:22:07,767 [WARNING] app.engine_controller: EMERGENCY STOP: max_exposure (307.5%)
+2026-02-12 17:22:07,767 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: max_exposure (307.5%)
+2026-02-12 17:22:14,834 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 17:22:14,834 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:22:14,834 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 17:22:14,834 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:22:14,834 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:22:14,834 [WARNING] app.engine_controller: Cannot start: current state is RUNNING
+2026-02-12 17:22:14,834 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:22:15,134 [WARNING] app.engine_controller: EMERGENCY STOP: max_exposure (307.5%)
+2026-02-12 17:22:15,134 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: max_exposure (307.5%)
+2026-02-12 17:22:39,367 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 17:22:39,367 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:22:39,367 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 17:22:39,367 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:22:39,367 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:22:39,367 [WARNING] app.engine_controller: Cannot start: current state is RUNNING
+2026-02-12 17:22:39,375 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:22:39,642 [WARNING] app.engine_controller: EMERGENCY STOP: max_exposure (307.5%)
+2026-02-12 17:22:39,642 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: max_exposure (307.5%)
+2026-02-12 17:22:40,458 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 17:22:40,458 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:22:40,458 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 17:22:40,458 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:22:40,458 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:22:40,458 [WARNING] app.engine_controller: Cannot start: current state is RUNNING
+2026-02-12 17:22:40,458 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:22:40,825 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 17:22:40,825 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:22:40,825 [WARNING] app.engine_controller: Cannot start: current state is RUNNING
+2026-02-12 17:22:40,825 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:22:40,825 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:22:40,825 [WARNING] app.engine_controller: Cannot start: current state is RUNNING
+2026-02-12 17:22:40,825 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:22:40,859 [WARNING] app.engine_controller: EMERGENCY STOP: max_exposure (307.5%)
+2026-02-12 17:22:40,859 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: max_exposure (307.5%)
+2026-02-12 17:23:35,992 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 17:23:35,992 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:23:35,999 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 17:23:35,999 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:23:36,000 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:23:36,000 [WARNING] app.engine_controller: Cannot start: current state is RUNNING
+2026-02-12 17:23:36,000 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:23:36,092 [WARNING] app.engine_controller: EMERGENCY STOP: max_exposure (307.5%)
+2026-02-12 17:23:36,092 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: max_exposure (307.5%)
+2026-02-12 17:23:36,866 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 17:23:36,866 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:23:36,866 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 17:23:36,866 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:23:36,866 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:23:36,866 [WARNING] app.engine_controller: Cannot start: current state is RUNNING
+2026-02-12 17:23:36,866 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:23:36,883 [INFO] app.broker.order_manager: TP HIT for TCS.NS @ 4044.16 (SL=2902.86 TP=3080.59) — closing 121 shares
+2026-02-12 17:23:36,885 [INFO] app.broker.order_manager: TP HIT for INFY.NS @ 1823.27 (SL=1497.26 TP=1409.18) — closing 1647 shares
+2026-02-12 17:23:37,300 [INFO] app.routes.webhook: Webhook received: order=2b35774f status=ACK filled=0 avg=0.00
+2026-02-12 17:23:37,326 [WARNING] app.engine_controller: EMERGENCY STOP: max_exposure (307.5%)
+2026-02-12 17:23:37,327 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: max_exposure (307.5%)
+2026-02-12 17:23:37,558 [INFO] app.routes.webhook: Webhook received: order=2b35774f status=PARTIAL filled=49 avg=4042.13
+2026-02-12 17:23:37,881 [INFO] app.routes.webhook: Webhook received: order=2b35774f status=FILLED filled=121 avg=4042.13
+2026-02-12 17:23:38,200 [INFO] app.routes.webhook: Webhook received: order=14f66554 status=ACK filled=0 avg=0.00
+2026-02-12 17:23:38,616 [INFO] app.routes.webhook: Webhook received: order=14f66554 status=FILLED filled=1647 avg=1822.36
+2026-02-12 17:26:05,048 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 17:26:05,048 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:26:05,048 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 17:26:05,048 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:26:05,048 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:26:05,048 [WARNING] app.engine_controller: Cannot start: current state is RUNNING
+2026-02-12 17:26:05,048 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:26:05,106 [INFO] app.broker.order_manager: SL HIT for TCS.NS @ 3057.02 (SL=2902.86 TP=3080.59) — closing 49 shares
+2026-02-12 17:26:05,531 [INFO] app.routes.webhook: Webhook received: order=ad4c82c6 status=ACK filled=0 avg=0.00
+2026-02-12 17:26:05,714 [INFO] app.broker.order_manager: SL HIT for TCS.NS @ 3066.02 (SL=2902.86 TP=3080.59) — closing 49 shares
+2026-02-12 17:26:05,806 [INFO] app.routes.webhook: Webhook received: order=ad4c82c6 status=FILLED filled=49 avg=3058.55
+2026-02-12 17:26:06,056 [INFO] app.routes.webhook: Webhook received: order=c4a1f2e3 status=ACK filled=0 avg=0.00
+2026-02-12 17:26:06,481 [INFO] app.routes.webhook: Webhook received: order=c4a1f2e3 status=FILLED filled=49 avg=3067.55
+2026-02-12 17:26:07,564 [INFO] app.broker.order_manager: TP HIT for TCS.NS @ 3104.57 (SL=2902.86 TP=3080.59) — closing 49 shares
+2026-02-12 17:26:07,749 [INFO] app.routes.webhook: Webhook received: order=03f16f1d status=ACK filled=0 avg=0.00
+2026-02-12 17:26:08,039 [INFO] app.routes.webhook: Webhook received: order=03f16f1d status=FILLED filled=49 avg=3103.02
+2026-02-12 17:26:15,515 [INFO] app.strategy.engine: Signal: SELL SBIN.NS @ 864.70 — SMA20 crossed below SMA50
+2026-02-12 17:26:16,032 [INFO] app.strategy.engine: Signal: BUY TCS.NS @ 2962.10 — SMA20 crossed above SMA50
+2026-02-12 17:26:20,939 [INFO] app.strategy.engine: Signal: BUY TCS.NS @ 2961.37 — SMA20 crossed above SMA50
+2026-02-12 17:26:27,106 [INFO] app.strategy.engine: Signal: SELL INFY.NS @ 1467.90 — SMA20 crossed below SMA50
+2026-02-12 17:26:29,481 [INFO] app.ws.socket_server: Control event: stop  payload={'action': 'stop'}
+2026-02-12 17:26:29,481 [INFO] app.engine_controller: EngineController -> STOPPED  (engine.stop)
+2026-02-12 17:26:29,481 [INFO] app.strategy.engine: Strategy engine stopped
+2026-02-12 17:26:29,789 [INFO] app.strategy.engine: Strategy engine stopped
+2026-02-12 17:26:58,813 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 17:26:58,813 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:26:58,813 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 17:26:58,813 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:26:58,813 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:26:58,813 [WARNING] app.engine_controller: Cannot start: current state is RUNNING
+2026-02-12 17:26:58,813 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:27:05,747 [INFO] app.strategy.engine: Signal: SELL INFY.NS @ 1535.80 — SMA20 crossed below SMA50
+2026-02-12 17:27:05,747 [INFO] app.broker.order_manager: Order created: 9c90c33c SELL INFY.NS qty=100 @ 1535.80  (avail_capital=1541891)
+2026-02-12 17:27:06,172 [INFO] app.routes.webhook: Webhook received: order=9c90c33c status=ACK filled=0 avg=0.00
+2026-02-12 17:27:06,873 [INFO] app.routes.webhook: Webhook received: order=9c90c33c status=PARTIAL filled=34 avg=1535.03
+2026-02-12 17:27:07,523 [INFO] app.routes.webhook: Webhook received: order=9c90c33c status=FILLED filled=100 avg=1535.03
+2026-02-12 17:27:08,888 [INFO] app.broker.order_manager: TP HIT for INFY.NS @ 1471.90 (SL=1566.52 TP=1474.37) — closing 134 shares
+2026-02-12 17:27:09,247 [INFO] app.routes.webhook: Webhook received: order=53d2e3e9 status=ACK filled=0 avg=0.00
+2026-02-12 17:27:09,497 [INFO] app.broker.order_manager: TP HIT for INFY.NS @ 1386.80 (SL=1566.52 TP=1474.37) — closing 134 shares
+2026-02-12 17:27:09,905 [INFO] app.routes.webhook: Webhook received: order=53d2e3e9 status=FILLED filled=134 avg=1472.64
+2026-02-12 17:27:09,980 [INFO] app.strategy.engine: Signal: BUY TCS.NS @ 3864.44 — SMA20 crossed above SMA50
+2026-02-12 17:27:09,980 [INFO] app.broker.order_manager: Order created: 8f41dbf7 BUY TCS.NS qty=40 @ 3864.44  (avail_capital=1550252)
+2026-02-12 17:27:10,080 [INFO] app.strategy.engine: Signal: SELL SBIN.NS @ 682.52 — SMA20 crossed below SMA50
+2026-02-12 17:27:10,080 [INFO] app.broker.order_manager: Order created: 4d66d6e0 SELL SBIN.NS qty=227 @ 682.52  (avail_capital=1550252)
+2026-02-12 17:27:10,272 [INFO] app.routes.webhook: Webhook received: order=1689f638 status=ACK filled=0 avg=0.00
+2026-02-12 17:27:10,589 [INFO] app.strategy.engine: Signal: BUY TCS.NS @ 3891.45 — SMA20 crossed above SMA50
+2026-02-12 17:27:10,922 [INFO] app.routes.webhook: Webhook received: order=1689f638 status=FILLED filled=134 avg=1387.49
+2026-02-12 17:27:11,105 [INFO] app.routes.webhook: Webhook received: order=8f41dbf7 status=ACK filled=0 avg=0.00
+2026-02-12 17:27:11,347 [INFO] app.broker.order_manager: TP HIT for INFY.NS @ 1568.70 (SL=1566.52 TP=1474.37) — closing 134 shares
+2026-02-12 17:27:11,505 [INFO] app.routes.webhook: Webhook received: order=8f41dbf7 status=FILLED filled=40 avg=3866.37
+2026-02-12 17:27:11,697 [INFO] app.routes.webhook: Webhook received: order=4d66d6e0 status=ACK filled=0 avg=0.00
+2026-02-12 17:27:11,963 [INFO] app.broker.order_manager: TP HIT for INFY.NS @ 1578.26 (SL=1566.52 TP=1474.37) — closing 134 shares
+2026-02-12 17:27:12,164 [INFO] app.routes.webhook: Webhook received: order=4d66d6e0 status=PARTIAL filled=162 avg=682.18
+2026-02-12 17:27:12,447 [INFO] app.routes.webhook: Webhook received: order=4d66d6e0 status=FILLED filled=227 avg=682.18
+2026-02-12 17:27:12,564 [INFO] app.broker.order_manager: SL HIT for SBIN.NS @ 727.64 (SL=696.17 TP=655.22) — closing 389 shares
+2026-02-12 17:27:12,564 [INFO] app.broker.order_manager: TP HIT for INFY.NS @ 1602.08 (SL=1566.52 TP=1474.37) — closing 134 shares
+2026-02-12 17:27:12,780 [INFO] app.routes.webhook: Webhook received: order=3d54d780 status=ACK filled=0 avg=0.00
+2026-02-12 17:27:13,172 [INFO] app.broker.order_manager: SL HIT for SBIN.NS @ 732.03 (SL=696.17 TP=655.22) — closing 389 shares
+2026-02-12 17:27:13,172 [INFO] app.broker.order_manager: TP HIT for INFY.NS @ 1600.29 (SL=1566.52 TP=1474.37) — closing 134 shares
+2026-02-12 17:27:13,505 [INFO] app.routes.webhook: Webhook received: order=3d54d780 status=FILLED filled=134 avg=1567.92
+2026-02-12 17:27:13,655 [INFO] app.routes.webhook: Webhook received: order=43df4267 status=ACK filled=0 avg=0.00
+2026-02-12 17:27:13,797 [INFO] app.broker.order_manager: SL HIT for SBIN.NS @ 732.85 (SL=696.17 TP=655.22) — closing 389 shares
+2026-02-12 17:27:13,799 [INFO] app.broker.order_manager: SL HIT for TCS.NS @ 3779.99 (SL=3787.15 TP=4019.01) — closing 40 shares
+2026-02-12 17:27:14,180 [INFO] app.routes.webhook: Webhook received: order=43df4267 status=PARTIAL filled=125 avg=1577.47
+2026-02-12 17:27:14,405 [INFO] app.broker.order_manager: SL HIT for SBIN.NS @ 743.84 (SL=696.17 TP=655.22) — closing 389 shares
+2026-02-12 17:27:14,405 [INFO] app.broker.order_manager: SL HIT for TCS.NS @ 3743.27 (SL=3787.15 TP=4019.01) — closing 40 shares
+2026-02-12 17:27:14,770 [INFO] app.routes.webhook: Webhook received: order=43df4267 status=FILLED filled=134 avg=1577.47
+2026-02-12 17:27:15,013 [INFO] app.broker.order_manager: SL HIT for SBIN.NS @ 738.44 (SL=696.17 TP=655.22) — closing 389 shares
+2026-02-12 17:27:15,013 [INFO] app.broker.order_manager: SL HIT for INFY.NS @ 1582.97 (SL=1566.52 TP=1474.37) — closing 259 shares
+2026-02-12 17:27:15,189 [INFO] app.routes.webhook: Webhook received: order=6df2ca84 status=ACK filled=0 avg=0.00
+2026-02-12 17:27:15,623 [INFO] app.broker.order_manager: SL HIT for SBIN.NS @ 731.84 (SL=696.17 TP=655.22) — closing 389 shares
+2026-02-12 17:27:15,625 [INFO] app.broker.order_manager: SL HIT for INFY.NS @ 1578.73 (SL=1566.52 TP=1474.37) — closing 259 shares
+2026-02-12 17:27:15,947 [INFO] app.routes.webhook: Webhook received: order=6df2ca84 status=PARTIAL filled=234 avg=728.01
+2026-02-12 17:27:16,260 [INFO] app.broker.order_manager: SL HIT for SBIN.NS @ 731.69 (SL=696.17 TP=655.22) — closing 155 shares
+2026-02-12 17:27:16,261 [INFO] app.broker.order_manager: SL HIT for TCS.NS @ 3752.23 (SL=3787.15 TP=4019.01) — closing 40 shares
+2026-02-12 17:27:16,430 [INFO] app.routes.webhook: Webhook received: order=6df2ca84 status=FILLED filled=389 avg=728.01
+2026-02-12 17:27:16,747 [INFO] app.strategy.engine: Signal: BUY TCS.NS @ 3849.15 — SMA20 crossed above SMA50
+2026-02-12 17:27:16,780 [INFO] app.routes.webhook: Webhook received: order=21cbd832 status=ACK filled=0 avg=0.00
+2026-02-12 17:27:16,855 [INFO] app.strategy.engine: Signal: SELL SBIN.NS @ 722.97 — SMA20 crossed below SMA50
+2026-02-12 17:27:16,888 [INFO] app.broker.order_manager: TP HIT for SBIN.NS @ 722.97 (SL=696.17 TP=655.22) — closing 234 shares
+2026-02-12 17:27:17,213 [INFO] app.routes.webhook: Webhook received: order=21cbd832 status=FILLED filled=134 avg=1601.28
+2026-02-12 17:27:17,480 [INFO] app.routes.webhook: Webhook received: order=12c209d1 status=ACK filled=0 avg=0.00
+2026-02-12 17:27:17,497 [INFO] app.broker.order_manager: TP HIT for SBIN.NS @ 715.88 (SL=696.17 TP=655.22) — closing 234 shares
+2026-02-12 17:27:17,498 [INFO] app.broker.order_manager: SL HIT for INFY.NS @ 1573.46 (SL=1566.52 TP=1474.37) — closing 393 shares
+2026-02-12 17:27:17,922 [INFO] app.routes.webhook: Webhook received: order=12c209d1 status=FILLED filled=389 avg=732.39
+2026-02-12 17:27:18,105 [INFO] app.broker.order_manager: TP HIT for SBIN.NS @ 721.28 (SL=696.17 TP=655.22) — closing 623 shares
+2026-02-12 17:27:18,105 [INFO] app.broker.order_manager: SL HIT for INFY.NS @ 1575.95 (SL=1566.52 TP=1474.37) — closing 393 shares
+2026-02-12 17:27:18,330 [INFO] app.routes.webhook: Webhook received: order=b4041bd8 status=ACK filled=0 avg=0.00
+2026-02-12 17:27:18,563 [INFO] app.routes.webhook: Webhook received: order=b4041bd8 status=FILLED filled=134 avg=1599.49
+2026-02-12 17:27:18,604 [WARNING] app.engine_controller: EMERGENCY STOP: max_exposure (93.0%)
+2026-02-12 17:27:18,604 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: max_exposure (93.0%)
+2026-02-12 17:27:18,713 [INFO] app.routes.webhook: Webhook received: order=255eab10 status=ACK filled=0 avg=0.00
+2026-02-12 17:27:19,521 [INFO] app.routes.webhook: Webhook received: order=255eab10 status=PARTIAL filled=116 avg=733.21
+2026-02-12 17:27:20,230 [INFO] app.routes.webhook: Webhook received: order=255eab10 status=FILLED filled=389 avg=733.21
+2026-02-12 17:27:20,432 [INFO] app.routes.webhook: Webhook received: order=ca27e751 status=ACK filled=0 avg=0.00
+2026-02-12 17:27:21,035 [INFO] app.routes.webhook: Webhook received: order=ca27e751 status=REJECTED filled=0 avg=0.00
+2026-02-12 17:27:21,288 [INFO] app.routes.webhook: Webhook received: order=2712f395 status=ACK filled=0 avg=0.00
+2026-02-12 17:27:21,849 [INFO] app.routes.webhook: Webhook received: order=2712f395 status=REJECTED filled=0 avg=0.00
+2026-02-12 17:27:22,016 [INFO] app.routes.webhook: Webhook received: order=5d959827 status=ACK filled=0 avg=0.00
+2026-02-12 17:27:22,795 [INFO] app.routes.webhook: Webhook received: order=5d959827 status=PARTIAL filled=34 avg=3741.40
+2026-02-12 17:27:23,506 [INFO] app.routes.webhook: Webhook received: order=5d959827 status=FILLED filled=40 avg=3741.40
+2026-02-12 17:27:23,631 [INFO] app.routes.webhook: Webhook received: order=429fa285 status=ACK filled=0 avg=0.00
+2026-02-12 17:27:24,081 [INFO] app.routes.webhook: Webhook received: order=429fa285 status=REJECTED filled=0 avg=0.00
+2026-02-12 17:27:24,505 [INFO] app.routes.webhook: Webhook received: order=5739bcc7 status=ACK filled=0 avg=0.00
+2026-02-12 17:27:24,872 [INFO] app.routes.webhook: Webhook received: order=5739bcc7 status=FILLED filled=259 avg=1583.76
+2026-02-12 17:27:25,205 [INFO] app.routes.webhook: Webhook received: order=09907ba8 status=ACK filled=0 avg=0.00
+2026-02-12 17:27:25,731 [INFO] app.routes.webhook: Webhook received: order=09907ba8 status=PARTIAL filled=221 avg=732.20
+2026-02-12 17:27:26,555 [INFO] app.routes.webhook: Webhook received: order=09907ba8 status=FILLED filled=389 avg=732.20
+2026-02-12 17:27:26,839 [INFO] app.routes.webhook: Webhook received: order=3c238a71 status=ACK filled=0 avg=0.00
+2026-02-12 17:27:27,071 [INFO] app.routes.webhook: Webhook received: order=3c238a71 status=FILLED filled=259 avg=1579.52
+2026-02-12 17:27:27,297 [INFO] app.routes.webhook: Webhook received: order=edb97ac2 status=ACK filled=0 avg=0.00
+2026-02-12 17:27:27,922 [INFO] app.routes.webhook: Webhook received: order=edb97ac2 status=PARTIAL filled=43 avg=732.06
+2026-02-12 17:27:28,182 [INFO] app.routes.webhook: Webhook received: order=edb97ac2 status=FILLED filled=155 avg=732.06
+2026-02-12 17:27:28,480 [INFO] app.routes.webhook: Webhook received: order=ef91dccd status=ACK filled=0 avg=0.00
+2026-02-12 17:27:28,932 [INFO] app.routes.webhook: Webhook received: order=ef91dccd status=FILLED filled=40 avg=3750.35
+2026-02-12 17:27:29,255 [INFO] app.routes.webhook: Webhook received: order=b062c47a status=ACK filled=0 avg=0.00
+2026-02-12 17:27:29,530 [INFO] app.routes.webhook: Webhook received: order=b062c47a status=FILLED filled=234 avg=722.60
+2026-02-12 17:27:29,904 [INFO] app.routes.webhook: Webhook received: order=daae060b status=ACK filled=0 avg=0.00
+2026-02-12 17:27:30,630 [INFO] app.routes.webhook: Webhook received: order=daae060b status=FILLED filled=234 avg=715.52
+2026-02-12 17:27:30,947 [INFO] app.routes.webhook: Webhook received: order=9d5153b9 status=ACK filled=0 avg=0.00
+2026-02-12 17:27:31,497 [INFO] app.routes.webhook: Webhook received: order=9d5153b9 status=FILLED filled=393 avg=1574.24
+2026-02-12 17:27:31,730 [INFO] app.routes.webhook: Webhook received: order=9f36c41f status=ACK filled=0 avg=0.00
+2026-02-12 17:27:32,221 [INFO] app.routes.webhook: Webhook received: order=9f36c41f status=PARTIAL filled=2 avg=720.92
+2026-02-12 17:27:32,963 [INFO] app.routes.webhook: Webhook received: order=9f36c41f status=FILLED filled=623 avg=720.92
+2026-02-12 17:27:33,263 [INFO] app.routes.webhook: Webhook received: order=e9545f97 status=ACK filled=0 avg=0.00
+2026-02-12 17:27:33,855 [INFO] app.routes.webhook: Webhook received: order=e9545f97 status=FILLED filled=393 avg=1576.74
+2026-02-12 17:27:59,229 [INFO] app.ws.socket_server: Control event: stop  payload={'action': 'stop'}
+2026-02-12 17:27:59,229 [INFO] app.strategy.engine: Strategy engine stopped
+2026-02-12 17:27:59,229 [INFO] app.strategy.engine: Strategy engine stopped
+2026-02-12 17:28:30,166 [INFO] app.ws.socket_server: Control event: set_strategy  payload={'action': 'set_strategy', 'strategy': 'rsi_mean_reversion'}
+2026-02-12 17:28:30,166 [INFO] app.strategy.engine: Strategy set to rsi_mean_reversion
+2026-02-12 17:28:35,921 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'rsi_mean_reversion'}
+2026-02-12 17:28:35,921 [INFO] app.strategy.engine: Strategy set to rsi_mean_reversion
+2026-02-12 17:28:35,921 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 17:28:35,921 [INFO] app.strategy.engine: Strategy engine started (rsi_mean_reversion)
+2026-02-12 17:28:35,921 [INFO] app.strategy.engine: Strategy set to rsi_mean_reversion
+2026-02-12 17:28:35,921 [WARNING] app.engine_controller: Cannot start: current state is RUNNING
+2026-02-12 17:28:35,921 [INFO] app.strategy.engine: Strategy engine started (rsi_mean_reversion)
+2026-02-12 17:28:35,955 [WARNING] app.engine_controller: EMERGENCY STOP: max_exposure (137.3%)
+2026-02-12 17:28:35,956 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: max_exposure (137.3%)
+2026-02-12 17:33:15,433 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 17:33:16,434 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 17:33:58,625 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 17:33:58,625 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:33:58,625 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 17:33:58,625 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:33:58,625 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:33:58,625 [WARNING] app.engine_controller: Cannot start: current state is RUNNING
+2026-02-12 17:33:58,625 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:33:58,924 [WARNING] app.engine_controller: EMERGENCY STOP: max_exposure (137.3%)
+2026-02-12 17:33:58,924 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: max_exposure (137.3%)
+2026-02-12 17:34:11,303 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 17:34:11,759 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 17:37:18,991 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 17:37:18,991 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:37:18,992 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 17:37:18,992 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:37:18,993 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:37:18,993 [WARNING] app.engine_controller: Cannot start: current state is RUNNING
+2026-02-12 17:37:18,993 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:37:19,016 [WARNING] app.engine_controller: EMERGENCY STOP: max_exposure (137.3%)
+2026-02-12 17:37:19,016 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: max_exposure (137.3%)
+2026-02-12 17:37:29,456 [INFO] app.ws.socket_server: Control event: stop  payload={'action': 'stop'}
+2026-02-12 17:37:29,456 [INFO] app.strategy.engine: Strategy engine stopped
+2026-02-12 17:37:29,456 [INFO] app.strategy.engine: Strategy engine stopped
+2026-02-12 17:38:42,406 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:38:42,406 [INFO] app.data_feed.provider: Creating YahooProvider for mode=demo
+2026-02-12 17:38:42,407 [INFO] __main__: Market data provider: yahoo (mode=demo)
+2026-02-12 17:38:42,410 [INFO] app.broker.simulated_broker: Simulated broker started
+2026-02-12 17:38:42,411 [INFO] __main__: Starting server on 0.0.0.0:5005  ML=False
+2026-02-12 17:38:42,426 [INFO] app.data_feed.demo_feed: DemoDataFeed connected — symbols=['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-12 17:38:42,426 [INFO] __main__: Tick loop started for ['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-12 17:38:42,451 [INFO] app.db.storage: Database tables initialised at C:\AI\algo trading\bot1\algo_demo_india\data\algo_demo.db
+2026-02-12 17:38:43,546 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 17:38:44,655 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 17:40:13,459 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 17:40:14,217 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 17:40:28,332 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 17:40:28,953 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 17:40:33,598 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 17:40:33,598 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:40:33,598 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 17:40:33,598 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:40:33,599 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:40:33,599 [WARNING] app.engine_controller: Cannot start: current state is RUNNING
+2026-02-12 17:40:33,599 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:40:50,942 [INFO] app.strategy.engine: Signal: SELL HDFCBANK.NS @ 904.40 — SMA20 crossed below SMA50
+2026-02-12 17:40:50,946 [INFO] app.broker.order_manager: Order created: b5645f78 SELL HDFCBANK.NS qty=110 @ 904.40  (avail_capital=1000000)
+2026-02-12 17:40:51,133 [INFO] app.routes.webhook: Webhook received: order=b5645f78 status=ACK filled=0 avg=0.00
+2026-02-12 17:40:51,366 [INFO] app.routes.webhook: Webhook received: order=b5645f78 status=REJECTED filled=0 avg=0.00
+2026-02-12 17:41:01,926 [INFO] app.strategy.engine: Signal: BUY TCS.NS @ 4072.81 — SMA20 crossed above SMA50
+2026-02-12 17:41:01,927 [INFO] app.broker.order_manager: Order created: 7f2518ae BUY TCS.NS qty=24 @ 4072.81  (avail_capital=1000000)
+2026-02-12 17:41:02,143 [INFO] app.routes.webhook: Webhook received: order=7f2518ae status=ACK filled=0 avg=0.00
+2026-02-12 17:41:02,923 [INFO] app.routes.webhook: Webhook received: order=7f2518ae status=FILLED filled=24 avg=4074.85
+2026-02-12 17:41:04,497 [INFO] app.broker.order_manager: SL HIT for TCS.NS @ 3986.53 (SL=3991.36 TP=4235.73) — closing 24 shares
+2026-02-12 17:41:04,812 [INFO] app.routes.webhook: Webhook received: order=89e8e4f5 status=ACK filled=0 avg=0.00
+2026-02-12 17:41:05,151 [INFO] app.broker.order_manager: SL HIT for TCS.NS @ 3941.58 (SL=3991.36 TP=4235.73) — closing 24 shares
+2026-02-12 17:41:05,197 [INFO] app.routes.webhook: Webhook received: order=89e8e4f5 status=PARTIAL filled=19 avg=3984.54
+2026-02-12 17:41:05,522 [INFO] app.routes.webhook: Webhook received: order=89e8e4f5 status=FILLED filled=24 avg=3984.54
+2026-02-12 17:41:05,728 [INFO] app.routes.webhook: Webhook received: order=12ea45b1 status=ACK filled=0 avg=0.00
+2026-02-12 17:41:05,805 [INFO] app.broker.order_manager: TP HIT for TCS.NS @ 3901.03 (SL=3991.36 TP=4235.73) — closing 19 shares
+2026-02-12 17:41:06,410 [INFO] app.broker.order_manager: SL HIT for TCS.NS @ 4017.75 (SL=3991.36 TP=4235.73) — closing 19 shares
+2026-02-12 17:41:06,521 [INFO] app.routes.webhook: Webhook received: order=12ea45b1 status=FILLED filled=24 avg=3939.61
+2026-02-12 17:41:06,848 [INFO] app.routes.webhook: Webhook received: order=26a5c6bf status=ACK filled=0 avg=0.00
+2026-02-12 17:41:07,019 [INFO] app.broker.order_manager: SL HIT for TCS.NS @ 4006.97 (SL=3991.36 TP=4235.73) — closing 43 shares
+2026-02-12 17:41:07,473 [INFO] app.routes.webhook: Webhook received: order=26a5c6bf status=FILLED filled=19 avg=3902.98
+2026-02-12 17:41:07,624 [INFO] app.broker.order_manager: SL HIT for TCS.NS @ 4013.64 (SL=3991.36 TP=4235.73) — closing 24 shares
+2026-02-12 17:41:07,878 [INFO] app.routes.webhook: Webhook received: order=2436a56f status=ACK filled=0 avg=0.00
+2026-02-12 17:41:08,233 [INFO] app.broker.order_manager: TP HIT for TCS.NS @ 3929.35 (SL=3991.36 TP=4235.73) — closing 24 shares
+2026-02-12 17:41:08,403 [INFO] app.routes.webhook: Webhook received: order=2436a56f status=FILLED filled=19 avg=4019.76
+2026-02-12 17:41:08,586 [INFO] app.routes.webhook: Webhook received: order=9247b9e9 status=ACK filled=0 avg=0.00
+2026-02-12 17:41:08,851 [INFO] app.broker.order_manager: TP HIT for TCS.NS @ 3905.33 (SL=3991.36 TP=4235.73) — closing 5 shares
+2026-02-12 17:41:09,036 [INFO] app.routes.webhook: Webhook received: order=9247b9e9 status=FILLED filled=43 avg=4008.98
+2026-02-12 17:41:09,239 [INFO] app.routes.webhook: Webhook received: order=a1565929 status=ACK filled=0 avg=0.00
+2026-02-12 17:41:09,459 [INFO] app.broker.order_manager: SL HIT for TCS.NS @ 3962.85 (SL=3991.36 TP=4235.73) — closing 38 shares
+2026-02-12 17:41:09,598 [INFO] app.routes.webhook: Webhook received: order=a1565929 status=FILLED filled=24 avg=4015.65
+2026-02-12 17:41:10,007 [INFO] app.routes.webhook: Webhook received: order=aa993466 status=ACK filled=0 avg=0.00
+2026-02-12 17:41:10,067 [INFO] app.broker.order_manager: SL HIT for TCS.NS @ 3963.09 (SL=3991.36 TP=4235.73) — closing 62 shares
+2026-02-12 17:41:10,535 [INFO] app.routes.webhook: Webhook received: order=aa993466 status=FILLED filled=24 avg=3931.32
+2026-02-12 17:41:10,673 [INFO] app.broker.order_manager: SL HIT for TCS.NS @ 3975.03 (SL=3991.36 TP=4235.73) — closing 86 shares
+2026-02-12 17:41:10,939 [INFO] app.routes.webhook: Webhook received: order=45dc0608 status=ACK filled=0 avg=0.00
+2026-02-12 17:41:11,265 [INFO] app.routes.webhook: Webhook received: order=45dc0608 status=FILLED filled=5 avg=3907.29
+2026-02-12 17:41:11,279 [INFO] app.broker.order_manager: SL HIT for TCS.NS @ 3937.09 (SL=3991.36 TP=4235.73) — closing 91 shares
+2026-02-12 17:41:11,587 [INFO] app.routes.webhook: Webhook received: order=a690d3d7 status=ACK filled=0 avg=0.00
+2026-02-12 17:41:11,915 [INFO] app.broker.order_manager: SL HIT for TCS.NS @ 3932.74 (SL=3991.36 TP=4235.73) — closing 91 shares
+2026-02-12 17:41:12,327 [INFO] app.routes.webhook: Webhook received: order=a690d3d7 status=FILLED filled=38 avg=3960.87
+2026-02-12 17:41:12,456 [INFO] app.routes.webhook: Webhook received: order=014cb472 status=ACK filled=0 avg=0.00
+2026-02-12 17:41:12,515 [INFO] app.broker.order_manager: SL HIT for TCS.NS @ 3969.86 (SL=3991.36 TP=4235.73) — closing 53 shares
+2026-02-12 17:41:12,692 [INFO] app.routes.webhook: Webhook received: order=014cb472 status=FILLED filled=62 avg=3961.11
+2026-02-12 17:41:12,941 [INFO] app.routes.webhook: Webhook received: order=dfa491ee status=ACK filled=0 avg=0.00
+2026-02-12 17:41:13,128 [INFO] app.broker.order_manager: TP HIT for TCS.NS @ 3954.44 (SL=3991.36 TP=4235.73) — closing 9 shares
+2026-02-12 17:41:13,190 [INFO] app.routes.webhook: Webhook received: order=dfa491ee status=PARTIAL filled=76 avg=3973.04
+2026-02-12 17:41:13,734 [INFO] app.broker.order_manager: TP HIT for TCS.NS @ 3946.37 (SL=3991.36 TP=4235.73) — closing 85 shares
+2026-02-12 17:41:13,879 [INFO] app.routes.webhook: Webhook received: order=dfa491ee status=FILLED filled=86 avg=3973.04
+2026-02-12 17:41:14,125 [INFO] app.routes.webhook: Webhook received: order=2f5ab71e status=ACK filled=0 avg=0.00
+2026-02-12 17:41:14,346 [INFO] app.broker.order_manager: TP HIT for TCS.NS @ 3894.80 (SL=3991.36 TP=4235.73) — closing 171 shares
+2026-02-12 17:41:14,517 [INFO] app.routes.webhook: Webhook received: order=2f5ab71e status=FILLED filled=91 avg=3935.12
+2026-02-12 17:41:14,800 [WARNING] app.engine_controller: EMERGENCY STOP: max_exposure (104.2%)
+2026-02-12 17:41:14,801 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: max_exposure (104.2%)
+2026-02-12 17:41:14,833 [INFO] app.routes.webhook: Webhook received: order=37eccc78 status=ACK filled=0 avg=0.00
+2026-02-12 17:41:15,219 [INFO] app.routes.webhook: Webhook received: order=37eccc78 status=PARTIAL filled=15 avg=3930.77
+2026-02-12 17:41:15,523 [INFO] app.routes.webhook: Webhook received: order=37eccc78 status=FILLED filled=91 avg=3930.77
+2026-02-12 17:41:15,923 [INFO] app.routes.webhook: Webhook received: order=07c74cb7 status=ACK filled=0 avg=0.00
+2026-02-12 17:41:16,487 [INFO] app.routes.webhook: Webhook received: order=07c74cb7 status=PARTIAL filled=21 avg=3967.87
+2026-02-12 17:41:17,204 [INFO] app.routes.webhook: Webhook received: order=07c74cb7 status=FILLED filled=53 avg=3967.87
+2026-02-12 17:41:17,562 [INFO] app.routes.webhook: Webhook received: order=66d265b5 status=ACK filled=0 avg=0.00
+2026-02-12 17:41:17,887 [INFO] app.routes.webhook: Webhook received: order=66d265b5 status=REJECTED filled=0 avg=0.00
+2026-02-12 17:41:18,275 [INFO] app.routes.webhook: Webhook received: order=93153702 status=ACK filled=0 avg=0.00
+2026-02-12 17:41:18,942 [INFO] app.routes.webhook: Webhook received: order=93153702 status=PARTIAL filled=69 avg=3948.34
+2026-02-12 17:41:19,642 [INFO] app.routes.webhook: Webhook received: order=93153702 status=FILLED filled=85 avg=3948.34
+2026-02-12 17:41:19,918 [INFO] app.routes.webhook: Webhook received: order=c51389b6 status=ACK filled=0 avg=0.00
+2026-02-12 17:41:20,398 [INFO] app.routes.webhook: Webhook received: order=c51389b6 status=FILLED filled=171 avg=3896.75
+2026-02-12 17:42:19,834 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 17:42:20,798 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 17:42:36,039 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 17:42:36,447 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 17:42:45,846 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 17:42:46,260 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 17:42:57,386 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 17:42:57,785 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 17:43:02,157 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 17:43:02,581 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 17:43:06,439 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 17:43:06,839 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 17:43:08,623 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 17:43:09,025 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 17:44:58,682 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 17:44:59,673 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 17:45:34,154 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 17:45:34,608 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 17:46:07,588 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 17:46:08,035 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 17:47:03,152 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 17:47:03,566 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 17:47:34,708 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 17:47:35,127 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 17:54:28,598 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:54:28,599 [INFO] app.data_feed.provider: Creating YahooProvider for mode=demo
+2026-02-12 17:54:28,600 [INFO] __main__: Market data provider: yahoo (mode=demo)
+2026-02-12 17:54:28,604 [INFO] app.broker.simulated_broker: Simulated broker started
+2026-02-12 17:54:28,605 [INFO] __main__: Starting server on 0.0.0.0:5005  ML=False
+2026-02-12 17:54:28,622 [INFO] app.data_feed.demo_feed: DemoDataFeed connected — symbols=['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-12 17:54:28,622 [INFO] __main__: Tick loop started for ['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-12 17:54:28,646 [INFO] app.db.storage: Database tables initialised at C:\AI\algo trading\bot1\algo_demo_india\data\algo_demo.db
+2026-02-12 17:54:33,610 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 17:54:33,653 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 17:56:04,293 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 17:56:05,029 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 17:56:41,098 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 17:56:41,711 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 17:56:51,828 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 17:56:51,829 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:56:51,829 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 17:56:51,829 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:56:51,830 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:56:51,830 [WARNING] app.engine_controller: Cannot start: current state is RUNNING
+2026-02-12 17:56:51,830 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:56:54,278 [INFO] app.ws.socket_server: Control event: toggle_ml  payload={'action': 'toggle_ml', 'use_ml': True}
+2026-02-12 17:57:01,616 [INFO] app.strategy.engine: Signal: SELL RELIANCE.NS @ 1229.94 — SMA20 crossed below SMA50
+2026-02-12 17:57:01,617 [INFO] app.broker.order_manager: Order created: b229d407 SELL RELIANCE.NS qty=81 @ 1229.94  (avail_capital=1000000)
+2026-02-12 17:57:02,028 [INFO] app.routes.webhook: Webhook received: order=b229d407 status=ACK filled=0 avg=0.00
+2026-02-12 17:57:02,393 [INFO] app.routes.webhook: Webhook received: order=b229d407 status=FILLED filled=81 avg=1229.32
+2026-02-12 17:57:09,745 [INFO] app.broker.order_manager: TP HIT for RELIANCE.NS @ 1166.59 (SL=1254.54 TP=1180.74) — closing 81 shares
+2026-02-12 17:57:10,201 [INFO] app.routes.webhook: Webhook received: order=3a55618b status=ACK filled=0 avg=0.00
+2026-02-12 17:57:10,367 [INFO] app.broker.order_manager: TP HIT for RELIANCE.NS @ 1157.28 (SL=1254.54 TP=1180.74) — closing 81 shares
+2026-02-12 17:57:10,617 [INFO] app.routes.webhook: Webhook received: order=3a55618b status=PARTIAL filled=69 avg=1167.17
+2026-02-12 17:57:10,974 [INFO] app.broker.order_manager: TP HIT for RELIANCE.NS @ 1170.92 (SL=1254.54 TP=1180.74) — closing 12 shares
+2026-02-12 17:57:11,357 [INFO] app.routes.webhook: Webhook received: order=3a55618b status=FILLED filled=81 avg=1167.17
+2026-02-12 17:57:11,587 [INFO] app.broker.order_manager: SL HIT for RELIANCE.NS @ 1204.79 (SL=1254.54 TP=1180.74) — closing 69 shares
+2026-02-12 17:57:11,604 [INFO] app.routes.webhook: Webhook received: order=02f9f02d status=ACK filled=0 avg=0.00
+2026-02-12 17:57:12,211 [INFO] app.routes.webhook: Webhook received: order=02f9f02d status=FILLED filled=81 avg=1157.86
+2026-02-12 17:57:12,220 [INFO] app.broker.order_manager: SL HIT for RELIANCE.NS @ 1244.83 (SL=1254.54 TP=1180.74) — closing 150 shares
+2026-02-12 17:57:12,473 [INFO] app.routes.webhook: Webhook received: order=8a7b117a status=ACK filled=0 avg=0.00
+2026-02-12 17:57:12,707 [INFO] app.strategy.engine: Signal: BUY TCS.NS @ 3469.74 — SMA20 crossed above SMA50
+2026-02-12 17:57:12,708 [INFO] app.broker.order_manager: Order created: 4c47aeb8 BUY TCS.NS qty=23 @ 3469.74  (avail_capital=830713)
+2026-02-12 17:57:12,829 [INFO] app.broker.order_manager: SL HIT for RELIANCE.NS @ 1233.47 (SL=1254.54 TP=1180.74) — closing 150 shares
+2026-02-12 17:57:12,987 [INFO] app.routes.webhook: Webhook received: order=8a7b117a status=FILLED filled=12 avg=1171.51
+2026-02-12 17:57:13,184 [INFO] app.routes.webhook: Webhook received: order=8239de13 status=ACK filled=0 avg=0.00
+2026-02-12 17:57:13,461 [INFO] app.broker.order_manager: SL HIT for RELIANCE.NS @ 1242.34 (SL=1254.54 TP=1180.74) — closing 162 shares
+2026-02-12 17:57:13,463 [INFO] app.routes.webhook: Webhook received: order=8239de13 status=PARTIAL filled=65 avg=1204.19
+2026-02-12 17:57:13,937 [INFO] app.routes.webhook: Webhook received: order=8239de13 status=FILLED filled=69 avg=1204.19
+2026-02-12 17:57:14,063 [INFO] app.broker.order_manager: SL HIT for RELIANCE.NS @ 1252.05 (SL=1254.54 TP=1180.74) — closing 28 shares
+2026-02-12 17:57:14,096 [INFO] app.routes.webhook: Webhook received: order=26d8df64 status=ACK filled=0 avg=0.00
+2026-02-12 17:57:14,547 [INFO] app.routes.webhook: Webhook received: order=26d8df64 status=FILLED filled=150 avg=1244.21
+2026-02-12 17:57:14,640 [INFO] app.strategy.engine: Signal: SELL SBIN.NS @ 713.52 — SMA20 crossed below SMA50
+2026-02-12 17:57:14,642 [INFO] app.broker.order_manager: Order created: 546c4407 SELL SBIN.NS qty=120 @ 713.52  (avail_capital=861060)
+2026-02-12 17:57:14,916 [INFO] app.routes.webhook: Webhook received: order=4c47aeb8 status=ACK filled=0 avg=0.00
+2026-02-12 17:57:15,596 [INFO] app.routes.webhook: Webhook received: order=4c47aeb8 status=FILLED filled=23 avg=3471.47
+2026-02-12 17:57:15,907 [INFO] app.routes.webhook: Webhook received: order=2d5e2cc2 status=ACK filled=0 avg=0.00
+2026-02-12 17:57:15,981 [INFO] app.broker.order_manager: SL HIT for TCS.NS @ 3380.86 (SL=3400.34 TP=3608.53) — closing 23 shares
+2026-02-12 17:57:16,445 [INFO] app.routes.webhook: Webhook received: order=2d5e2cc2 status=PARTIAL filled=106 avg=1232.86
+2026-02-12 17:57:16,599 [INFO] app.broker.order_manager: SL HIT for TCS.NS @ 3380.28 (SL=3400.34 TP=3608.53) — closing 23 shares
+2026-02-12 17:57:16,742 [INFO] app.routes.webhook: Webhook received: order=2d5e2cc2 status=FILLED filled=150 avg=1232.86
+2026-02-12 17:57:17,022 [INFO] app.routes.webhook: Webhook received: order=c7c2a01c status=ACK filled=0 avg=0.00
+2026-02-12 17:57:17,215 [INFO] app.broker.order_manager: SL HIT for RELIANCE.NS @ 1264.10 (SL=1254.54 TP=1180.74) — closing 378 shares
+2026-02-12 17:57:17,360 [INFO] app.routes.webhook: Webhook received: order=c7c2a01c status=FILLED filled=162 avg=1241.72
+2026-02-12 17:57:17,546 [INFO] app.routes.webhook: Webhook received: order=e0e1d78d status=ACK filled=0 avg=0.00
+2026-02-12 17:57:17,824 [INFO] app.broker.order_manager: SL HIT for RELIANCE.NS @ 1271.27 (SL=1254.54 TP=1180.74) — closing 540 shares
+2026-02-12 17:57:18,259 [INFO] app.routes.webhook: Webhook received: order=e0e1d78d status=REJECTED filled=0 avg=0.00
+2026-02-12 17:57:18,462 [INFO] app.broker.order_manager: SL HIT for RELIANCE.NS @ 1296.92 (SL=1254.54 TP=1180.74) — closing 540 shares
+2026-02-12 17:57:18,482 [INFO] app.routes.webhook: Webhook received: order=546c4407 status=ACK filled=0 avg=0.00
+2026-02-12 17:57:18,781 [INFO] app.routes.webhook: Webhook received: order=546c4407 status=FILLED filled=120 avg=713.17
+2026-02-12 17:57:18,911 [WARNING] app.engine_controller: EMERGENCY STOP: max_exposure (82.3%)
+2026-02-12 17:57:18,911 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: max_exposure (82.3%)
+2026-02-12 17:57:19,115 [INFO] app.routes.webhook: Webhook received: order=87bb9076 status=ACK filled=0 avg=0.00
+2026-02-12 17:57:19,681 [INFO] app.routes.webhook: Webhook received: order=87bb9076 status=REJECTED filled=0 avg=0.00
+2026-02-12 17:57:20,106 [INFO] app.routes.webhook: Webhook received: order=44274c08 status=ACK filled=0 avg=0.00
+2026-02-12 17:57:20,742 [INFO] app.routes.webhook: Webhook received: order=44274c08 status=FILLED filled=23 avg=3378.59
+2026-02-12 17:57:21,120 [INFO] app.routes.webhook: Webhook received: order=f504be46 status=ACK filled=0 avg=0.00
+2026-02-12 17:57:21,381 [INFO] app.routes.webhook: Webhook received: order=f504be46 status=PARTIAL filled=305 avg=1264.73
+2026-02-12 17:57:21,907 [INFO] app.routes.webhook: Webhook received: order=f504be46 status=FILLED filled=378 avg=1264.73
+2026-02-12 17:57:22,182 [INFO] app.routes.webhook: Webhook received: order=6b687957 status=ACK filled=0 avg=0.00
+2026-02-12 17:57:22,427 [INFO] app.routes.webhook: Webhook received: order=6b687957 status=FILLED filled=540 avg=1271.91
+2026-02-12 17:57:22,567 [INFO] app.routes.webhook: Webhook received: order=1093f938 status=ACK filled=0 avg=0.00
+2026-02-12 17:57:23,056 [INFO] app.routes.webhook: Webhook received: order=1093f938 status=FILLED filled=540 avg=1297.57
+2026-02-12 17:57:55,686 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 17:57:56,648 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 17:58:10,201 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 17:58:10,601 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 17:58:27,424 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 17:58:27,425 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:58:27,425 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 17:58:27,425 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:58:27,426 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:58:27,426 [WARNING] app.engine_controller: Cannot start: current state is RUNNING
+2026-02-12 17:58:27,426 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:58:27,866 [WARNING] app.engine_controller: EMERGENCY STOP: max_exposure (166.0%)
+2026-02-12 17:58:27,866 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: max_exposure (166.0%)
+2026-02-12 17:58:35,679 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 17:58:36,107 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 17:58:45,748 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 17:58:45,749 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:58:45,749 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 17:58:45,749 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:58:45,750 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:58:45,750 [WARNING] app.engine_controller: Cannot start: current state is RUNNING
+2026-02-12 17:58:45,751 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:58:45,812 [WARNING] app.engine_controller: EMERGENCY STOP: max_exposure (166.0%)
+2026-02-12 17:58:45,814 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: max_exposure (166.0%)
+2026-02-12 17:59:20,156 [INFO] app.ws.socket_server: Control event: toggle_ml  payload={'action': 'toggle_ml', 'use_ml': True}
+2026-02-12 17:59:23,349 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 17:59:23,349 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:59:23,349 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 17:59:23,349 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:59:23,350 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:59:23,350 [WARNING] app.engine_controller: Cannot start: current state is RUNNING
+2026-02-12 17:59:23,351 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:59:23,519 [WARNING] app.engine_controller: EMERGENCY STOP: max_exposure (166.0%)
+2026-02-12 17:59:23,520 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: max_exposure (166.0%)
+2026-02-12 17:59:45,413 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 17:59:45,414 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:59:45,414 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 17:59:45,414 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:59:45,415 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 17:59:45,415 [WARNING] app.engine_controller: Cannot start: current state is RUNNING
+2026-02-12 17:59:45,416 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 17:59:45,739 [WARNING] app.engine_controller: EMERGENCY STOP: max_exposure (166.0%)
+2026-02-12 17:59:45,739 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: max_exposure (166.0%)
+2026-02-12 17:59:48,808 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 17:59:49,722 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 18:01:20,778 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 18:01:20,778 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 18:01:20,778 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 18:01:20,783 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 18:01:20,783 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 18:01:20,783 [WARNING] app.engine_controller: Cannot start: current state is RUNNING
+2026-02-12 18:01:20,783 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 18:01:21,013 [WARNING] app.engine_controller: EMERGENCY STOP: max_exposure (166.0%)
+2026-02-12 18:01:21,013 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: max_exposure (166.0%)
+2026-02-12 18:01:25,407 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 18:01:26,394 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 18:09:40,288 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 18:09:41,214 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 18:14:47,875 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 18:14:48,784 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 18:30:44,231 [INFO] app.db.storage: Migration: added orders.account_id
+2026-02-12 18:30:44,238 [INFO] app.db.storage: Migration: added trades.account_id
+2026-02-12 18:30:44,239 [INFO] app.db.storage: Migration: added trades.pnl
+2026-02-12 18:30:44,239 [INFO] app.db.storage: Migration: added pnl_history.account_id
+2026-02-12 18:30:44,239 [INFO] app.db.storage: Database tables initialised at C:\AI\algo trading\bot1\algo_demo_india\data\algo_demo.db
+2026-02-12 18:30:44,239 [INFO] app.db.storage: Created account default with initial_capital=1000000.00
+2026-02-12 18:30:44,239 [INFO] app.broker.capital_manager: CapitalManager restored from DB: account=default  capital=1000000.00  realised_pnl=0.00  positions=0
+2026-02-12 18:30:44,239 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 18:30:44,239 [INFO] app.data_feed.provider: Creating YahooProvider for mode=demo
+2026-02-12 18:30:44,239 [INFO] __main__: Market data provider: yahoo (mode=demo)
+2026-02-12 18:30:44,247 [INFO] app.broker.simulated_broker: Simulated broker started
+2026-02-12 18:30:44,247 [INFO] __main__: Starting server on 0.0.0.0:5005  ML=False
+2026-02-12 18:32:13,579 [INFO] app.db.storage: Database tables initialised at C:\AI\algo trading\bot1\algo_demo_india\data\algo_demo.db
+2026-02-12 18:32:13,579 [INFO] app.broker.capital_manager: CapitalManager restored from DB: account=default  capital=1000000.00  realised_pnl=0.00  positions=0
+2026-02-12 18:32:13,579 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 18:32:13,579 [INFO] app.data_feed.provider: Creating YahooProvider for mode=demo
+2026-02-12 18:32:13,579 [INFO] __main__: Market data provider: yahoo (mode=demo)
+2026-02-12 18:32:13,588 [INFO] app.broker.simulated_broker: Simulated broker started
+2026-02-12 18:32:13,588 [INFO] __main__: Starting server on 0.0.0.0:5005  ML=False
+2026-02-12 18:32:13,604 [INFO] app.data_feed.demo_feed: DemoDataFeed connected — symbols=['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-12 18:32:13,604 [INFO] __main__: Tick loop started for ['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-12 18:32:17,971 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 18:32:18,646 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 18:32:27,605 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 18:32:28,479 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 18:32:45,587 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 18:32:45,595 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 18:32:45,595 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 18:32:45,595 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 18:32:45,595 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 18:32:45,595 [WARNING] app.engine_controller: Cannot start: current state is RUNNING
+2026-02-12 18:32:45,595 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 18:32:57,172 [INFO] app.strategy.engine: Signal: SELL INFY.NS @ 1343.92 — SMA20 crossed below SMA50
+2026-02-12 18:32:57,174 [INFO] app.broker.order_manager: Order created: 6934b324 SELL INFY.NS qty=74 @ 1343.92  (avail_capital=1000000)
+2026-02-12 18:32:57,349 [INFO] app.routes.webhook: Webhook received: order=6934b324 status=ACK filled=0 avg=0.00
+2026-02-12 18:32:57,520 [INFO] app.ws.socket_server: Control event: stop  payload={'action': 'stop'}
+2026-02-12 18:32:57,520 [INFO] app.engine_controller: EngineController -> STOPPED  (engine.stop)
+2026-02-12 18:32:57,520 [INFO] app.strategy.engine: Strategy engine stopped
+2026-02-12 18:32:57,520 [INFO] app.strategy.engine: Strategy engine stopped
+2026-02-12 18:32:57,795 [INFO] app.routes.webhook: Webhook received: order=6934b324 status=PARTIAL filled=22 avg=1343.25
+2026-02-12 18:32:58,062 [INFO] app.routes.webhook: Webhook received: order=6934b324 status=FILLED filled=74 avg=1343.25
+2026-02-12 18:33:50,935 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 18:33:51,862 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 18:34:01,146 [INFO] app.ws.socket_server: Control event: stop  payload={'action': 'stop'}
+2026-02-12 18:34:01,146 [INFO] app.strategy.engine: Strategy engine stopped
+2026-02-12 18:34:01,146 [INFO] app.strategy.engine: Strategy engine stopped
+2026-02-12 18:34:03,082 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 18:34:03,083 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 18:34:03,083 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 18:34:03,083 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 18:34:03,084 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 18:34:03,086 [WARNING] app.engine_controller: Cannot start: current state is RUNNING
+2026-02-12 18:34:03,087 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 18:34:03,220 [INFO] app.broker.order_manager: SL HIT for INFY.NS @ 1710.24 (SL=1370.80 TP=1290.17) — closing 96 shares
+2026-02-12 18:34:03,362 [INFO] app.routes.webhook: Webhook received: order=9e4ee437 status=ACK filled=0 avg=0.00
+2026-02-12 18:34:03,837 [INFO] app.routes.webhook: Webhook received: order=9e4ee437 status=PARTIAL filled=72 avg=1711.09
+2026-02-12 18:34:03,865 [INFO] app.broker.order_manager: SL HIT for INFY.NS @ 1712.96 (SL=1370.80 TP=1290.17) — closing 24 shares
+2026-02-12 18:34:04,399 [INFO] app.routes.webhook: Webhook received: order=9e4ee437 status=FILLED filled=96 avg=1711.09
+2026-02-12 18:34:04,487 [INFO] app.broker.order_manager: TP HIT for INFY.NS @ 1703.78 (SL=1370.80 TP=1290.17) — closing 72 shares
+2026-02-12 18:34:04,680 [INFO] app.routes.webhook: Webhook received: order=1d3f591a status=ACK filled=0 avg=0.00
+2026-02-12 18:34:05,152 [INFO] app.broker.order_manager: TP HIT for INFY.NS @ 1771.28 (SL=1370.80 TP=1290.17) — closing 72 shares
+2026-02-12 18:34:05,528 [INFO] app.routes.webhook: Webhook received: order=1d3f591a status=FILLED filled=24 avg=1713.81
+2026-02-12 18:34:05,779 [INFO] app.broker.order_manager: TP HIT for INFY.NS @ 1751.22 (SL=1370.80 TP=1290.17) — closing 96 shares
+2026-02-12 18:34:05,870 [INFO] app.routes.webhook: Webhook received: order=5339c3f7 status=ACK filled=0 avg=0.00
+2026-02-12 18:34:06,162 [INFO] app.routes.webhook: Webhook received: order=5339c3f7 status=FILLED filled=72 avg=1702.93
+2026-02-12 18:34:06,396 [INFO] app.broker.order_manager: TP HIT for INFY.NS @ 1777.35 (SL=1370.80 TP=1290.17) — closing 24 shares
+2026-02-12 18:34:06,396 [INFO] app.routes.webhook: Webhook received: order=ffb51480 status=ACK filled=0 avg=0.00
+2026-02-12 18:34:06,988 [INFO] app.routes.webhook: Webhook received: order=ffb51480 status=FILLED filled=72 avg=1770.39
+2026-02-12 18:34:07,004 [INFO] app.broker.order_manager: SL HIT for INFY.NS @ 1806.63 (SL=1370.80 TP=1290.17) — closing 48 shares
+2026-02-12 18:34:07,212 [INFO] app.routes.webhook: Webhook received: order=a5a770d1 status=ACK filled=0 avg=0.00
+2026-02-12 18:34:07,623 [INFO] app.broker.order_manager: SL HIT for INFY.NS @ 1815.08 (SL=1370.80 TP=1290.17) — closing 48 shares
+2026-02-12 18:34:07,748 [INFO] app.routes.webhook: Webhook received: order=a5a770d1 status=REJECTED filled=0 avg=0.00
+2026-02-12 18:34:07,912 [INFO] app.routes.webhook: Webhook received: order=27759906 status=ACK filled=0 avg=0.00
+2026-02-12 18:34:08,251 [INFO] app.broker.order_manager: SL HIT for INFY.NS @ 1814.70 (SL=1370.80 TP=1290.17) — closing 48 shares
+2026-02-12 18:34:08,622 [INFO] app.routes.webhook: Webhook received: order=27759906 status=PARTIAL filled=22 avg=1776.46
+2026-02-12 18:34:08,904 [INFO] app.broker.order_manager: SL HIT for INFY.NS @ 1810.96 (SL=1370.80 TP=1290.17) — closing 70 shares
+2026-02-12 18:34:09,119 [INFO] app.routes.webhook: Webhook received: order=27759906 status=FILLED filled=24 avg=1776.46
+2026-02-12 18:34:09,454 [INFO] app.routes.webhook: Webhook received: order=3d5beb4d status=ACK filled=0 avg=0.00
+2026-02-12 18:34:09,510 [INFO] app.strategy.engine: Signal: SELL HDFCBANK.NS @ 841.18 — SMA20 crossed below SMA50
+2026-02-12 18:34:09,512 [INFO] app.broker.order_manager: Order created: 1889a072 SELL HDFCBANK.NS qty=94 @ 841.18  (avail_capital=798762)
+2026-02-12 18:34:09,587 [INFO] app.broker.order_manager: SL HIT for INFY.NS @ 1759.38 (SL=1370.80 TP=1290.17) — closing 94 shares
+2026-02-12 18:34:10,113 [INFO] app.routes.webhook: Webhook received: order=3d5beb4d status=FILLED filled=48 avg=1807.54
+2026-02-12 18:34:10,202 [INFO] app.broker.order_manager: SL HIT for INFY.NS @ 1772.30 (SL=1370.80 TP=1290.17) — closing 46 shares
+2026-02-12 18:34:10,264 [INFO] app.routes.webhook: Webhook received: order=2d070170 status=ACK filled=0 avg=0.00
+2026-02-12 18:34:10,630 [INFO] app.routes.webhook: Webhook received: order=2d070170 status=PARTIAL filled=6 avg=1815.99
+2026-02-12 18:34:10,829 [INFO] app.broker.order_manager: SL HIT for INFY.NS @ 1781.33 (SL=1370.80 TP=1290.17) — closing 40 shares
+2026-02-12 18:34:10,987 [INFO] app.routes.webhook: Webhook received: order=2d070170 status=FILLED filled=48 avg=1815.99
+2026-02-12 18:34:11,394 [INFO] app.routes.webhook: Webhook received: order=3e13cd4e status=ACK filled=0 avg=0.00
+2026-02-12 18:34:11,478 [INFO] app.broker.order_manager: TP HIT for INFY.NS @ 1847.57 (SL=1370.80 TP=1290.17) — closing 8 shares
+2026-02-12 18:34:12,103 [INFO] app.routes.webhook: Webhook received: order=3e13cd4e status=FILLED filled=48 avg=1815.60
+2026-02-12 18:34:12,161 [INFO] app.broker.order_manager: TP HIT for INFY.NS @ 1835.38 (SL=1370.80 TP=1290.17) — closing 56 shares
+2026-02-12 18:34:12,312 [INFO] app.routes.webhook: Webhook received: order=581ee883 status=ACK filled=0 avg=0.00
+2026-02-12 18:34:12,796 [INFO] app.broker.order_manager: TP HIT for INFY.NS @ 1868.84 (SL=1370.80 TP=1290.17) — closing 56 shares
+2026-02-12 18:34:12,970 [INFO] app.routes.webhook: Webhook received: order=581ee883 status=FILLED filled=70 avg=1811.86
+2026-02-12 18:34:13,345 [INFO] app.routes.webhook: Webhook received: order=1889a072 status=ACK filled=0 avg=0.00
+2026-02-12 18:34:13,419 [INFO] app.broker.order_manager: TP HIT for INFY.NS @ 1869.18 (SL=1370.80 TP=1290.17) — closing 126 shares
+2026-02-12 18:34:14,012 [INFO] app.routes.webhook: Webhook received: order=1889a072 status=PARTIAL filled=91 avg=840.76
+2026-02-12 18:34:14,045 [INFO] app.broker.order_manager: TP HIT for INFY.NS @ 1803.28 (SL=1370.80 TP=1290.17) — closing 126 shares
+2026-02-12 18:34:14,047 [INFO] app.broker.order_manager: SL HIT for HDFCBANK.NS @ 884.62 (SL=858.00 TP=807.53) — closing 91 shares
+2026-02-12 18:34:14,370 [INFO] app.routes.webhook: Webhook received: order=1889a072 status=FILLED filled=94 avg=840.76
+2026-02-12 18:34:14,538 [INFO] app.routes.webhook: Webhook received: order=b8b2637a status=ACK filled=0 avg=0.00
+2026-02-12 18:34:14,655 [INFO] app.broker.order_manager: TP HIT for INFY.NS @ 1804.45 (SL=1370.80 TP=1290.17) — closing 126 shares
+2026-02-12 18:34:14,658 [INFO] app.broker.order_manager: SL HIT for HDFCBANK.NS @ 886.05 (SL=858.00 TP=807.53) — closing 185 shares
+2026-02-12 18:34:15,229 [INFO] app.routes.webhook: Webhook received: order=b8b2637a status=PARTIAL filled=42 avg=1760.26
+2026-02-12 18:34:15,270 [INFO] app.broker.order_manager: TP HIT for INFY.NS @ 1825.77 (SL=1370.80 TP=1290.17) — closing 168 shares
+2026-02-12 18:34:15,280 [INFO] app.broker.order_manager: SL HIT for HDFCBANK.NS @ 890.32 (SL=858.00 TP=807.53) — closing 185 shares
+2026-02-12 18:34:15,521 [INFO] app.routes.webhook: Webhook received: order=b8b2637a status=FILLED filled=94 avg=1760.26
+2026-02-12 18:34:15,921 [INFO] app.broker.order_manager: TP HIT for INFY.NS @ 1837.71 (SL=1370.80 TP=1290.17) — closing 262 shares
+2026-02-12 18:34:15,921 [INFO] app.broker.order_manager: SL HIT for HDFCBANK.NS @ 900.97 (SL=858.00 TP=807.53) — closing 185 shares
+2026-02-12 18:34:15,929 [INFO] app.routes.webhook: Webhook received: order=2e3a4eff status=ACK filled=0 avg=0.00
+2026-02-12 18:34:16,546 [INFO] app.routes.webhook: Webhook received: order=2e3a4eff status=FILLED filled=46 avg=1773.19
+2026-02-12 18:34:16,583 [INFO] app.broker.order_manager: TP HIT for INFY.NS @ 1834.95 (SL=1370.80 TP=1290.17) — closing 308 shares
+2026-02-12 18:34:16,587 [INFO] app.broker.order_manager: SL HIT for HDFCBANK.NS @ 917.65 (SL=858.00 TP=807.53) — closing 185 shares
+2026-02-12 18:34:16,698 [INFO] app.routes.webhook: Webhook received: order=d4cab3a0 status=ACK filled=0 avg=0.00
+2026-02-12 18:34:16,946 [INFO] app.routes.webhook: Webhook received: order=d4cab3a0 status=FILLED filled=40 avg=1782.22
+2026-02-12 18:34:17,048 [WARNING] app.engine_controller: EMERGENCY STOP: max_exposure (80.7%)
+2026-02-12 18:34:17,049 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: max_exposure (80.7%)
+2026-02-12 18:34:17,388 [INFO] app.routes.webhook: Webhook received: order=a004f720 status=ACK filled=0 avg=0.00
+2026-02-12 18:34:18,064 [INFO] app.routes.webhook: Webhook received: order=a004f720 status=FILLED filled=8 avg=1846.65
+2026-02-12 18:34:18,310 [INFO] app.routes.webhook: Webhook received: order=3a052646 status=ACK filled=0 avg=0.00
+2026-02-12 18:34:19,036 [INFO] app.routes.webhook: Webhook received: order=3a052646 status=PARTIAL filled=13 avg=1834.47
+2026-02-12 18:34:19,674 [INFO] app.routes.webhook: Webhook received: order=3a052646 status=FILLED filled=56 avg=1834.47
+2026-02-12 18:34:19,898 [INFO] app.routes.webhook: Webhook received: order=fd2aea67 status=ACK filled=0 avg=0.00
+2026-02-12 18:34:20,702 [INFO] app.routes.webhook: Webhook received: order=fd2aea67 status=FILLED filled=56 avg=1867.91
+2026-02-12 18:34:20,964 [INFO] app.routes.webhook: Webhook received: order=86e2ea86 status=ACK filled=0 avg=0.00
+2026-02-12 18:34:21,627 [INFO] app.routes.webhook: Webhook received: order=86e2ea86 status=FILLED filled=126 avg=1868.25
+2026-02-12 18:34:21,794 [INFO] app.routes.webhook: Webhook received: order=6f5d5fa7 status=ACK filled=0 avg=0.00
+2026-02-12 18:34:22,153 [INFO] app.routes.webhook: Webhook received: order=6f5d5fa7 status=FILLED filled=126 avg=1802.38
+2026-02-12 18:34:22,511 [INFO] app.routes.webhook: Webhook received: order=483f21aa status=ACK filled=0 avg=0.00
+2026-02-12 18:34:23,012 [INFO] app.ws.socket_server: Control event: stop  payload={'action': 'stop'}
+2026-02-12 18:34:23,012 [INFO] app.strategy.engine: Strategy engine stopped
+2026-02-12 18:34:23,012 [INFO] app.strategy.engine: Strategy engine stopped
+2026-02-12 18:34:23,102 [INFO] app.routes.webhook: Webhook received: order=483f21aa status=FILLED filled=91 avg=885.06
+2026-02-12 18:34:23,452 [INFO] app.routes.webhook: Webhook received: order=8bbbf0ad status=ACK filled=0 avg=0.00
+2026-02-12 18:34:23,811 [INFO] app.routes.webhook: Webhook received: order=8bbbf0ad status=FILLED filled=126 avg=1803.55
+2026-02-12 18:34:23,964 [INFO] app.routes.webhook: Webhook received: order=386bd7f4 status=ACK filled=0 avg=0.00
+2026-02-12 18:34:24,762 [INFO] app.routes.webhook: Webhook received: order=386bd7f4 status=FILLED filled=185 avg=886.49
+2026-02-12 18:34:25,009 [INFO] app.routes.webhook: Webhook received: order=62bc0ec2 status=ACK filled=0 avg=0.00
+2026-02-12 18:34:25,698 [INFO] app.routes.webhook: Webhook received: order=62bc0ec2 status=FILLED filled=168 avg=1824.85
+2026-02-12 18:34:26,002 [INFO] app.routes.webhook: Webhook received: order=c07caa9d status=ACK filled=0 avg=0.00
+2026-02-12 18:34:26,529 [INFO] app.routes.webhook: Webhook received: order=c07caa9d status=FILLED filled=185 avg=890.76
+2026-02-12 18:34:26,794 [INFO] app.routes.webhook: Webhook received: order=a25949b2 status=ACK filled=0 avg=0.00
+2026-02-12 18:34:27,044 [INFO] app.routes.webhook: Webhook received: order=a25949b2 status=FILLED filled=262 avg=1836.80
+2026-02-12 18:34:27,387 [INFO] app.routes.webhook: Webhook received: order=a62c398e status=ACK filled=0 avg=0.00
+2026-02-12 18:34:27,945 [INFO] app.routes.webhook: Webhook received: order=a62c398e status=FILLED filled=185 avg=901.42
+2026-02-12 18:34:28,136 [INFO] app.routes.webhook: Webhook received: order=ac667648 status=ACK filled=0 avg=0.00
+2026-02-12 18:34:28,461 [INFO] app.routes.webhook: Webhook received: order=ac667648 status=PARTIAL filled=250 avg=1834.03
+2026-02-12 18:34:29,111 [INFO] app.routes.webhook: Webhook received: order=ac667648 status=FILLED filled=308 avg=1834.03
+2026-02-12 18:34:29,302 [INFO] app.ws.socket_server: Control event: toggle_ml  payload={'action': 'toggle_ml', 'use_ml': True}
+2026-02-12 18:34:29,519 [INFO] app.routes.webhook: Webhook received: order=95231c80 status=ACK filled=0 avg=0.00
+2026-02-12 18:34:30,246 [INFO] app.routes.webhook: Webhook received: order=95231c80 status=FILLED filled=185 avg=918.11
+2026-02-12 18:34:39,536 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 18:34:39,536 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 18:34:39,536 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 18:34:39,536 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 18:34:39,536 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 18:34:39,536 [WARNING] app.engine_controller: Cannot start: current state is RUNNING
+2026-02-12 18:34:39,536 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 18:34:39,544 [WARNING] app.engine_controller: EMERGENCY STOP: max_exposure (275.7%)
+2026-02-12 18:34:39,544 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: max_exposure (275.7%)
+2026-02-12 18:35:34,010 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 18:46:51,417 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 18:46:52,355 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 18:46:55,667 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 18:46:56,070 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 19:11:13,833 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 19:44:00,555 [INFO] app.db.storage: Database tables initialised at C:\AI\algo trading\bot1\algo_demo_india\data\algo_demo.db
+2026-02-12 19:44:00,555 [INFO] app.broker.capital_manager: CapitalManager restored from DB: account=default  capital=-1712680.39  realised_pnl=-25465.65  positions=2
+2026-02-12 19:44:00,555 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 19:44:00,555 [INFO] app.data_feed.provider: Creating YahooProvider for mode=demo
+2026-02-12 19:44:00,555 [INFO] __main__: Market data provider: yahoo (mode=demo)
+2026-02-12 19:44:00,555 [INFO] app.broker.simulated_broker: Simulated broker started
+2026-02-12 19:44:00,555 [INFO] __main__: Starting server on 0.0.0.0:5005  ML=False
+2026-02-12 19:44:00,586 [INFO] app.data_feed.demo_feed: DemoDataFeed connected — symbols=['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-12 19:44:00,586 [INFO] __main__: Tick loop started for ['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-12 19:44:03,680 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 19:44:06,434 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 19:44:11,046 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 19:44:11,990 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 19:44:14,782 [INFO] app.ws.socket_server: Control event: stop  payload={'action': 'stop'}
+2026-02-12 19:44:14,782 [WARNING] app.engine_controller: Cannot stop: current state is IDLE
+2026-02-12 19:44:14,782 [INFO] app.strategy.engine: Strategy engine stopped
+2026-02-12 19:44:14,782 [WARNING] app.engine_controller: Cannot stop: current state is IDLE
+2026-02-12 19:44:14,782 [INFO] app.strategy.engine: Strategy engine stopped
+2026-02-12 19:44:54,298 [INFO] app.ws.socket_server: Control event: stop  payload={'action': 'stop'}
+2026-02-12 19:44:54,298 [WARNING] app.engine_controller: Cannot stop: current state is IDLE
+2026-02-12 19:44:54,298 [INFO] app.strategy.engine: Strategy engine stopped
+2026-02-12 19:44:54,298 [WARNING] app.engine_controller: Cannot stop: current state is IDLE
+2026-02-12 19:44:54,298 [INFO] app.strategy.engine: Strategy engine stopped
+2026-02-12 20:51:34,121 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 20:53:45,259 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 21:00:51,762 [INFO] app.db.storage: Database tables initialised at C:\AI\algo trading\bot1\algo_demo_india\data\algo_demo.db
+2026-02-12 21:00:51,762 [INFO] app.broker.capital_manager: CapitalManager restored from DB: account=default  capital=-1732980.39  realised_pnl=-25765.65  positions=3
+2026-02-12 21:00:51,762 [INFO] app.broker.order_manager: Restored 52 orders from DB into in-memory cache
+2026-02-12 21:00:51,763 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 21:00:51,763 [INFO] app.data_feed.provider: Creating YahooProvider for mode=demo
+2026-02-12 21:00:51,764 [INFO] app.main: Market data provider: yahoo (mode=demo)
+2026-02-12 21:03:32,013 [INFO] app.db.storage: Database tables initialised at C:\AI\algo trading\bot1\algo_demo_india\data\algo_demo.db
+2026-02-12 21:03:32,013 [INFO] app.broker.capital_manager: CapitalManager restored from DB: account=default  capital=-1732980.39  realised_pnl=-25765.65  positions=3
+2026-02-12 21:03:32,013 [INFO] app.broker.order_manager: Restored 52 orders from DB into in-memory cache
+2026-02-12 21:03:32,013 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 21:03:32,013 [INFO] app.data_feed.provider: Creating YahooProvider for mode=demo
+2026-02-12 21:03:32,013 [INFO] __main__: Market data provider: yahoo (mode=demo)
+2026-02-12 21:03:32,013 [INFO] app.broker.simulated_broker: Simulated broker started
+2026-02-12 21:03:32,013 [INFO] __main__: Starting server on 0.0.0.0:5005  ML=False
+2026-02-12 21:03:32,029 [INFO] app.data_feed.demo_feed: DemoDataFeed connected — symbols=['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-12 21:03:32,041 [INFO] __main__: Tick loop started for ['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-12 21:03:40,494 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 21:03:43,368 [INFO] app.routes.auth: User logged out: ?
+2026-02-12 21:03:49,577 [INFO] app.db.storage: Created account user_a3033770 with initial_capital=1000000.00
+2026-02-12 21:03:49,577 [INFO] app.routes.auth: User registered: meganath1025@gmail.com (account=user_a3033770)
+2026-02-12 21:03:50,027 [INFO] app.broker.order_manager: Order 93274100: NEW â†’ REJECTED  filled=0  avg=0.00
+2026-02-12 21:03:50,028 [WARNING] app.broker.order_manager: Order 93274100 timed out after 60s â€” REJECTED
+2026-02-12 21:03:50,029 [INFO] app.broker.order_manager: Order e24c43ec: NEW â†’ REJECTED  filled=0  avg=0.00
+2026-02-12 21:03:50,029 [WARNING] app.broker.order_manager: Order e24c43ec timed out after 60s â€” REJECTED
+2026-02-12 21:03:50,029 [INFO] __main__: Cleaned up 2 stale orders
+2026-02-12 21:03:53,611 [INFO] app.routes.auth: User logged out: meganath1025@gmail.com
+2026-02-12 21:04:04,362 [INFO] app.routes.auth: User logged in: meganath1025@gmail.com
+2026-02-12 21:04:20,944 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 21:04:20,944 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 21:04:20,944 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 21:04:20,944 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 21:04:21,193 [WARNING] app.engine_controller: EMERGENCY STOP: daily_loss_halted
+2026-02-12 21:04:21,194 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: daily_loss_halted
+2026-02-12 21:04:56,300 [INFO] app.ws.socket_server: Control event: toggle_ml  payload={'action': 'toggle_ml', 'use_ml': True}
+2026-02-12 21:05:06,444 [INFO] app.ws.socket_server: Control event: stop  payload={'action': 'stop'}
+2026-02-12 21:05:06,444 [INFO] app.strategy.engine: Strategy engine stopped
+2026-02-12 21:07:33,935 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 21:07:33,935 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 21:07:33,935 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 21:07:33,941 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 21:07:34,372 [WARNING] app.engine_controller: EMERGENCY STOP: daily_loss_halted
+2026-02-12 21:07:34,372 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: daily_loss_halted
+2026-02-12 21:07:35,244 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 21:07:35,244 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 21:07:35,244 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 21:07:35,244 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 21:07:35,591 [WARNING] app.engine_controller: EMERGENCY STOP: daily_loss_halted
+2026-02-12 21:07:35,591 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: daily_loss_halted
+2026-02-12 21:07:36,691 [INFO] app.ws.socket_server: Control event: stop  payload={'action': 'stop'}
+2026-02-12 21:07:36,691 [INFO] app.strategy.engine: Strategy engine stopped
+2026-02-12 21:41:22,081 [INFO] app.db.storage: Database tables initialised at C:\AI\algo trading\bot1\algo_demo_india\data\algo_demo.db
+2026-02-12 21:41:22,081 [INFO] app.engine_controller: EngineController: restored STOPPED state from DB
+2026-02-12 21:41:22,097 [INFO] app.broker.capital_manager: CapitalManager restored from DB: account=default  capital=-1732980.39  realised_pnl=-25765.65  positions=3
+2026-02-12 21:41:22,097 [INFO] app.broker.order_manager: Restored 59 orders from DB into in-memory cache
+2026-02-12 21:41:22,097 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 21:41:22,097 [INFO] app.data_feed.provider: Creating YahooProvider for mode=demo
+2026-02-12 21:41:22,097 [INFO] app.main: Market data provider: yahoo (mode=demo)
+2026-02-12 21:41:52,898 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 21:41:57,731 [INFO] app.db.storage: Database tables initialised at C:\AI\algo trading\bot1\algo_demo_india\data\algo_demo.db
+2026-02-12 21:41:57,731 [INFO] app.engine_controller: EngineController: restored STOPPED state from DB
+2026-02-12 21:41:57,731 [INFO] app.broker.capital_manager: CapitalManager restored from DB: account=default  capital=-1732980.39  realised_pnl=-25765.65  positions=3
+2026-02-12 21:41:57,731 [INFO] app.broker.order_manager: Restored 59 orders from DB into in-memory cache
+2026-02-12 21:41:57,731 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 21:41:57,731 [INFO] app.data_feed.provider: Creating YahooProvider for mode=demo
+2026-02-12 21:41:57,731 [INFO] __main__: Market data provider: yahoo (mode=demo)
+2026-02-12 21:41:57,731 [INFO] app.broker.simulated_broker: Simulated broker started
+2026-02-12 21:41:57,731 [INFO] __main__: Starting server on 0.0.0.0:5005  ML=False
+2026-02-12 21:41:57,746 [INFO] app.data_feed.demo_feed: DemoDataFeed connected — symbols=['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-12 21:41:57,746 [INFO] __main__: Tick loop started for ['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-12 21:41:58,682 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 21:42:01,035 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 21:42:01,857 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 21:42:10,348 [INFO] app.ws.socket_server: Control event: stop  payload={'action': 'stop'}
+2026-02-12 21:42:10,348 [INFO] app.strategy.engine: Strategy engine stopped
+2026-02-12 21:42:15,640 [INFO] app.broker.order_manager: Order 5dc75a0e: NEW â†’ REJECTED  filled=0  avg=0.00
+2026-02-12 21:42:15,640 [WARNING] app.broker.order_manager: Order 5dc75a0e timed out after 60s â€” REJECTED
+2026-02-12 21:42:15,640 [INFO] app.broker.order_manager: Order ac91d13d: NEW â†’ REJECTED  filled=0  avg=0.00
+2026-02-12 21:42:15,640 [WARNING] app.broker.order_manager: Order ac91d13d timed out after 60s â€” REJECTED
+2026-02-12 21:42:15,640 [INFO] __main__: Cleaned up 2 stale orders
+2026-02-12 21:42:31,090 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 21:42:31,090 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 21:42:31,090 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 21:42:31,090 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 21:42:31,356 [WARNING] app.engine_controller: EMERGENCY STOP: daily_loss_halted
+2026-02-12 21:42:31,356 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: daily_loss_halted
+2026-02-12 21:42:50,110 [INFO] app.routes.auth: User logged out: meganath1025@gmail.com
+2026-02-12 21:42:50,120 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 21:43:09,164 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 21:43:17,622 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 21:43:17,622 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 21:43:17,622 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 21:43:17,622 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 21:43:17,956 [WARNING] app.engine_controller: EMERGENCY STOP: daily_loss_halted
+2026-02-12 21:43:17,956 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: daily_loss_halted
+2026-02-12 21:51:21,707 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 21:51:27,524 [INFO] app.routes.auth: User logged in: meganath1025@gmail.com
+2026-02-12 21:51:27,891 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 21:51:42,706 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 21:51:42,706 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 21:51:42,706 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 21:51:42,706 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 21:51:43,048 [WARNING] app.engine_controller: EMERGENCY STOP: daily_loss_halted
+2026-02-12 21:51:43,048 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: daily_loss_halted
+2026-02-12 21:54:09,453 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 21:54:10,506 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 21:54:28,365 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 21:54:28,874 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 21:54:34,237 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 21:54:34,706 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 22:03:32,875 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 22:03:33,936 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 22:08:58,576 [INFO] app.db.storage: Database tables initialised at C:\AI\algo trading\bot1\algo_demo_india\data\algo_demo.db
+2026-02-12 22:08:58,576 [INFO] app.engine_controller: EngineController: restored STOPPED state from DB
+2026-02-12 22:08:58,576 [INFO] app.broker.capital_manager: CapitalManager restored from DB: account=default  capital=-1732980.39  realised_pnl=-25765.65  positions=3
+2026-02-12 22:08:58,580 [INFO] app.broker.order_manager: Restored 66 orders from DB into in-memory cache
+2026-02-12 22:08:58,580 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 22:08:58,580 [INFO] app.data_feed.provider: Creating YahooProvider for mode=demo
+2026-02-12 22:08:58,580 [INFO] app.main: Market data provider: yahoo (mode=demo)
+2026-02-12 22:09:33,780 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 22:09:34,467 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 22:09:39,268 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 22:09:39,268 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 22:09:39,268 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 22:09:39,268 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 22:09:39,553 [WARNING] app.engine_controller: EMERGENCY STOP: daily_loss_halted
+2026-02-12 22:09:39,553 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: daily_loss_halted
+2026-02-12 22:09:57,312 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 22:09:57,761 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 22:10:40,375 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 22:10:40,375 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 22:10:40,375 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 22:10:40,375 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 22:10:40,577 [WARNING] app.engine_controller: EMERGENCY STOP: daily_loss_halted
+2026-02-12 22:10:40,577 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: daily_loss_halted
+2026-02-12 22:11:01,792 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 22:25:39,737 [INFO] app.db.storage: Database tables initialised at C:\AI\algo trading\bot1\algo_demo_india\data\algo_demo.db
+2026-02-12 22:25:39,742 [INFO] app.engine_controller: EngineController: restored STOPPED state from DB
+2026-02-12 22:25:39,742 [INFO] app.broker.capital_manager: CapitalManager restored from DB: account=default  capital=-1732980.39  realised_pnl=-25765.65  positions=3
+2026-02-12 22:25:39,742 [INFO] app.broker.order_manager: Restored 66 orders from DB into in-memory cache
+2026-02-12 22:25:39,742 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 22:25:39,742 [INFO] app.data_feed.provider: Creating YahooProvider for mode=demo
+2026-02-12 22:25:39,742 [INFO] __main__: Market data provider: yahoo (mode=demo)
+2026-02-12 22:25:39,742 [INFO] app.broker.simulated_broker: Simulated broker started
+2026-02-12 22:25:39,753 [INFO] __main__: Starting server on 0.0.0.0:5005  ML=False
+2026-02-12 22:25:39,772 [INFO] app.data_feed.demo_feed: DemoDataFeed connected — symbols=['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-12 22:25:39,772 [INFO] __main__: Tick loop started for ['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-12 22:25:40,113 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 22:25:43,438 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 22:25:44,523 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 22:25:57,703 [INFO] app.broker.order_manager: Order 6aef4730: NEW â†’ REJECTED  filled=0  avg=0.00
+2026-02-12 22:25:57,703 [WARNING] app.broker.order_manager: Order 6aef4730 timed out after 60s â€” REJECTED
+2026-02-12 22:25:57,703 [INFO] app.broker.order_manager: Order 6064c800: NEW â†’ REJECTED  filled=0  avg=0.00
+2026-02-12 22:25:57,703 [WARNING] app.broker.order_manager: Order 6064c800 timed out after 60s â€” REJECTED
+2026-02-12 22:25:57,703 [INFO] __main__: Cleaned up 2 stale orders
+2026-02-12 22:25:59,743 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 22:25:59,743 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 22:25:59,743 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 22:25:59,743 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 22:26:00,040 [WARNING] app.engine_controller: EMERGENCY STOP: daily_loss_halted
+2026-02-12 22:26:00,040 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: daily_loss_halted
+2026-02-12 22:26:33,880 [INFO] app.ws.socket_server: Control event: stop  payload={'action': 'stop'}
+2026-02-12 22:26:33,880 [INFO] app.strategy.engine: Strategy engine stopped
+2026-02-12 22:28:24,334 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 22:28:55,170 [INFO] app.db.storage: Database tables initialised at C:\AI\algo trading\bot1\algo_demo_india\data\algo_demo.db
+2026-02-12 22:28:55,170 [INFO] app.engine_controller: EngineController: restored STOPPED state from DB
+2026-02-12 22:28:55,170 [INFO] app.broker.capital_manager: CapitalManager restored from DB: account=default  capital=-1732980.39  realised_pnl=-25765.65  positions=3
+2026-02-12 22:28:55,170 [INFO] app.broker.order_manager: Restored 73 orders from DB into in-memory cache
+2026-02-12 22:28:55,170 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 22:28:55,170 [INFO] app.data_feed.provider: Creating YahooProvider for mode=demo
+2026-02-12 22:28:55,170 [INFO] app.main: Market data provider: yahoo (mode=demo)
+2026-02-12 22:29:38,384 [INFO] app.db.storage: Database tables initialised at C:\AI\algo trading\bot1\algo_demo_india\data\algo_demo.db
+2026-02-12 22:29:38,385 [INFO] app.engine_controller: EngineController: restored STOPPED state from DB
+2026-02-12 22:29:38,385 [INFO] app.broker.capital_manager: CapitalManager restored from DB: account=default  capital=-1732980.39  realised_pnl=-25765.65  positions=3
+2026-02-12 22:29:38,386 [INFO] app.broker.order_manager: Restored 73 orders from DB into in-memory cache
+2026-02-12 22:29:38,386 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 22:29:38,387 [INFO] app.data_feed.provider: Creating YahooProvider for mode=demo
+2026-02-12 22:29:38,387 [INFO] __main__: Market data provider: yahoo (mode=demo)
+2026-02-12 22:29:38,394 [INFO] app.broker.simulated_broker: Simulated broker started
+2026-02-12 22:29:38,394 [INFO] __main__: Starting server on 0.0.0.0:5005  ML=False
+2026-02-12 22:29:38,410 [INFO] app.data_feed.demo_feed: DemoDataFeed connected — symbols=['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-12 22:29:38,410 [INFO] __main__: Tick loop started for ['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-12 22:29:41,085 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 22:29:50,578 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 22:29:50,578 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 22:29:50,578 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 22:29:50,578 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 22:29:50,671 [WARNING] app.engine_controller: EMERGENCY STOP: daily_loss_halted
+2026-02-12 22:29:50,671 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: daily_loss_halted
+2026-02-12 22:29:56,311 [INFO] app.broker.order_manager: Order 57ceff96: NEW â†’ REJECTED  filled=0  avg=0.00
+2026-02-12 22:29:56,311 [WARNING] app.broker.order_manager: Order 57ceff96 timed out after 60s â€” REJECTED
+2026-02-12 22:29:56,311 [INFO] app.broker.order_manager: Order 7b46d5f9: NEW â†’ REJECTED  filled=0  avg=0.00
+2026-02-12 22:29:56,311 [WARNING] app.broker.order_manager: Order 7b46d5f9 timed out after 60s â€” REJECTED
+2026-02-12 22:29:56,311 [INFO] __main__: Cleaned up 2 stale orders
+2026-02-12 22:30:10,019 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 22:30:11,010 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 22:30:17,338 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 22:30:17,810 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 22:31:30,425 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 22:31:31,660 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 22:41:08,167 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 22:41:15,750 [INFO] app.db.storage: Database tables initialised at C:\AI\algo trading\bot1\algo_demo_india\data\algo_demo.db
+2026-02-12 22:41:15,750 [INFO] app.engine_controller: EngineController: restored STOPPED state from DB
+2026-02-12 22:41:15,750 [INFO] app.broker.capital_manager: CapitalManager restored from DB: account=default  capital=-1732980.39  realised_pnl=-25765.65  positions=3
+2026-02-12 22:41:15,766 [INFO] app.broker.order_manager: Restored 73 orders from DB into in-memory cache
+2026-02-12 22:41:15,766 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 22:41:15,766 [INFO] app.data_feed.provider: Creating YahooProvider for mode=demo
+2026-02-12 22:41:15,766 [INFO] __main__: Market data provider: yahoo (mode=demo)
+2026-02-12 22:41:15,766 [INFO] app.broker.simulated_broker: Simulated broker started
+2026-02-12 22:41:15,766 [INFO] __main__: Starting server on 0.0.0.0:5005  ML=False
+2026-02-12 22:41:15,782 [INFO] app.data_feed.demo_feed: DemoDataFeed connected — symbols=['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-12 22:41:15,782 [INFO] __main__: Tick loop started for ['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-12 22:41:16,651 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 22:41:19,584 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 22:41:20,485 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 22:41:33,136 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 22:41:33,136 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 22:41:33,136 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 22:41:33,136 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 22:41:33,560 [WARNING] app.engine_controller: EMERGENCY STOP: daily_loss_halted
+2026-02-12 22:41:33,560 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: daily_loss_halted
+2026-02-12 22:41:57,742 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 22:41:58,268 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 22:42:00,617 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 22:42:01,076 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 22:42:01,959 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 22:42:02,502 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 22:42:12,384 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 22:42:12,835 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 22:43:25,450 [INFO] app.ws.socket_server: Control event: stop  payload={'action': 'stop'}
+2026-02-12 22:43:25,450 [INFO] app.strategy.engine: Strategy engine stopped
+2026-02-12 22:49:48,758 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 22:49:56,557 [INFO] app.db.storage: Database tables initialised at C:\AI\algo trading\bot1\algo_demo_india\data\algo_demo.db
+2026-02-12 22:49:56,557 [INFO] app.engine_controller: EngineController: restored STOPPED state from DB
+2026-02-12 22:49:56,557 [INFO] app.broker.capital_manager: CapitalManager restored from DB: account=default  capital=-1732980.39  realised_pnl=-25765.65  positions=3
+2026-02-12 22:49:56,557 [INFO] app.broker.order_manager: Restored 73 orders from DB into in-memory cache
+2026-02-12 22:49:56,557 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 22:49:56,557 [INFO] app.data_feed.provider: Creating YahooProvider for mode=demo
+2026-02-12 22:49:56,557 [INFO] __main__: Market data provider: yahoo (mode=demo)
+2026-02-12 22:49:56,557 [INFO] app.broker.simulated_broker: Simulated broker started
+2026-02-12 22:49:56,557 [INFO] __main__: Starting server on 0.0.0.0:5005  ML=False
+2026-02-12 22:49:56,581 [INFO] app.data_feed.demo_feed: DemoDataFeed connected — symbols=['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-12 22:49:56,581 [INFO] __main__: Tick loop started for ['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'SBIN.NS']
+2026-02-12 22:49:56,679 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 22:49:58,403 [INFO] app.ws.socket_server: WebSocket client disconnected
+2026-02-12 22:49:59,188 [INFO] app.ws.socket_server: WebSocket client connected
+2026-02-12 22:50:11,528 [INFO] app.ws.socket_server: Control event: start  payload={'action': 'start', 'strategy': 'sma_crossover'}
+2026-02-12 22:50:11,528 [INFO] app.strategy.engine: Strategy set to sma_crossover
+2026-02-12 22:50:11,528 [INFO] app.engine_controller: EngineController -> RUNNING  (engine.start)
+2026-02-12 22:50:11,528 [INFO] app.strategy.engine: Strategy engine started (sma_crossover)
+2026-02-12 22:50:11,920 [WARNING] app.engine_controller: EMERGENCY STOP: daily_loss_halted
+2026-02-12 22:50:11,920 [WARNING] app.strategy.engine: ENGINE EMERGENCY STOP: daily_loss_halted
+2026-02-12 22:50:20,878 [INFO] app.ws.socket_server: Control event: toggle_ml  payload={'action': 'toggle_ml', 'use_ml': True}
+2026-02-12 22:50:23,929 [INFO] app.ws.socket_server: WebSocket client disconnected

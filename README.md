@@ -1,8 +1,12 @@
 # AlgoTerminal — Algorithmic Trading Demo for Indian Stock Market
 
-> **Full-stack demo application** showcasing algorithmic trading system design for NSE/BSE stocks.
-> Built with Python (Flask + SocketIO), TradingView charts, and a professional Binance-style dark UI.
+> **Full-stack production-ready demo application** showcasing algorithmic trading system design for NSE/BSE stocks.
+> Built with Python (Flask + SocketIO), TradingView Lightweight Charts, and a professional Binance-style dark UI.
 > **This is a simulation/demo — not connected to real brokers or live market feeds.**
+
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![Flask](https://img.shields.io/badge/flask-3.0.3-green.svg)](https://flask.palletsprojects.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ---
 
@@ -11,21 +15,26 @@
 1. [What Is This?](#what-is-this)
 2. [Architecture Overview](#architecture-overview)
 3. [Complete Folder Structure](#complete-folder-structure)
-4. [Trading Algorithms](#trading-algorithms)
-5. [How Trades Work (Signal → Order Flow)](#how-trades-work-signal--order-flow)
-6. [Data: Real-Time vs Simulated](#data-real-time-vs-simulated)
-7. [ML Prediction Module](#ml-prediction-module)
-8. [Backtesting Engine](#backtesting-engine)
-9. [Risk Management](#risk-management)
-10. [REST API Reference](#rest-api-reference)
-11. [WebSocket Events](#websocket-events)
-12. [Database Schema](#database-schema)
-13. [Configuration Reference](#configuration-reference)
-14. [How to Run](#how-to-run)
-15. [Running Tests](#running-tests)
-16. [Docker Deployment](#docker-deployment)
-17. [Upgrading to Production-Ready Real Algo Trading](#upgrading-to-production-ready-real-algo-trading)
-18. [Tech Stack](#tech-stack)
+4. [Core Components Deep Dive](#core-components-deep-dive)
+5. [Trading Algorithms](#trading-algorithms)
+6. [How Trades Work (Signal → Order Flow)](#how-trades-work-signal--order-flow)
+7. [Data: Real-Time vs Simulated](#data-real-time-vs-simulated)
+8. [ML Prediction Module](#ml-prediction-module)
+9. [Backtesting Engine](#backtesting-engine)
+10. [Risk Management](#risk-management)
+11. [Capital Management System](#capital-management-system)
+12. [Order Validation Layer](#order-validation-layer)
+13. [Authentication System](#authentication-system)
+14. [REST API Reference](#rest-api-reference)
+15. [WebSocket Events](#websocket-events)
+16. [Database Schema](#database-schema)
+17. [Configuration Reference](#configuration-reference)
+18. [How to Run](#how-to-run)
+19. [Running Tests](#running-tests)
+20. [Docker Deployment](#docker-deployment)
+21. [Upgrading to Production-Ready Real Algo Trading](#upgrading-to-production-ready-real-algo-trading)
+22. [Tech Stack](#tech-stack)
+23. [Glossary](#glossary)
 
 ---
 
@@ -50,7 +59,7 @@ AlgoTerminal is a **complete, interview-ready demo** of an algorithmic trading s
 |-|-|
 | ❌ | **Not connected to real brokers** — uses a simulated broker (but includes a Zerodha adapter template) |
 | ❌ | **Not real-time market data** — replays historical / synthetic CSV data as ticks |
-| ❌ | **Not production-grade** — no authentication, no HTTPS, no rate limiting, single-process |
+| ❌ | **Not fully production-grade** — basic authentication only, no HTTPS, single-process |
 | ❌ | **Not financial advice** — this is purely a technical demonstration |
 
 ---
@@ -206,28 +215,136 @@ algo_demo_india/
 
 | File | Lines | Purpose |
 |------|-------|---------|
-| `app/config.py` | 81 | Loads ALL settings from `.env` with typed defaults. Single source of truth. |
-| `app/main.py` | 257 | Creates Flask + SocketIO app, wires components, runs background tick loop that streams prices. |
-| `app/strategy/engine.py` | 153 | Manages active strategy, feeds ticks, applies ML filter, forwards signals to OrderManager. |
-| `app/strategy/strategies.py` | 236 | 4 strategy classes sharing `.on_tick()` interface + `STRATEGY_REGISTRY` dict. |
-| `app/broker/order_manager.py` | 361 | Order lifecycle: signal → order (risk-sized), state machine, position & P&L tracking, retry logic. |
-| `app/broker/simulated_broker.py` | 149 | Fake broker with async queue, latency/slippage/partial fills, fires webhook on state change. |
+| `app/config.py` | 134 | Loads ALL settings from `.env` with typed defaults. Single source of truth for config. |
+| `app/main.py` | 492 | Flask entry point, component wiring, background tick loop, WebSocket integration. |
+| `app/engine_controller.py` | 174 | **Single source of truth** for engine state (IDLE/RUNNING/STOPPED/PAUSED). |
+| `app/strategy/engine.py` | 251 | Manages active strategy, feeds ticks, applies ML filter, safety guards. |
+| `app/strategy/strategies.py` | 353 | 4 strategy classes with trend filter, edge-trigger signals, `STRATEGY_REGISTRY`. |
+| `app/broker/order_manager.py` | 533 | Order lifecycle, state machine (NEW→ACK→FILLED), retry logic, SL/TP management. |
+| `app/broker/capital_manager.py` | 418 | **DB-backed** capital/position tracking, margin calculation, daily loss limits. |
+| `app/broker/order_validator.py` | 192 | 10 pre-trade validation guards: kill switch, cooldowns, exposure caps. |
+| `app/broker/trade_ledger.py` | ~100 | Independent PnL verification from trades table. |
+| `app/broker/simulated_broker.py` | 183 | Fake broker with latency queue, slippage, partial fills, rejection simulation. |
 | `app/broker/adapter_template.py` | 103 | Abstract `BrokerAdapter` ABC + Zerodha Kite skeleton for real-broker migration. |
-| `app/utils/data.py` | 261 | Yahoo Finance download, Geometric Brownian Motion fallback, tick generator (CSV row replay). |
-| `app/utils/indicators.py` | 98 | Pure functions: SMA, EMA, RSI (Wilder), BB, ATR, MACD, Momentum, Donchian Channel. |
-| `app/utils/risk.py` | 107 | Position sizing formula, SL/TP price calc, `DrawdownTracker` class. |
-| `app/routes/api.py` | 156 | REST endpoints: start/stop engine, place/cancel orders, get positions/P&L/status/ML predict. |
-| `app/routes/webhook.py` | 89 | Receives POST from simulated broker, updates order status, broadcasts via WebSocket. |
-| `app/ws/socket_server.py` | 82 | Socket.IO handlers: `control`, `ping`, `request_state`. Client↔Server real-time comm. |
-| `app/ml/trainer.py` | 158 | Trains XGBoost classifier (15 technical features → predict next-day direction). CLI tool. |
+| `app/data_feed/base.py` | ~50 | Abstract `DataFeed` interface: `connect()`, `subscribe()`, `on_tick()`. |
+| `app/data_feed/demo_feed.py` | ~120 | CSV replay implementation — each row → one tick, loops infinitely. |
+| `app/data_feed/provider.py` | ~30 | Factory function to create appropriate feed based on `MODE`. |
+| `app/utils/data.py` | 299 | Yahoo Finance download, GBM synthetic fallback, tick generator (CSV replay). |
+| `app/utils/indicators.py` | 98 | Pure functions: SMA, EMA, RSI (Wilder), BB, ATR, MACD, Momentum, Donchian. |
+| `app/utils/risk.py` | 202 | Position sizing with 7 safety guards, SL/TP calculation, `DrawdownTracker`. |
+| `app/utils/clock.py` | ~80 | IST-aware clock, NSE market hours detection. |
+| `app/routes/api.py` | 396 | REST endpoints: engine control, orders, positions, PnL, candles, ML predict. |
+| `app/routes/webhook.py` | 89 | Receives POST from broker, updates order status, broadcasts via WebSocket. |
+| `app/routes/auth.py` | 162 | User registration, login, logout, session management. |
+| `app/ws/socket_server.py` | 137 | Socket.IO handlers: `control`, `ping`, `request_state`, tick history on connect. |
+| `app/ml/trainer.py` | 158 | Trains XGBoost classifier (15 technical features → predict next-day direction). |
 | `app/ml/predictor.py` | 113 | Loads trained model, computes P(up-move) for live signal filtering. |
-| `app/backtest/backtester.py` | 269 | Iterates historical data through strategies, manages SL/TP exits, calculates Sharpe/DD/WR. CLI tool. |
-| `app/db/storage.py` | 230 | SQLite DAL with 4 tables. WAL journal mode. Thread-safe via module-level lock. |
-| `frontend/index.html` | 276 | 3-column layout: watchlist, TradingView chart + tabs, P&L/order form/strategy sidebar. |
-| `frontend/static/app.js` | 798 | Tick→candle conversion, chart overlays (SMA/EMA/BB), WebSocket handling, order form, watchlist. |
-| `frontend/static/style.css` | 1003 | Binance-inspired dark theme, CSS Grid layout, animations, responsive breakpoints. |
-| `tests/test_strategy.py` | 259 | 21 tests: indicators, risk sizing, order state machine, strategy signals. |
+| `app/backtest/backtester.py` | 326 | Run strategies on historical data, SL/TP exits, Sharpe/DD/WR metrics. |
+| `app/db/storage.py` | 735 | SQLite DAL: accounts, positions, orders, trades, candles. WAL mode, thread-safe. |
+| `frontend/index.html` | 344 | 3-column layout: watchlist, TradingView chart + tabs, sidebar with auth modal. |
+| `frontend/static/app.js` | 1312 | Chart management, WebSocket handling, order form, paginated tables, overlays. |
+| `frontend/static/style.css` | 1003 | Binance-inspired dark theme, CSS Grid layout, animations, responsive design. |
+| `tests/test_strategy.py` | 375 | 21+ unit tests: indicators, risk sizing, capital manager, strategies. |
 | `scripts/fetch_data.py` | 23 | CLI: downloads OHLCV for all `DEFAULT_SYMBOLS`. |
+
+---
+
+## Core Components Deep Dive
+
+### Engine Controller (`app/engine_controller.py`)
+
+The **EngineController** is the **single source of truth** for the trading engine state. Every component that performs trading-related work checks `controller.is_running` before proceeding.
+
+| State | Description |
+|-------|-------------|
+| `IDLE` | System booted, no strategy active |
+| `RUNNING` | Strategy executing, orders flowing |
+| `STOPPED` | User pressed stop; market data streams but trading is frozen |
+| `PAUSED` | Soft pause; can resume without full restart |
+
+```python
+# All trading components guard with this pattern:
+if not controller.is_running:
+    return  # Skip processing when not RUNNING
+```
+
+**Key Features:**
+- Thread-safe state transitions with locking
+- Persists state to DB (survives server restart)
+- Auto-resume capability on server recovery
+- Stop event for background thread coordination
+
+### Capital Manager (`app/broker/capital_manager.py`)
+
+DB-backed capital and position management — the **single source of truth** for financial state.
+
+| Property | Description |
+|----------|-------------|
+| `available_capital` | Free cash for new trades |
+| `used_margin` | Capital locked in open positions |
+| `realised_pnl` | Closed trade profits/losses |
+| `unrealised_pnl` | Mark-to-market on open positions |
+
+**Hard Caps Enforced:**
+- `MAX_POSITION_SIZE_PER_TRADE` — per-trade notional limit
+- `MAX_OPEN_POSITIONS` — concurrent open symbols cap (default: 10)
+- `MAX_TOTAL_EXPOSURE_PERCENT` — portfolio-level exposure (default: 80%)
+- `MAX_QTY_PER_ORDER` — absolute share count sanity limit
+
+**Capital Flow:**
+```
+Opening Fill:   available_capital -= qty × fill_price
+Position Close: available_capital += margin + realised_pnl
+```
+
+### Order Validator (`app/broker/order_validator.py`)
+
+Pre-trade validation layer with 10 defence-in-depth safety guards:
+
+| Guard | Description |
+|-------|-------------|
+| Kill Switch | Hard stop, no exceptions |
+| Daily Loss Halt | Automatic after threshold breach |
+| Duplicate Signal | Idempotency check (same symbol+action+price) |
+| Tick Cooldown | Minimum ticks between signals per symbol |
+| Time Cooldown | Minimum wall-clock seconds between signals |
+| Position Direction | Blocks doubling-down in same direction |
+| Max Open Positions | Rejects if position count at limit |
+| Available Capital | Ensures funds before creating order |
+| Exposure Cap | Total portfolio exposure limit |
+| Quantity Sanity | Rejects zero-quantity trades |
+
+### Data Feed Abstraction (`app/data_feed/`)
+
+| Component | Purpose |
+|-----------|---------|
+| `base.py` | Abstract `DataFeed` interface — `connect()`, `subscribe()`, `on_tick()` |
+| `demo_feed.py` | CSV replay implementation for demo mode |
+| `provider.py` | Factory function to create appropriate feed based on `MODE` |
+
+**DemoDataFeed Workflow:**
+1. On `connect()` — loads CSV data for all symbols
+2. Creates tick generators that replay OHLCV rows
+3. Each CSV row → one tick event
+4. Loops infinitely for continuous demo
+
+### Trade Ledger (`app/broker/trade_ledger.py`)
+
+Computes PnL exclusively from the `trades` table — independent verification layer.
+
+```python
+# Verify CapitalManager vs TradeLedger (should match!)
+verification = ledger.verify_against_capital_manager(capital_mgr)
+# {"match": True, "discrepancy": 0.0}
+```
+
+### Engine Clock (`app/utils/clock.py`)
+
+IST (India Standard Time) aware clock with NSE market hours awareness:
+
+- `is_market_open()` — checks if within NSE trading hours (9:15 AM - 3:30 PM IST)
+- Supports different modes: `demo` (always open), `paper`, `live`
+- Auto-converts UTC timestamps to IST for display
 
 ---
 
@@ -480,25 +597,171 @@ Supports configurable slippage (default 0.05 %), commission (default 0.03 %), an
 | **Drawdown tracker** | `DrawdownTracker` monitors peak-to-trough | Used in backtester |
 | **Broker realism** | Latency 200–800 ms, 0.05 % slippage, ~30 % partial fills, ~5 % rejection | Configurable |
 
+### Position Sizing Safety Guards
+
+The risk module (`app/utils/risk.py`) applies multiple safety guards in sequence:
+
+1. **Minimum Stop Distance** — Rejects if `SL% < MIN_STOP_DISTANCE_PCT` (prevents qty explosion)
+2. **SL Floor** — Enforces `MIN_STOP_LOSS_PCT` to prevent near-zero SL
+3. **Notional Cap** — `MAX_POSITION_SIZE_PCT_OF_CAPITAL` (10%) limits single position size
+4. **Per-Trade Cap** — `MAX_POSITION_SIZE_PER_TRADE` (500 shares)
+5. **Per-Order Cap** — `MAX_QTY_PER_ORDER` (10,000 shares)
+6. **Absolute Max** — `ABSOLUTE_MAX_QTY` hard ceiling
+7. **Capital Check** — `qty × price` must not exceed available capital
+
+---
+
+## Capital Management System
+
+The **CapitalManager** (`app/broker/capital_manager.py`) provides DB-backed, thread-safe capital tracking.
+
+### Account State (Persisted to SQLite)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `initial_capital` | float | Starting capital (₹10 Lakhs default) |
+| `available_capital` | float | Free cash for new trades |
+| `realised_pnl` | float | Cumulative closed-trade P&L |
+| `used_margin` | float | Capital locked in open positions |
+| `daily_loss_halted` | bool | Auto-halt flag after loss threshold |
+
+### Position Tracking
+
+Each position tracks:
+```python
+{
+    "symbol": "RELIANCE.NS",
+    "qty": 50,
+    "avg_price": 2543.10,
+    "side": "BUY"  # or "SELL" for short
+}
+```
+
+### Capital Flow Operations
+
+| Operation | Effect |
+|-----------|--------|
+| `reserve_capital(qty, price)` | `available_capital -= qty × price` |
+| `release_capital(qty, price)` | `available_capital += qty × price` |
+| `record_pnl(amount)` | `realised_pnl += amount; available_capital += amount` |
+
+### Daily Loss Limit
+
+When `realised_pnl` drops below `-DAILY_LOSS_LIMIT` (default: ₹50,000):
+1. Sets `daily_loss_halted = True`
+2. Persists halt flag to DB (survives restart)
+3. All new orders are rejected until manual reset
+
+---
+
+## Order Validation Layer
+
+The **OrderValidator** (`app/broker/order_validator.py`) implements 10 safety checks before any order is created.
+
+### Validation Sequence
+
+```
+Signal arrives → OrderValidator.validate_signal()
+                         │
+                         ├── 1. Kill switch active? → REJECT
+                         ├── 2. Daily loss halted? → REJECT
+                         ├── 3. Daily loss limit breached? → REJECT + HALT
+                         ├── 4. Duplicate signal (idempotency)? → REJECT
+                         ├── 5. Tick cooldown not met? → REJECT
+                         ├── 6. Time cooldown not met? → REJECT
+                         ├── 7. Already have position in same direction? → REJECT
+                         ├── 8. Max open positions reached? → REJECT
+                         ├── 9. Insufficient capital? → REJECT
+                         ├── 10. Exposure cap exceeded? → REJECT
+                         │
+                         └── All passed → APPROVED → Order created
+```
+
+### Cooldown System
+
+- **Tick Cooldown**: `STRATEGY_COOLDOWN_CANDLES` (5 ticks) between signals for same symbol
+- **Time Cooldown**: `SIGNAL_COOLDOWN_SEC` (30 seconds) wall-clock time between signals
+- Prevents overtrading even when ticks arrive rapidly
+
+---
+
+## Authentication System
+
+The auth module (`app/routes/auth.py`) provides basic multi-user support with session management.
+
+### Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/auth/register` | Create new user + account |
+| `POST` | `/auth/login` | Log in, set Flask session |
+| `POST` | `/auth/logout` | Clear session |
+| `GET` | `/auth/me` | Get current user info |
+
+### User Flow
+
+1. **Register**: Creates user row + dedicated account with `INITIAL_CAPITAL`
+2. **Login**: Validates password hash, sets session cookie
+3. **Session**: Flask session tracks `user_id` for request authentication
+4. **Logout**: Clears session, invalidates access
+
+### Password Security
+
+- Uses `werkzeug.security.generate_password_hash()` (PBKDF2-SHA256)
+- Minimum 4 character password requirement
+- Username: 2-50 characters, case-insensitive
+
+### Guest Mode
+
+Users can skip authentication ("Continue as Guest") for demo purposes without creating an account.
+
 ---
 
 ## REST API Reference
 
 Base URL: `http://localhost:5005`
 
+### Engine Control
+
+| Method | Endpoint | Body | Response |
+|--------|----------|------|----------|
+| `POST` | `/api/start` | `{"strategy": "sma_crossover"}` | `{"status": "started", "strategy": "..."}` |
+| `POST` | `/api/stop` | — | `{"status": "stopped", "state": "STOPPED"}` |
+| `GET` | `/api/status` | — | `{running, strategy, use_ml, ticks_processed, mode, market_open}` |
+| `GET` | `/api/clock` | — | `{ist_time, market_open, mode, ...}` |
+
+### Trading
+
 | Method | Endpoint | Body / Query | Response |
 |--------|----------|-------------|----------|
-| `GET` | `/` | — | Trading terminal HTML |
-| `POST` | `/api/start` | `{"strategy": "sma_crossover"}` | `{"status": "started"}` |
-| `POST` | `/api/stop` | — | `{"status": "stopped"}` |
-| `GET` | `/api/status` | — | `{running, strategy, use_ml, ticks_processed}` |
-| `GET` | `/api/positions` | — | `{positions: {...}}` with current prices |
-| `GET` | `/api/pnl` | — | `{realised_pnl, unrealised_pnl, total_pnl, capital}` |
-| `POST` | `/api/place-order` | `{symbol, side, qty, price, order_type?}` | `{order: {...}}` |
+| `POST` | `/api/place-order` | `{symbol, side, qty, price, sl_pct?, tp_pct?}` | `{order: {...}}` or `{error: "..."}` |
 | `POST` | `/api/cancel-order` | `{order_id}` | `{order: {...}}` |
-| `GET` | `/api/orders` | — | `{orders: [...]}` (limit 100) |
-| `GET` | `/api/ml-predict` | `?symbol=RELIANCE.NS` | `{symbol, probability, direction}` |
-| `POST` | `/webhook/order-update` | `{order_id, status, filled_qty, avg_price}` | `{ok: true}` |
+| `GET` | `/api/orders` | `?limit=100` | `{orders: [...]}` |
+| `GET` | `/api/positions` | — | `{positions: [...]}` with current prices |
+| `GET` | `/api/pnl` | — | `{realised_pnl, unrealised_pnl, total_pnl, capital}` |
+| `GET` | `/api/ledger` | — | Trade-ledger computed PnL (verification) |
+
+### Data
+
+| Method | Endpoint | Query | Response |
+|--------|----------|-------|----------|
+| `GET` | `/api/candles` | `symbol=RELIANCE.NS&timeframe=1m&limit=500` | `{candles: [...], count: N}` |
+| `GET` | `/api/ml-predict` | `symbol=RELIANCE.NS` | `{symbol, probability, direction}` |
+
+### Authentication
+
+| Method | Endpoint | Body | Response |
+|--------|----------|------|----------|
+| `POST` | `/auth/register` | `{username, password}` | `{user_id, username}` |
+| `POST` | `/auth/login` | `{username, password}` | `{user_id, username}` |
+| `POST` | `/auth/logout` | — | `{ok: true}` |
+| `GET` | `/auth/me` | — | `{user_id, username}` or `{error}` |
+
+### Webhook
+
+| Method | Endpoint | Body | Description |
+|--------|----------|------|-------------|
+| `POST` | `/webhook/order-update` | `{order_id, status, filled_qty, avg_price}` | Broker callback for order state changes |
 
 A **Postman collection** is provided in `postman_collection.json`.
 
@@ -532,9 +795,34 @@ A **Postman collection** is provided in `postman_collection.json`.
 SQLite at `data/algo_demo.db` — WAL journal mode, thread-safe.
 
 ```sql
+-- Account capital tracking (DB-backed, survives restart)
+CREATE TABLE accounts (
+    account_id        TEXT PRIMARY KEY DEFAULT 'default',
+    initial_capital   REAL NOT NULL,
+    available_capital REAL NOT NULL,
+    realised_pnl      REAL NOT NULL DEFAULT 0,
+    daily_loss_halted INTEGER DEFAULT 0,
+    engine_state      TEXT DEFAULT 'IDLE',
+    created_at        TEXT NOT NULL,
+    updated_at        TEXT NOT NULL
+);
+
+-- Position book (per-account, per-symbol)
+CREATE TABLE positions (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    account_id  TEXT NOT NULL DEFAULT 'default',
+    symbol      TEXT NOT NULL,
+    side        TEXT NOT NULL DEFAULT 'FLAT',
+    qty         INTEGER NOT NULL DEFAULT 0,
+    avg_price   REAL NOT NULL DEFAULT 0,
+    updated_at  TEXT NOT NULL,
+    UNIQUE(account_id, symbol)
+);
+
 -- Orders with full lifecycle tracking
 CREATE TABLE orders (
     order_id    TEXT PRIMARY KEY,    -- UUID
+    account_id  TEXT DEFAULT 'default',
     symbol      TEXT NOT NULL,
     side        TEXT NOT NULL,       -- BUY / SELL
     qty         INTEGER NOT NULL,
@@ -552,13 +840,16 @@ CREATE TABLE orders (
 CREATE TABLE trades (
     trade_id    INTEGER PRIMARY KEY AUTOINCREMENT,
     order_id    TEXT REFERENCES orders(order_id),
+    account_id  TEXT DEFAULT 'default',
     symbol      TEXT,  side TEXT,  qty INTEGER,  price REAL,
+    pnl         REAL DEFAULT 0,
     timestamp   TEXT
 );
 
 -- P&L snapshots over time
 CREATE TABLE pnl_history (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    account_id      TEXT DEFAULT 'default',
     timestamp       TEXT,
     realised_pnl    REAL,
     unrealised_pnl  REAL,
@@ -573,6 +864,34 @@ CREATE TABLE strategy_logs (
     strategy    TEXT,  symbol TEXT,  signal TEXT,
     details     TEXT  -- JSON blob
 );
+
+-- Historical candles (persisted chart data)
+CREATE TABLE candles (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    symbol     TEXT NOT NULL,
+    timeframe  TEXT NOT NULL DEFAULT '1m',
+    timestamp  INTEGER NOT NULL,  -- Unix epoch
+    open       REAL NOT NULL,
+    high       REAL NOT NULL,
+    low        REAL NOT NULL,
+    close      REAL NOT NULL,
+    volume     REAL NOT NULL DEFAULT 0,
+    UNIQUE(symbol, timeframe, timestamp)
+);
+
+-- Users table for multi-user support
+CREATE TABLE users (
+    user_id    TEXT PRIMARY KEY,
+    username   TEXT UNIQUE NOT NULL,
+    password   TEXT NOT NULL,  -- PBKDF2-SHA256 hash
+    created_at TEXT NOT NULL
+);
+
+-- Indexes for performance
+CREATE INDEX idx_candles_sym_tf ON candles(symbol, timeframe, timestamp DESC);
+CREATE INDEX idx_orders_account ON orders(account_id, created_at DESC);
+CREATE INDEX idx_trades_account ON trades(account_id, timestamp DESC);
+CREATE INDEX idx_positions_account ON positions(account_id);
 ```
 
 ### Order State Machine
@@ -807,6 +1126,47 @@ Nginx (HTTPS) → Gunicorn (Flask) → Celery Workers → Redis
 | Testing | pytest | 8.3.2 |
 | CI/CD | GitHub Actions | flake8 + pytest |
 | Container | Docker + docker-compose | Python 3.11-slim |
+
+---
+
+## Glossary
+
+| Term | Definition |
+|------|------------|
+| **ATR** | Average True Range — volatility indicator measuring price movement range |
+| **Backtesting** | Running a strategy on historical data to evaluate performance |
+| **Bollinger Bands** | Price channels at ±N standard deviations from a moving average |
+| **Donchian Channel** | Highest high and lowest low over N periods |
+| **Drawdown** | Peak-to-trough decline in portfolio value |
+| **EMA** | Exponential Moving Average — weighted average giving more weight to recent prices |
+| **GBM** | Geometric Brownian Motion — mathematical model for random price movements |
+| **Golden Cross** | When short-term SMA crosses above long-term SMA (bullish signal) |
+| **Death Cross** | When short-term SMA crosses below long-term SMA (bearish signal) |
+| **Idempotency** | Ensuring duplicate signals don't create duplicate orders |
+| **IST** | Indian Standard Time (UTC+5:30) |
+| **Kill Switch** | Emergency stop that immediately halts all trading |
+| **MACD** | Moving Average Convergence Divergence — trend momentum indicator |
+| **Mark-to-Market (MTM)** | Valuing open positions at current market prices |
+| **Mean Reversion** | Strategy based on prices returning to historical average |
+| **Momentum** | Rate of price change over a period |
+| **NSE** | National Stock Exchange of India |
+| **OHLCV** | Open, High, Low, Close, Volume — standard price bar data |
+| **Partial Fill** | When only part of an order is executed |
+| **Position Sizing** | Calculating how many shares to buy based on risk parameters |
+| **Realised P&L** | Profit/loss from closed positions |
+| **RSI** | Relative Strength Index — momentum oscillator (0-100 scale) |
+| **R:R** | Risk-to-Reward ratio (e.g., 2:1 means TP is 2× the SL distance) |
+| **Sharpe Ratio** | Risk-adjusted return metric: (return - risk-free) / volatility |
+| **Slippage** | Difference between expected and actual execution price |
+| **SMA** | Simple Moving Average — arithmetic mean of prices over N periods |
+| **Stop-Loss (SL)** | Order to exit a position when price moves against you |
+| **Take-Profit (TP)** | Order to exit a position when price reaches a profit target |
+| **Tick** | A single price update or the minimum price movement |
+| **Trend Filter** | Confirming trade direction aligns with the broader trend |
+| **Unrealised P&L** | Paper profit/loss on open positions |
+| **WAL** | Write-Ahead Logging — SQLite journaling mode for better concurrency |
+| **WebSocket** | Persistent bidirectional connection for real-time data |
+| **XGBoost** | Extreme Gradient Boosting — ML algorithm for classification/regression |
 
 ---
 
